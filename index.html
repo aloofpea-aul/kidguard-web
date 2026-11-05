@@ -314,7 +314,7 @@ select option{background:#1A1438}
     </div>
     <div id="reqList" style="display:flex;flex-direction:column;gap:10px"></div>
     <div class="qa rise" style="animation-delay:.24s" id="qa"></div>
-    <div class="note" id="note">คำสั่งถึงเครื่องลูกภายในประมาณ 2 นาที</div>
+    <div class="note" id="note">คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
     <div class="glass sec rise" style="animation-delay:.32s">
       <div class="sh"><span>แอปที่ใช้วันนี้</span><a onclick="tab('rp')">ดูทั้งหมด</a></div>
       <div id="topApps" style="display:flex;flex-direction:column;gap:12px"></div>
@@ -360,7 +360,7 @@ select option{background:#1A1438}
         <div id="appsRules"></div>
       </div>
       <button class="big shine rise" style="animation-delay:.24s" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
-      <div class="note">กฎใหม่ถึงเครื่องลูกภายในประมาณ 2 นาที</div>
+      <div class="note">กฎใหม่ถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
     </div>
     <div class="glass ver rise" id="verCard"></div>
   </div>
@@ -379,8 +379,9 @@ select option{background:#1A1438}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.6', WEB_DATE = '5 พ.ย. 2569', LATEST_APP = '1.6';
+var WEB_VER = '1.7', WEB_DATE = '5 พ.ย. 2569', LATEST_APP = '1.7';
 var CHANGES = [
+  ['1.7','5 พ.ย. 2569','คำสั่งถึงเครื่องลูกเร็วขึ้น (ช้าสุด ~30 วินาที) · ซิงค์ทันทีเมื่อลูกเปิดจอ · เมนูลัดใน LINE'],
   ['1.6','5 พ.ย. 2569','หน้าเครื่องลูกดีไซน์ใหม่ลูกเจี๊ยบสดใส · ขอเล่นเพิ่มได้จากหน้าหลัก · เสียงกดปุ่มในเครื่องลูก'],
   ['1.5','5 พ.ย. 2569','แตะแอปเพื่อเปิดแผ่นควบคุม · สั่งด่วน ให้เล่นอีก/ล็อกชั่วคราว · เสียงและเอฟเฟกต์ปุ่ม'],
   ['1.4','5 พ.ย. 2569','ไอคอนแอปจริงจากเครื่องลูก · ดีไซน์ใหม่ธีมมืด ตัวหนังสือใหญ่ขึ้น'],
@@ -517,7 +518,7 @@ function render(){
     '<button onclick="cmd(\'bonus\',15)"><div class="ic">⏱️</div>+15 นาที</button>'+
     '<button onclick="cmd(\'bonus\',30)"><div class="ic">⏰</div>+30 นาที</button>'+
     (paused ? '<button onclick="cmd(\'resume\')"><div class="ic cool">▶️</div>คุมต่อ</button>' : '<button onclick="cmd(\'pause\',60)"><div class="ic">⏸️</div>พัก 1 ชม.</button>');
-  $('note').textContent = d.pending.length ? 'มีคำสั่งรอส่ง '+d.pending.length+' รายการ · ถึงเครื่องลูกภายใน ~2 นาที' : 'คำสั่งถึงเครื่องลูกภายในประมาณ 2 นาที';
+  $('note').textContent = d.pending.length ? 'มีคำสั่งรอส่ง '+d.pending.length+' รายการ · ถึงเครื่องลูกภายใน ~30 วินาที' : 'คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที';
 
   // แอป
   var cfgApps = (d.cfg && d.cfg.apps) || {};
@@ -586,7 +587,7 @@ function cmd(c, arg){
   if(c==='lock' && !arguments[2]){ askConfirm('🔒','ล็อกทั้งเครื่องของ '+d.name+'?','ลูกยังโทรออกได้ ปลดล็อกได้จากหน้านี้','ล็อกเลย',function(){ cmd('lock',0,true); }); return; }
   var msg = {lock:'🔒 ส่งคำสั่งล็อกแล้ว',unlock:'🔓 ส่งคำสั่งปลดล็อกแล้ว',bonus:'⏱️ เพิ่มเวลา '+arg+' นาทีแล้ว',pause:'⏸️ หยุดควบคุม 1 ชม.',resume:'▶️ กลับมาควบคุมแล้ว'}[c]||'ส่งคำสั่งแล้ว';
   call('command', {deviceId:d.deviceId, cmd:c, arg:arg||0}).then(function(){
-    sfx(c==='lock'?'lock':c==='unlock'||c==='resume'?'unlock':'ok'); toast(msg+' · ถึงเครื่องภายใน ~2 นาที'); load();
+    sfx(c==='lock'?'lock':c==='unlock'||c==='resume'?'unlock':'ok'); toast(msg+' · ถึงเครื่องภายใน ~30 วินาที'); load();
   }).catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); });
 }
 
@@ -641,7 +642,7 @@ function saveRules(){
   c.protectSettings = $('rProt').checked;
   if([c.bedStart,c.bedEnd,c.schoolStart,c.schoolEnd].some(function(x){return x==null;})){ toast('กรอกเวลาให้ครบ'); return; }
   call('saveConfig', {deviceId:d.deviceId, cfg:c}).then(function(){
-    sfx('ok'); toast('✅ บันทึกแล้ว จะถึงเครื่องลูกภายใน ~2 นาที'); DRAFT=null; load();
+    sfx('ok'); toast('✅ บันทึกแล้ว จะถึงเครื่องลูกภายใน ~30 วินาที'); DRAFT=null; load();
   }).catch(function(e){ toast('บันทึกไม่ได้: '+(e.message||e)); });
 }
 
@@ -743,8 +744,8 @@ function oldApp(){ var v=String(dev().appVersion||'0').split('.'); return (+v[0]
 function quick(kind, m, btn){
   if(kind==='clear'){ sendAppTemp('clear',0).then(function(){ sfx('unlock'); toast('↺ ยกเลิกคำสั่งชั่วคราวของ '+SH.label+' แล้ว'); }).catch(function(e){ sfx('err'); toast('ส่งไม่ได้: '+(e.message||e)); }); return; }
   var t = kind==='allow' ? 'ให้ '+SH.label+' เล่นอีก '+m+' นาที แล้วล็อก?' : (m<0 ? 'ล็อก '+SH.label+' จนถึงพรุ่งนี้?' : 'ล็อก '+SH.label+' ตอนนี้ แล้วปลดใน '+(m>=60?m/60+' ชม.':m+' นาที')+'?');
-  askConfirm(kind==='allow'?'⏳':'🔒', t, 'คำสั่งถึงเครื่องลูกภายในประมาณ 2 นาที', kind==='allow'?'ให้เล่นต่อ':'ล็อกเลย', function(){
-    sendAppTemp(kind, m).then(function(){ sfx(kind==='allow'?'unlock':'lock'); burstAt(btn); toast((kind==='allow'?'⏳ ':'🔒 ')+'ส่งคำสั่งแล้ว · ถึงเครื่องลูกภายใน ~2 นาที'); load(); })
+  askConfirm(kind==='allow'?'⏳':'🔒', t, 'คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที', kind==='allow'?'ให้เล่นต่อ':'ล็อกเลย', function(){
+    sendAppTemp(kind, m).then(function(){ sfx(kind==='allow'?'unlock':'lock'); burstAt(btn); toast((kind==='allow'?'⏳ ':'🔒 ')+'ส่งคำสั่งแล้ว · ถึงเครื่องลูกภายใน ~30 วินาที'); load(); })
       .catch(function(e){ sfx('err'); toast('ส่งไม่ได้: '+(e.message||e)); });
   });
 }
