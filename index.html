@@ -2,340 +2,485 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>KidGuard ผู้ปกครอง</title>
-<meta name="theme-color" content="#7A4FD0">
+<meta name="theme-color" content="#0B0820">
 <meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KidGuard">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mali:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@600;700;800&family=Mali:wght@700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#F3F5F9;--card:#fff;--text:#182032;--muted:#4E5A6E;--blue:#2457C5;--blue-soft:#E6EDFB;
-    --orange:#F08A3C;--orange-t:#A4510F;--orange-bg:#FFF3E8;--green-t:#1E6B3A;--green-bg:#DDF2E4;--line:#C9D2E2;--track:#E4E9F2}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans Thai',sans-serif;font-size:15px}
-  .wrap{max-width:1100px;margin:0 auto;padding:18px 14px 60px;display:flex;flex-direction:column;gap:14px}
-  h1{margin:0;font-size:22px} h2{margin:0 0 10px;font-size:17px}
-  .muted{color:var(--muted);font-size:13px}
-  .card{background:var(--card);border-radius:18px;padding:16px 18px}
-  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-  .kpi .v{font-size:24px;font-weight:700;margin-top:2px}
-  .chip{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--text);font:inherit;font-size:15px;cursor:pointer}
-  .chip.on{background:#7A4FD0;color:#fff;border-color:#7A4FD0;font-weight:600}
-  .btn{min-height:46px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--text);font:inherit;font-size:15px;cursor:pointer;flex:1 1 140px}
-  .btn.pri{background:var(--blue);color:#fff;border:0;font-weight:600}
-  .btn.dark{background:var(--text);color:#fff;border:0;font-weight:600}
-  .btn:disabled{opacity:.5}
-  .tabs{display:flex;gap:8px}
-  .badge{display:inline-block;padding:4px 10px;border-radius:8px;font-size:13px;font-weight:600}
-  .b-green{background:var(--green-bg);color:var(--green-t)} .b-orange{background:var(--orange-bg);color:var(--orange-t)}
-  .b-dark{background:var(--text);color:#fff} .b-blue{background:var(--blue-soft);color:var(--blue)}
-  .chart{position:relative;height:200px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:end;border-bottom:1px solid #DCE2EC}
-  .chart .bar{border-radius:8px 8px 0 0;background:#8AA4D8;min-height:2px}
-  .chart .bar.over{background:var(--orange)} .chart .bar.today{background:var(--blue)}
-  .chart .limit{position:absolute;left:0;right:0;border-top:2px dashed #8A96AA}
-  .xl{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
-  table{width:100%;border-collapse:collapse} td,th{padding:10px 6px;border-bottom:1px solid #EEF1F6;text-align:left}
-  th{font-size:13px;color:var(--muted);font-weight:500}
-  .scroll{overflow-x:auto}
-  label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
-  input,select{font:inherit;font-size:16px;min-height:44px;border:1px solid var(--line);border-radius:10px;padding:0 10px;color:var(--text);background:#fff}
-  .sw{flex-direction:row;align-items:center;justify-content:space-between;font-size:15px;color:var(--text);min-height:44px}
-  .sw input{width:22px;height:22px;min-height:0;accent-color:var(--blue)}
-  .app{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #EEF1F6;flex-wrap:wrap}
-  .app .n{flex:1 1 140px} .app select{flex:0 0 150px} .app input{flex:0 0 80px;width:80px}
-  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--text);color:#fff;padding:12px 18px;border-radius:12px;display:none;z-index:9}
-  .hidden{display:none!important}
-  .login{position:fixed;inset:0;overflow:auto;background:#F6F3EE}
-  .login .blob{position:absolute;border-radius:50%;pointer-events:none}
-  .lg-inner{position:relative;min-height:100%;box-sizing:border-box;max-width:400px;margin:0 auto;padding:72px 24px 28px;display:flex;flex-direction:column;align-items:center}
-  .lg-logo{width:148px;height:148px;border-radius:44px;background:#fff;box-shadow:0 10px 30px rgba(122,79,208,.20);display:flex;align-items:center;justify-content:center}
-  .brand{font-family:'Mali',cursive;font-weight:700;color:#7A4FD0;line-height:1.1;margin:0}
-  .brand span{color:#E8A400}
-  .lg-inner .brand{font-size:40px;margin-top:20px}
-  .tag{margin:8px 0 0;color:#55607A;text-align:center;line-height:1.6}
-  .lg-card{margin-top:28px;width:100%;background:#fff;border-radius:26px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 6px 24px rgba(31,42,68,.08)}
-  .lg-card>label:first-child{font-size:14px;font-weight:600;color:var(--text)}
-  .pwbox{display:flex;align-items:center;gap:8px;border:2px solid #E2DAF5;border-radius:16px;padding:0 6px 0 16px;background:#FCFAFF}
-  .pwbox:focus-within{border-color:#7A4FD0}
-  .pwbox input{flex:1;border:0;background:transparent;font-size:18px;letter-spacing:3px;min-height:50px;outline:none;padding:0;min-width:0}
-  .iconbtn{width:44px;height:44px;border:0;border-radius:12px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .remember{flex-direction:row;align-items:center;gap:10px;font-size:14px;color:#55607A;min-height:44px}
-  .remember input{width:20px;height:20px;min-height:0;accent-color:#7A4FD0}
-  .btn.big{flex:0 0 auto;min-height:56px;border-radius:18px;font-size:17px;background:#7A4FD0;box-shadow:0 6px 16px rgba(122,79,208,.35)}
-  .err{color:#B42318;font-size:14px;text-align:center;min-height:20px}
-  .foot{margin-top:auto;padding-top:28px;display:flex;align-items:center;gap:8px;font-size:13px;color:#6B7590}
-  .head{display:flex;align-items:center;gap:12px}
-  .head .brand{font-size:22px}
+:root{--bg:#0B0820;--txt:#fff;--mut:#B9B3E6;--mut2:#8F89C2;--glass:rgba(255,255,255,.08);--line:rgba(255,255,255,.16);
+  --g1:#8B5CF6;--g2:#22D3EE;--ok:#3CF5A0;--warn:#FFD25A;--bad:#F43F5E;--grad:linear-gradient(90deg,#8B5CF6,#22D3EE)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:'IBM Plex Sans Thai',sans-serif;font-size:15px}
+body{overflow-x:hidden}
+.num{font-family:Inter,sans-serif;font-weight:800;letter-spacing:-.5px}
+.mut{color:var(--mut);font-size:13px}
+.hidden{display:none!important}
+button{font-family:inherit;cursor:pointer;color:inherit;transition:transform .15s ease,opacity .2s}
+button:active{transform:scale(.95)}
+button:disabled{opacity:.5}
+
+/* พื้นหลังแสงเหนือ */
+.aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;
+  background:radial-gradient(40% 30% at 20% 15%,rgba(124,58,237,.6),transparent 70%),radial-gradient(35% 28% at 85% 40%,rgba(14,165,233,.45),transparent 70%),radial-gradient(40% 30% at 45% 95%,rgba(219,39,119,.4),transparent 70%);
+  animation:drift 18s ease-in-out infinite alternate}
+@keyframes drift{0%{transform:translate(0,0) rotate(0) scale(1)}50%{transform:translate(-6%,4%) rotate(8deg) scale(1.08)}100%{transform:translate(4%,-3%) rotate(-6deg) scale(1)}}
+
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:24px;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 18px calc(env(safe-area-inset-bottom) + 110px);display:flex;flex-direction:column;gap:14px}
+.rise{animation:rise .7s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* ส่วนหัว */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hi{font-size:13px;color:var(--mut)} .who{font-size:22px;font-weight:700}
+.avatar{width:46px;height:46px;border-radius:15px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;border:0}
+.chick{animation:bob 3.2s ease-in-out infinite;transform-origin:50% 80%}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-3deg)}}
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
+@keyframes blink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.1)}}
+.devs{display:flex;gap:8px;overflow-x:auto}
+.dchip{flex:0 0 auto;height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:14px}
+.dchip.on{background:var(--grad);border:0;font-weight:600}
+
+/* การ์ดหลัก */
+.hero{padding:18px;display:flex;gap:16px;align-items:center}
+.ring{position:relative;flex:0 0 auto}
+.ring svg{transform:rotate(-90deg);display:block}
+.ring .arc{transition:stroke-dasharray 1.6s cubic-bezier(.2,.8,.2,1)}
+.ring .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.glowring{animation:glow 4s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 14px rgba(139,92,246,.45))}50%{filter:drop-shadow(0 0 26px rgba(34,211,238,.55))}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.1);font-size:12px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:ping 2s ease-out infinite}
+.dot.off{background:#FF8A4C;animation:none}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(60,245,160,.7)}80%,100%{box-shadow:0 0 0 9px rgba(60,245,160,0)}}
+.state{display:inline-flex;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.s-ok{background:rgba(60,245,160,.16);color:#A7FFD8}.s-lock{background:rgba(244,63,94,.22);color:#FFB4C1}.s-pause{background:rgba(255,210,90,.18);color:#FFE7A1}
+
+/* คำขอเวลา */
+.req{position:relative;overflow:hidden;padding:14px 16px;border-color:rgba(255,210,90,.5);background:linear-gradient(135deg,rgba(255,210,90,.18),rgba(255,255,255,.06));animation:rise .7s backwards,edge 2.6s ease-in-out 1s infinite}
+@keyframes edge{0%,100%{border-color:rgba(255,210,90,.35);box-shadow:0 0 0 rgba(255,210,90,0)}50%{border-color:rgba(255,210,90,.9);box-shadow:0 0 24px rgba(255,210,90,.25)}}
+.req::after,.shine::after{content:"";position:absolute;top:0;bottom:0;left:0;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);animation:shine 3.5s 1.2s ease-in-out infinite;pointer-events:none}
+@keyframes shine{0%{transform:translateX(-120%) skewX(-20deg)}60%,100%{transform:translateX(380%) skewX(-20deg)}}
+.shine{position:relative;overflow:hidden}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.bok{height:44px;border:0;border-radius:14px;background:linear-gradient(90deg,#3CF5A0,#22D3EE);color:#04161A;font-weight:700;font-size:15px}
+.bno{height:44px;border:1px solid rgba(255,255,255,.25);border-radius:14px;background:transparent;font-size:15px}
+
+/* ปุ่มลัด */
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.qa button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:#D8D2FF;padding:0}
+.qa .ic{width:58px;height:58px;border-radius:19px;display:flex;align-items:center;justify-content:center;font-size:23px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);animation:float 4s ease-in-out infinite}
+.qa button:nth-child(2) .ic{animation-delay:.5s}.qa button:nth-child(3) .ic{animation-delay:1s}.qa button:nth-child(4) .ic{animation-delay:1.5s}
+.qa .ic.hot{background:linear-gradient(135deg,#F43F5E,#8B5CF6);border:0}
+.qa .ic.cool{background:linear-gradient(135deg,#3CF5A0,#22D3EE);border:0}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.note{font-size:12px;color:var(--mut2);text-align:center}
+
+/* รายการแอป */
+.sec{padding:16px;display:flex;flex-direction:column;gap:12px}
+.sh{display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:600}
+.sh a{font-size:13px;color:#A78BFA;font-weight:500;cursor:pointer}
+.app{display:flex;align-items:center;gap:10px}
+.ai{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:0 0 auto;color:#fff}
+.ab{flex:1;min-width:0}
+.at{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:5px}
+.at span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{height:8px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:9px;background:var(--grad);animation:fill 1.4s .3s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes fill{from{width:0}}
+.rb{flex:0 0 auto;font-size:11px;padding:3px 8px;border-radius:99px}
+.r-lim{background:rgba(139,92,246,.25);color:#D9CCFA}.r-blk{background:rgba(244,63,94,.25);color:#FFB4C1}.r-alw{background:rgba(60,245,160,.18);color:#A7FFD8}
+
+/* กราฟ 7 วัน */
+.chart{position:relative;height:170px;display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end;padding-top:10px}
+.col{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.cb{width:100%;max-width:34px;border-radius:10px 10px 4px 4px;background:rgba(167,139,250,.45);transform-origin:bottom;animation:grow 1.1s cubic-bezier(.2,.8,.2,1) backwards}
+.cb.today{background:var(--grad);box-shadow:0 0 16px rgba(34,211,238,.45)}
+.cb.over{background:linear-gradient(180deg,#F43F5E,#FF8A4C)}
+@keyframes grow{from{transform:scaleY(0)}}
+.limline{position:absolute;left:0;right:0;border-top:2px dashed rgba(255,255,255,.35)}
+.xl{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;text-align:center;font-size:11px;color:var(--mut2)}
+.xl b{color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{padding:12px;text-align:center;border-radius:18px}
+.stat .num{font-size:20px}
+
+/* ตั้งกฎ */
+.lbl{font-size:13px;color:var(--mut)}
+.lims{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.limbox{padding:12px;border-radius:16px;background:rgba(255,255,255,.07);display:flex;flex-direction:column;gap:8px}
+.limbox .num{font-size:26px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:rgba(255,255,255,.15);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 0 12px #22D3EE;animation:knob 2.5s ease-in-out infinite}
+@keyframes knob{0%,100%{box-shadow:0 0 8px #8B5CF6}50%{box-shadow:0 0 18px #22D3EE}}
+.trow{display:flex;align-items:center;gap:12px;padding:12px 0}
+.trow+.trow,.trow+.times,.times+.trow{border-top:1px solid rgba(255,255,255,.1)}
+.trow .e{font-size:22px}.trow .t{flex:1}.trow .t b{display:block;font-size:15px;font-weight:600}
+.sw{position:relative;width:50px;height:30px;flex:0 0 auto}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw span{position:absolute;inset:0;border-radius:15px;background:rgba(255,255,255,.15);transition:.3s}
+.sw span::before{content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.3s cubic-bezier(.2,.8,.2,1.3)}
+.sw input:checked+span{background:var(--grad)}
+.sw input:checked+span::before{transform:translateX(20px)}
+.times{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 0 12px}
+.times label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mut)}
+input[type=time],input[type=number],input[type=search],input[type=password],input[type=text],select{font:inherit;font-size:16px;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;color:#fff;background:rgba(255,255,255,.06);outline:none;color-scheme:dark;width:100%}
+input:focus,select:focus{border-color:#A78BFA}
+select option{background:#1A1438}
+.arow{display:flex;align-items:center;gap:10px;padding:8px 0;flex-wrap:wrap}
+.arow+.arow{border-top:1px solid rgba(255,255,255,.08)}
+.arow .n{flex:1 1 120px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.seg{display:flex;background:rgba(255,255,255,.06);border-radius:12px;padding:3px;gap:2px;flex:0 0 auto}
+.seg button{border:0;background:none;font-size:12px;padding:6px 8px;border-radius:9px;color:var(--mut)}
+.seg button.on{background:rgba(255,255,255,.16);color:#fff;font-weight:600}
+.seg button.on.blk{background:rgba(244,63,94,.35)}.seg button.on.alw{background:rgba(60,245,160,.25)}.seg button.on.lim{background:rgba(139,92,246,.45)}
+.arow input[type=number]{width:72px;flex:0 0 72px;min-height:36px;font-size:14px;padding:0 8px}
+.big{height:54px;border:0;border-radius:18px;background:var(--grad);font-size:16px;font-weight:700;width:100%}
+
+/* แถบล่าง */
+.tabbar{position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 12px);width:calc(100% - 28px);max-width:520px;height:66px;border-radius:24px;background:rgba(20,14,45,.72);border:1px solid rgba(255,255,255,.14);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);display:flex;justify-content:space-around;align-items:center}
+.tabbar button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:#8F89C2;min-width:70px;position:relative}
+.tabbar button .ti{font-size:20px;transition:transform .3s}
+.tabbar button.on{color:#fff}
+.tabbar button.on .ti{transform:translateY(-2px) scale(1.12)}
+.tabbar button.on::after{content:"";position:absolute;bottom:-9px;width:18px;height:3px;border-radius:3px;background:var(--grad)}
+.badge{position:absolute;top:-4px;right:16px;min-width:18px;height:18px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 5px}
+
+.toast{position:fixed;z-index:9;left:50%;bottom:calc(env(safe-area-inset-bottom) + 92px);transform:translate(-50%,20px);opacity:0;pointer-events:none;background:rgba(30,22,64,.92);border:1px solid var(--line);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);padding:12px 18px;border-radius:16px;transition:.35s cubic-bezier(.2,.8,.2,1);max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.sync{border:0;background:none;padding:0;font-size:12px;color:var(--mut2);display:inline-flex;align-items:center;gap:6px}
+.sync i{display:inline-block;font-style:normal}
+.sync.spin i{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* หน้าเข้าสู่ระบบ */
+.login{position:fixed;inset:0;z-index:2;overflow:auto}
+.lg{position:relative;min-height:100%;max-width:420px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 70px) 24px 28px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.lgo{width:150px;height:150px;border-radius:46px;background:rgba(255,255,255,.1);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;animation:glow 4s ease-in-out infinite}
+.brand{font-family:'Mali',cursive;font-weight:700;font-size:42px;margin:20px 0 0;background:linear-gradient(90deg,#C4B0F2,#FFD25A);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{margin:6px 0 0;color:var(--mut);line-height:1.6}
+.lgc{margin-top:28px;width:100%;padding:22px;display:flex;flex-direction:column;gap:14px;text-align:left}
+.pwbox{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:16px;padding:0 6px 0 16px;background:rgba(255,255,255,.06)}
+.pwbox:focus-within{border-color:#A78BFA;box-shadow:0 0 0 4px rgba(139,92,246,.2)}
+.pwbox input{border:0;background:transparent;font-size:20px;letter-spacing:4px;min-height:54px;padding:0}
+.pwbox input:focus{border:0}
+.eyeb{width:44px;height:44px;border:0;border-radius:12px;background:none;font-size:18px}
+.rem{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mut)}
+.rem input{width:20px;height:20px;accent-color:#8B5CF6}
+.err{color:#FFB4C1;font-size:14px;text-align:center;min-height:20px}
+.foot{margin-top:auto;padding-top:28px;font-size:13px;color:var(--mut2)}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+
+/* หลังโหลดครั้งแรก ไม่เล่นแอนิเมชันเข้าซ้ำ */
+.calm .bar i,.calm .cb{animation:none}
+.calm .req{animation:edge 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<div class="aurora"></div>
 
 <!-- เข้าสู่ระบบ -->
 <div id="login" class="login hidden">
-  <div class="blob" style="width:260px;height:260px;background:#E9E0FF;top:-90px;right:-80px"></div>
-  <div class="blob" style="width:180px;height:180px;background:#FFEDB8;bottom:120px;left:-90px"></div>
-  <div class="blob" style="width:90px;height:90px;background:#FFE3D3;bottom:-20px;right:40px"></div>
-  <div class="lg-inner">
-    <div class="lg-logo"><svg viewBox="0 0 120 120" width="112" height="112" role="img" aria-label="โลโก้ KidGuard"><path d="M14 70 C14 40 36 20 60 20 C84 20 106 40 106 70 C96 58 80 52 60 52 C40 52 24 58 14 70 Z" fill="#7A4FD0"></path><circle cx="60" cy="74" r="28" fill="#FFD25A"></circle><path d="M44 52 C46 44 52 42 56 46" fill="none" stroke="#FFD25A" stroke-width="4" stroke-linecap="round"></path><circle cx="50" cy="70" r="4" fill="#2B2340"></circle><circle cx="70" cy="70" r="4" fill="#2B2340"></circle><circle cx="51.3" cy="68.7" r="1.3" fill="#fff"></circle><circle cx="71.3" cy="68.7" r="1.3" fill="#fff"></circle><path d="M55 78 L65 78 L60 85 Z" fill="#FF8A4C"></path><ellipse cx="45" cy="80" rx="4" ry="2.6" fill="#FFB4B4"></ellipse><ellipse cx="75" cy="80" rx="4" ry="2.6" fill="#FFB4B4"></ellipse><path d="M14 70 C22 92 40 104 60 104 C80 104 98 92 106 70 C98 86 82 96 60 96 C38 96 22 86 14 70 Z" fill="#9E7BE8"></path></svg></div>
-    <h1 class="brand">Kid<span>Guard</span></h1>
-    <p class="tag">ดูแลเวลามือถือของลูก<br>อย่างอบอุ่น</p>
-    <div class="lg-card">
-      <label for="pw">รหัสผ่านผู้ปกครอง</label>
+  <div class="lg">
+    <div class="lgo rise" id="lgLogo"></div>
+    <h1 class="brand rise" style="animation-delay:.1s">KidGuard</h1>
+    <p class="tag rise" style="animation-delay:.18s">ดูแลเวลามือถือของลูก อย่างอบอุ่น</p>
+    <div class="lgc glass rise" style="animation-delay:.26s" id="lgCard">
+      <label for="pw" style="font-weight:600">รหัสผ่านผู้ปกครอง</label>
       <div class="pwbox">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A94AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+        <span aria-hidden="true">🔒</span>
         <input id="pw" type="password" inputmode="numeric" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-        <button type="button" class="iconbtn" aria-label="แสดงรหัสผ่าน" onclick="var i=$('pw');i.type=i.type==='password'?'text':'password'">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8A94AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-        </button>
+        <button type="button" class="eyeb" aria-label="แสดงรหัสผ่าน" onclick="var i=$('pw');i.type=i.type==='password'?'text':'password'">👁️</button>
       </div>
-      <label class="remember"><input id="rem" type="checkbox" checked>จำไว้ในมือถือเครื่องนี้</label>
-      <button class="btn pri big" id="loginBtn" onclick="doLogin()">เข้าสู่ระบบ</button>
+      <label class="rem"><input id="rem" type="checkbox" checked>จำไว้ในมือถือเครื่องนี้</label>
+      <button class="big shine" id="loginBtn" onclick="doLogin()">เข้าสู่ระบบ</button>
       <div id="loginErr" class="err" role="alert"></div>
     </div>
-    <div class="foot">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F8A78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
-      ใส่รหัสผิด 10 ครั้ง ระบบล็อก 15 นาที
-    </div>
+    <div class="foot">🛡️ ใส่รหัสผิด 10 ครั้ง ระบบล็อก 15 นาที</div>
   </div>
 </div>
 
+<!-- แอป -->
 <div id="app" class="wrap hidden">
-  <div class="row" style="justify-content:space-between">
-    <div class="head">
-      <svg viewBox="0 0 120 120" width="44" height="44" role="img" aria-label="โลโก้ KidGuard"><path d="M14 70 C14 40 36 20 60 20 C84 20 106 40 106 70 C96 58 80 52 60 52 C40 52 24 58 14 70 Z" fill="#7A4FD0"></path><circle cx="60" cy="74" r="28" fill="#FFD25A"></circle><path d="M44 52 C46 44 52 42 56 46" fill="none" stroke="#FFD25A" stroke-width="4" stroke-linecap="round"></path><circle cx="50" cy="70" r="4" fill="#2B2340"></circle><circle cx="70" cy="70" r="4" fill="#2B2340"></circle><circle cx="51.3" cy="68.7" r="1.3" fill="#fff"></circle><circle cx="71.3" cy="68.7" r="1.3" fill="#fff"></circle><path d="M55 78 L65 78 L60 85 Z" fill="#FF8A4C"></path><ellipse cx="45" cy="80" rx="4" ry="2.6" fill="#FFB4B4"></ellipse><ellipse cx="75" cy="80" rx="4" ry="2.6" fill="#FFB4B4"></ellipse><path d="M14 70 C22 92 40 104 60 104 C80 104 98 92 106 70 C98 86 82 96 60 96 C38 96 22 86 14 70 Z" fill="#9E7BE8"></path></svg>
-      <div>
-        <div class="brand">Kid<span>Guard</span></div>
-        <div id="updated" class="muted"></div>
-      </div>
+  <div class="top rise">
+    <div>
+      <div class="hi" id="hello">สวัสดี 👋</div>
+      <div class="who">คุณพ่อคุณแม่</div>
+      <button class="sync" id="sync" onclick="refresh()"><i>⟳</i><span id="updated">กำลังโหลด…</span></button>
     </div>
-    <div class="row" id="devChips"></div>
+    <button class="avatar" id="avatar" aria-label="ออกจากระบบ" onclick="logout()"></button>
+  </div>
+  <div class="devs" id="devChips"></div>
+
+  <div id="empty" class="glass sec hidden">
+    <div class="sh">ยังไม่มีเครื่องลูกเชื่อมต่อ</div>
+    <div class="mut">ในแอป KidGuard บนเครื่องลูก: หน้าผู้ปกครอง &gt; ข้อ 7 ใส่ลิงก์เว็บนี้และรหัสครอบครัว แล้วกด "บันทึกและซิงค์ทันที"</div>
   </div>
 
-  <div id="empty" class="card hidden">
-    <h2>ยังไม่มีเครื่องลูกเชื่อมต่อ</h2>
-    <div class="muted">ในแอป KidGuard บนเครื่องลูก: หน้าผู้ปกครอง > ข้อ 7 ใส่ลิงก์เว็บนี้และรหัสครอบครัว แล้วกด "บันทึกและซิงค์ทันที"</div>
+  <!-- ภาพรวม -->
+  <div id="pOv" class="hidden" style="display:flex;flex-direction:column;gap:14px">
+    <div class="glass hero rise" style="animation-delay:.08s">
+      <div class="ring glowring" id="ring"></div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:19px;font-weight:700" id="kName">-</div>
+        <div class="chips" id="kChips"></div>
+        <div class="mut" id="kInfo" style="line-height:1.5"></div>
+        <div id="kState"></div>
+      </div>
+    </div>
+    <div id="reqList" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div class="qa rise" style="animation-delay:.24s" id="qa"></div>
+    <div class="note" id="note">คำสั่งถึงเครื่องลูกภายในประมาณ 2 นาที</div>
+    <div class="glass sec rise" style="animation-delay:.32s">
+      <div class="sh"><span>แอปที่ใช้วันนี้</span><a onclick="tab('rp')">ดูทั้งหมด</a></div>
+      <div id="topApps" style="display:flex;flex-direction:column;gap:12px"></div>
+    </div>
   </div>
 
-  <div id="main" class="hidden" style="display:flex;flex-direction:column;gap:14px">
-    <div class="tabs">
-      <button class="chip on" id="tabOv" onclick="tab('ov')">ภาพรวม</button>
-      <button class="chip" id="tabRu" onclick="tab('ru')">ตั้งกฎ</button>
+  <!-- รายงาน -->
+  <div id="pRp" class="hidden" style="display:flex;flex-direction:column;gap:14px">
+    <div class="stats rise" id="stats"></div>
+    <div class="glass sec rise" style="animation-delay:.08s">
+      <div class="sh"><span>เวลาใช้งาน 7 วัน</span><span class="mut">เส้นประ = โควตา</span></div>
+      <div class="chart" id="chart"></div>
+      <div class="xl" id="chartX"></div>
     </div>
-
-    <!-- ภาพรวม -->
-    <div id="ov" style="display:flex;flex-direction:column;gap:14px">
-      <div class="grid">
-        <div class="card kpi"><div class="muted">ใช้ไปวันนี้</div><div class="v" id="kUsed">-</div><div class="muted" id="kLimit"></div></div>
-        <div class="card kpi"><div class="muted">เหลือเวลา</div><div class="v" id="kRem">-</div><div class="muted" id="kBonus"></div></div>
-        <div class="card kpi"><div class="muted">สถานะเครื่อง</div><div class="v" id="kOnline">-</div><div class="muted" id="kSeen"></div></div>
-        <div class="card kpi"><div class="muted">การควบคุม</div><div class="v" id="kCtrl" style="font-size:20px">-</div><div class="muted" id="kPend"></div></div>
-      </div>
-
-      <div class="card hidden" id="reqCard" style="border:2px solid #D9CCFA">
-        <h2>คำขอเวลาเพิ่ม</h2>
-        <div id="reqList"></div>
-      </div>
-
-      <div class="card">
-        <h2>สั่งการ</h2>
-        <div class="row">
-          <button class="btn dark" id="bLock" onclick="cmd('lock')">ล็อกเครื่องทันที</button>
-          <button class="btn" id="bUnlock" onclick="cmd('unlock')">ปลดล็อกเครื่อง</button>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn pri" onclick="cmd('bonus',15)">+15 นาที</button>
-          <button class="btn pri" onclick="cmd('bonus',30)">+30 นาที</button>
-          <button class="btn pri" onclick="cmd('bonus',60)">+60 นาที</button>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn" onclick="cmd('pause',60)">หยุดควบคุม 1 ชม.</button>
-          <button class="btn" onclick="cmd('resume')">ควบคุมต่อทันที</button>
-        </div>
-        <div class="muted" style="margin-top:8px">คำสั่งถึงเครื่องลูกภายในประมาณ 2 นาที (เครื่องต้องต่ออินเทอร์เน็ต)</div>
-      </div>
-
-      <div class="card">
-        <div class="row" style="justify-content:space-between"><h2>เวลาใช้งาน 7 วัน</h2><span class="muted">เส้นประ = โควตาวันนี้</span></div>
-        <div class="chart" id="chart"></div>
-        <div class="xl" id="chartX"></div>
-      </div>
-
-      <div class="card">
-        <h2>แอปที่ใช้วันนี้</h2>
-        <div class="scroll"><table><thead><tr><th>แอป</th><th>เวลาที่ใช้</th><th>กฎ</th></tr></thead><tbody id="appsT"></tbody></table></div>
-      </div>
+    <div class="glass sec rise" style="animation-delay:.16s">
+      <div class="sh"><span>ทุกแอปวันนี้</span></div>
+      <div id="allApps" style="display:flex;flex-direction:column;gap:12px"></div>
     </div>
+  </div>
 
-    <!-- ตั้งกฎ -->
-    <div id="ru" class="hidden" style="display:flex;flex-direction:column;gap:14px">
-      <div id="ruEmpty" class="card muted hidden">ยังไม่มีข้อมูลกฎจากเครื่องนี้ รอเครื่องลูกซิงค์ครั้งแรก</div>
-      <div id="ruForm" style="display:flex;flex-direction:column;gap:14px">
-      <div class="card">
-        <h2>เวลาใช้งานต่อวัน (นาที, 0 = ไม่จำกัด)</h2>
-        <div class="grid">
-          <label>วันเรียน (จ.–ศ.)<input id="rWd" type="number" min="0"></label>
-          <label>วันหยุด (ส.–อา.)<input id="rWe" type="number" min="0"></label>
+  <!-- ตั้งกฎ -->
+  <div id="pRu" class="hidden" style="display:flex;flex-direction:column;gap:14px">
+    <div id="ruEmpty" class="glass sec mut hidden">ยังไม่มีข้อมูลกฎจากเครื่องนี้ รอเครื่องลูกซิงค์ครั้งแรก</div>
+    <div id="ruForm" style="display:flex;flex-direction:column;gap:14px">
+      <div class="glass sec rise">
+        <div class="lbl">เวลาเล่นต่อวัน (เลื่อนไปซ้ายสุด = ไม่จำกัด)</div>
+        <div class="lims">
+          <div class="limbox"><div class="lbl">วันเรียน จ.–ศ.</div><div class="num" id="vWd">-</div><input type="range" id="rWd" min="0" max="480" step="15" oninput="showLim()"></div>
+          <div class="limbox"><div class="lbl">วันหยุด ส.–อา.</div><div class="num" id="vWe">-</div><input type="range" id="rWe" min="0" max="480" step="15" oninput="showLim()"></div>
         </div>
       </div>
-      <div class="card">
-        <h2>ช่วงเวลาห้ามใช้</h2>
-        <label class="sw">เวลานอน (ทุกวัน)<input id="rBedOn" type="checkbox"></label>
-        <div class="grid"><label>เริ่ม<input id="rBedS" type="time"></label><label>ถึง<input id="rBedE" type="time"></label></div>
-        <label class="sw" style="margin-top:8px">เวลาเรียน (จ.–ศ.)<input id="rSchOn" type="checkbox"></label>
-        <div class="grid"><label>เริ่ม<input id="rSchS" type="time"></label><label>ถึง<input id="rSchE" type="time"></label></div>
+      <div class="glass rise" style="padding:4px 16px;animation-delay:.08s">
+        <div class="trow"><div class="e">🌙</div><div class="t"><b>เวลานอน</b><span class="mut">ทุกวัน</span></div><label class="sw"><input type="checkbox" id="rBedOn"><span></span></label></div>
+        <div class="times"><label>เริ่ม<input type="time" id="rBedS"></label><label>ถึง<input type="time" id="rBedE"></label></div>
+        <div class="trow"><div class="e">🏫</div><div class="t"><b>เวลาเรียน</b><span class="mut">จ.–ศ.</span></div><label class="sw"><input type="checkbox" id="rSchOn"><span></span></label></div>
+        <div class="times"><label>เริ่ม<input type="time" id="rSchS"></label><label>ถึง<input type="time" id="rSchE"></label></div>
+        <div class="trow"><div class="e">🛡️</div><div class="t"><b>กันเข้าการตั้งค่าเครื่อง</b><span class="mut">ต้องใช้ PIN พ่อแม่</span></div><label class="sw"><input type="checkbox" id="rProt"><span></span></label></div>
       </div>
-      <div class="card">
-        <h2>แต่ละแอป</h2>
-        <input id="appSearch" placeholder="ค้นหาแอป…" oninput="renderApps()" style="width:100%;margin-bottom:6px">
+      <div class="glass sec rise" style="animation-delay:.16s">
+        <div class="sh"><span>กฎรายแอป</span></div>
+        <input type="search" id="appSearch" placeholder="🔍 ค้นหาแอป…" oninput="renderApps()">
         <div id="appsRules"></div>
       </div>
-      <div class="card">
-        <label class="sw">ล็อกแอปการตั้งค่าเครื่อง<input id="rProt" type="checkbox"></label>
-      </div>
-      <button class="btn pri" style="flex:0 0 auto" onclick="saveRules()">บันทึกและส่งไปที่เครื่องลูก</button>
-      <div class="muted">กฎใหม่ถึงเครื่องลูกภายในประมาณ 2 นาที</div>
-      </div>
+      <button class="big shine rise" style="animation-delay:.24s" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
+      <div class="note">กฎใหม่ถึงเครื่องลูกภายในประมาณ 2 นาที</div>
     </div>
   </div>
 </div>
+
+<nav class="tabbar hidden" id="tabbar">
+  <button id="tOv" class="on" onclick="tab('ov')"><span class="ti">🏠</span>ภาพรวม<span class="badge hidden" id="reqBadge"></span></button>
+  <button id="tRp" onclick="tab('rp')"><span class="ti">📊</span>รายงาน</button>
+  <button id="tRu" onclick="tab('ru')"><span class="ti">⚙️</span>ตั้งกฎ</button>
+</nav>
 
 <div class="toast" id="toast"></div>
 
 <script>
-var PW = '';
-var DATA = null;
-var CUR = null;      // deviceId ที่เลือก
-var DRAFT = null;    // กฎที่กำลังแก้
+var LASTDASH = null, PW = '', DATA = null, CUR = null, DRAFT = null, TAB = 'ov', FIRST = true;
+var API = 'https://script.google.com/macros/s/AKfycbxh2xcNY_iRgaweNHMA1XERFsy5J_1S7Be9-XcVlvHBBw60soAYcmDxvYtoKbKXjdck/exec';
+var CHICK = function(s){ return '<svg class="chick" viewBox="0 0 120 120" width="'+s+'" height="'+s+'" aria-hidden="true"><path d="M14 70 C14 40 36 20 60 20 C84 20 106 40 106 70 C96 58 80 52 60 52 C40 52 24 58 14 70 Z" fill="#7A4FD0"/><circle cx="60" cy="74" r="28" fill="#FFD25A"/><circle class="eye" cx="50" cy="70" r="4" fill="#2B2340"/><circle class="eye" cx="70" cy="70" r="4" fill="#2B2340"/><path d="M55 78 L65 78 L60 85 Z" fill="#FF8A4C"/><ellipse cx="45" cy="80" rx="4" ry="2.6" fill="#FFB4B4"/><ellipse cx="75" cy="80" rx="4" ry="2.6" fill="#FFB4B4"/><path d="M14 70 C22 92 40 104 60 104 C80 104 98 92 106 70 C98 86 82 96 60 96 C38 96 22 86 14 70 Z" fill="#B79BF0"/></svg>'; };
 
 function $(id){ return document.getElementById(id); }
-function toast(t){ var e=$('toast'); e.textContent=t; e.style.display='block'; clearTimeout(e._t); e._t=setTimeout(function(){e.style.display='none';},2600); }
+function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('show'); clearTimeout(e._t); e._t=setTimeout(function(){e.classList.remove('show');},2800); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
-function dur(ms){ var m=Math.floor((ms||0)/60000), h=Math.floor(m/60); m=m%60; return h>0 ? (h+' ชม.'+(m? ' '+m+' นาที':'')) : (m+' นาที'); }
+function dur(ms){ var m=Math.floor((ms||0)/60000), h=Math.floor(m/60); m=m%60; return h>0 ? (h+' ชม.'+(m? ' '+m+' น.':'')) : (m+' นาที'); }
+function clock(ms){ var m=Math.max(0,Math.floor((ms||0)/60000)); return Math.floor(m/60)+':'+('0'+(m%60)).slice(-2); }
 function hm(min){ var h=Math.floor(min/60)%24, m=min%60; return (h<10?'0':'')+h+':'+(m<10?'0':'')+m; }
 function toMin(s){ var p=String(s||'').split(':'); return p.length===2 ? (+p[0])*60+(+p[1]) : null; }
-function ago(t){ if(!t) return 'ยังไม่เคยซิงค์'; var s=Math.round((Date.now()-t)/1000); if(s<60) return 'ซิงค์ล่าสุด '+s+' วินาทีที่แล้ว'; var m=Math.round(s/60); if(m<60) return 'ซิงค์ล่าสุด '+m+' นาทีที่แล้ว'; return 'ซิงค์ล่าสุด '+new Date(t).toLocaleString('th-TH'); }
+function ago(t){ if(!t) return 'ยังไม่เคยซิงค์'; var s=Math.round((Date.now()-t)/1000); if(s<60) return 'ซิงค์ '+s+' วินาทีที่แล้ว'; var m=Math.round(s/60); if(m<60) return 'ซิงค์ '+m+' นาทีที่แล้ว'; return 'ซิงค์ '+new Date(t).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
+function tm(t){ return new Date(t).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}); }
+var COLORS=['#E8505B','#FF6B3D','#F5A524','#22C55E','#06B6D4','#3B82F6','#8B5CF6','#EC4899'];
+function aIcon(label){ var s=String(label||'?'), h=0; for(var i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return '<div class="ai" style="background:'+COLORS[h%COLORS.length]+'">'+esc(s.charAt(0).toUpperCase())+'</div>'; }
 
-var API = 'https://script.google.com/macros/s/AKfycbxh2xcNY_iRgaweNHMA1XERFsy5J_1S7Be9-XcVlvHBBw60soAYcmDxvYtoKbKXjdck/exec';
 function call(action, data){
   return fetch(API, {method:'POST', body: JSON.stringify({action:'api', pw:PW, api:action, data:data||null})})
     .then(function(r){ return r.json(); })
     .then(function(j){ if(!j.ok) throw new Error(j.error||'ผิดพลาด'); return j.result; });
 }
 
+function greet(){ var h=new Date().getHours(); return h<5?'ยังไม่นอนอีกเหรอ 🌙':h<12?'สวัสดีตอนเช้า ☀️':h<17?'สวัสดีตอนบ่าย 🌤️':h<21?'สวัสดีตอนเย็น 👋':'ราตรีสวัสดิ์ 🌙'; }
+
 function doLogin(){
   PW = $('pw').value.trim();
-  if(!PW){ $('loginErr').textContent='ใส่รหัสผ่านก่อน'; return; }
+  if(!PW){ $('loginErr').textContent='ใส่รหัสผ่านก่อน'; shake(); return; }
   $('loginBtn').disabled = true; $('loginBtn').textContent = 'กำลังเข้าสู่ระบบ…'; $('loginErr').textContent='';
   call('login').then(function(){
     try{ if($('rem').checked) localStorage.setItem('kgpw', PW); }catch(e){}
-    $('login').classList.add('hidden'); $('app').classList.remove('hidden'); load();
-  }).catch(function(e){ $('loginErr').textContent = e.message || 'เข้าสู่ระบบไม่ได้'; $('loginBtn').disabled=false; $('loginBtn').textContent='เข้าสู่ระบบ'; });
+    showApp(); load();
+  }).catch(function(e){ $('loginErr').textContent = e.message || 'เข้าสู่ระบบไม่ได้'; shake(); $('loginBtn').disabled=false; $('loginBtn').textContent='เข้าสู่ระบบ'; });
 }
+function shake(){ var c=$('lgCard'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
+function showApp(){ $('login').classList.add('hidden'); $('app').classList.remove('hidden'); $('tabbar').classList.remove('hidden'); }
+function logout(){ if(!confirm('ออกจากระบบในมือถือเครื่องนี้?')) return; try{localStorage.removeItem('kgpw');}catch(e){} location.reload(); }
 
+function refresh(){ $('sync').classList.add('spin'); load().then(function(){ $('sync').classList.remove('spin'); }); }
 function load(){
   return call('overview').then(function(d){
     DATA = d;
-    if(!d.devices.length){ $('empty').classList.remove('hidden'); $('main').classList.add('hidden'); return; }
-    $('empty').classList.add('hidden'); $('main').classList.remove('hidden');
+    if(!d.devices.length){ $('empty').classList.remove('hidden'); ['pOv','pRp','pRu'].forEach(function(p){$(p).classList.add('hidden');}); $('updated').textContent='ยังไม่มีเครื่องลูก'; return; }
+    $('empty').classList.add('hidden');
     if(!CUR || !dev()) CUR = d.devices[0].deviceId;
-    render();
+    render(); showTab();
   }).catch(function(e){
     if(String(e.message||'').indexOf('รหัสผ่าน')>=0){ try{localStorage.removeItem('kgpw');}catch(x){} location.reload(); }
     toast('โหลดข้อมูลไม่ได้: '+(e.message||e));
   });
 }
-
 function dev(){ return (DATA && DATA.devices || []).filter(function(x){return x.deviceId===CUR;})[0]; }
 
+function ringHtml(size, stroke, pct, inner){
+  var r=(size-stroke)/2, c=2*Math.PI*r;
+  return '<svg width="'+size+'" height="'+size+'"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#22D3EE"/></linearGradient></defs>'+
+    '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="'+stroke+'"/>'+
+    '<circle class="arc" cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="url(#rg)" stroke-width="'+stroke+'" stroke-linecap="round" stroke-dasharray="'+(LASTDASH||('0 '+c.toFixed(1)))+'" data-to="'+(c*pct).toFixed(1)+' '+c.toFixed(1)+'"/></svg>'+
+    '<div class="in">'+inner+'</div>';
+}
+function countUp(el, toMs){
+  var target=Math.max(0,Math.floor(toMs/60000)), start=performance.now(), from=el._v||0;
+  if(from===target){ el.textContent=clock(target*60000); return; }
+  function step(t){ var k=Math.min(1,(t-start)/1100), e=1-Math.pow(1-k,3), v=Math.round(from+(target-from)*e); el.textContent=clock(v*60000); if(k<1) requestAnimationFrame(step); else el._v=target; }
+  requestAnimationFrame(step);
+}
+
 function render(){
-  var d = dev();
-  $('updated').textContent = d.name+' · '+d.model+' · '+ago(d.lastSeen);
-  $('devChips').innerHTML = DATA.devices.map(function(x){
-    return '<button class="chip'+(x.deviceId===CUR?' on':'')+'" onclick="pick(\''+x.deviceId+'\')">'+esc(x.name)+'</button>';
-  }).join('');
+  var d = dev(), now = Date.now();
+  $('hello').textContent = greet();
+  $('updated').textContent = ago(d.lastSeen);
+  $('devChips').innerHTML = DATA.devices.length>1 ? DATA.devices.map(function(x){
+    return '<button class="dchip'+(x.deviceId===CUR?' on':'')+'" onclick="pick(\''+x.deviceId+'\')">'+esc(x.name)+'</button>'; }).join('') : '';
 
-  var used = d.isToday ? d.countedMs : 0;
-  $('kUsed').textContent = dur(used);
-  $('kLimit').textContent = d.limitMin>0 ? 'จากโควตา '+dur(d.limitMin*60000) : 'ไม่จำกัดเวลา';
-  $('kRem').textContent = (d.remainingMs<0 || d.limitMin<=0) ? 'ไม่จำกัด' : dur(d.isToday? d.remainingMs : d.limitMin*60000);
-  $('kBonus').textContent = d.bonusMin>0 ? 'รวมเวลาที่เพิ่มให้ '+d.bonusMin+' นาที' : '';
-  $('kOnline').innerHTML = d.online ? '<span style="color:var(--green-t)">ออนไลน์</span>' : '<span style="color:var(--orange-t)">ออฟไลน์</span>';
-  $('kSeen').textContent = (Number(d.battery)>=0 && d.battery!=='' ? 'แบตเตอรี่ '+d.battery+'% · ' : '')+ago(d.lastSeen).replace('ซิงค์ล่าสุด ','');
-  var ctrl = d.forceLock ? '<span class="badge b-dark">ล็อกทั้งเครื่อง</span>' :
-    (d.pauseUntil>Date.now() ? '<span class="badge b-orange">หยุดควบคุมถึง '+new Date(d.pauseUntil).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+'</span>' :
-    '<span class="badge b-green">ควบคุมปกติ</span>');
-  $('kCtrl').innerHTML = ctrl;
-  $('kPend').textContent = d.pending.length ? 'มีคำสั่งรอส่ง '+d.pending.length+' รายการ' : '';
-  var rq = d.requests || [];
-  $('reqCard').classList.toggle('hidden', !rq.length);
-  $('reqList').innerHTML = rq.map(function(r){
-    return '<div style="display:flex;flex-direction:column;gap:8px;padding:6px 0">'+
-      '<div><b>'+esc(d.name)+'</b> ขอเล่นเพิ่ม <b>'+r.minutes+' นาที</b>'+(r.app?' <span class="muted">('+esc(r.app)+')</span>':'')+
-      '<div class="muted">'+new Date(r.createdAt).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+' น.</div></div>'+
-      '<div class="row"><button class="btn pri" onclick="decide(\''+r.id+'\',true,'+r.minutes+')">อนุมัติ '+r.minutes+' นาที</button>'+
-      '<button class="btn" onclick="decide(\''+r.id+'\',false,0)">ไม่อนุมัติ</button></div></div>';
-  }).join('');
+  // วงแหวนเวลา
+  var used = d.isToday ? d.countedMs : 0, unlimited = d.limitMin<=0 || d.remainingMs<0;
+  var total = d.limitMin*60000 + (d.bonusMin||0)*60000;
+  var rem = unlimited ? 0 : (d.isToday ? d.remainingMs : total);
+  var pct = unlimited ? 1 : Math.max(0, Math.min(1, rem/Math.max(total,1)));
+  var ring = $('ring');
+  var prevV = ring.querySelector('.num') ? ring.querySelector('.num')._v : 0;
+  ring.innerHTML = ringHtml(132, 12, pct, unlimited ? '<div class="num" style="font-size:30px">∞</div><div style="font-size:11px;color:var(--mut)">ไม่จำกัด</div>'
+    : '<div class="num" style="font-size:30px">0:00</div><div style="font-size:11px;color:var(--mut)">ชม. คงเหลือ</div>');
+  var arc = ring.querySelector('.arc');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ arc.setAttribute('stroke-dasharray', arc.getAttribute('data-to')); LASTDASH=arc.getAttribute('data-to'); }); });
+  if(!unlimited){ var n=ring.querySelector('.num'); n._v=prevV||0; countUp(n, rem); }
 
-  // กราฟ
-  var lim = d.limitMin*60000, max = Math.max(lim, 1);
-  d.history.forEach(function(h){ if(h.ms>max) max=h.ms; });
-  max *= 1.1;
-  var bars = d.history.map(function(h,i){
-    var cls = 'bar'+(i===d.history.length-1?' today':'')+(lim>0 && h.ms>lim?' over':'');
-    return '<div class="'+cls+'" style="height:'+Math.round(h.ms/max*100)+'%" title="'+dur(h.ms)+'"></div>';
-  }).join('');
-  var line = lim>0 ? '<div class="limit" style="bottom:'+Math.round(lim/max*100)+'%"></div>' : '';
-  $('chart').innerHTML = line + bars;
-  $('chartX').innerHTML = d.history.map(function(h,i){ return '<div>'+(i===d.history.length-1?'<b style="color:var(--text)">วันนี้</b>':esc(h.label))+'<br>'+dur(h.ms)+'</div>'; }).join('');
-
-  // ตารางแอป
-  var cfgApps = (d.cfg && d.cfg.apps) || {};
-  var list = (d.isToday ? d.usage : []).filter(function(u){ return u.ms>=60000; }).sort(function(a,b){return b.ms-a.ms;}).slice(0,15);
-  $('appsT').innerHTML = list.length ? list.map(function(u){
-    return '<tr><td>'+esc(u.label)+'</td><td>'+dur(u.ms)+'</td><td>'+ruleBadge(cfgApps[u.pkg])+'</td></tr>';
-  }).join('') : '<tr><td colspan="3" class="muted">ยังไม่ได้ใช้แอปไหนวันนี้</td></tr>';
+  $('kName').textContent = d.name;
+  var bat = (d.battery!=='' && Number(d.battery)>=0) ? '<span class="chip">'+(Number(d.battery)<20?'🪫':'🔋')+' '+d.battery+'%</span>' : '';
+  $('kChips').innerHTML = '<span class="chip"><span class="dot'+(d.online?'':' off')+'"></span>'+(d.online?'ออนไลน์':'ออฟไลน์')+'</span>'+bat;
+  var bed = d.cfg && d.cfg.bedOn ? ' · นอน '+hm(d.cfg.bedStart) : '';
+  $('kInfo').innerHTML = 'ใช้ไป '+dur(used)+(unlimited?'':' จาก '+dur(total))+(d.bonusMin>0?' (รวมเพิ่ม '+d.bonusMin+' น.)':'')+'<br>'+esc(d.model||'')+bed;
 
   var pendLock = d.pending.filter(function(p){return p.cmd==='lock'||p.cmd==='unlock';}).pop();
   var locked = pendLock ? pendLock.cmd==='lock' : d.forceLock;
-  $('bLock').className = 'btn' + (locked ? '' : ' dark');
-  $('bUnlock').className = 'btn' + (locked ? ' pri' : '');
-  $('bLock').textContent = locked ? 'ล็อกอยู่' + (pendLock ? ' (รอส่ง)' : '') : 'ล็อกเครื่องทันที';
-  $('bUnlock').textContent = (!locked && pendLock) ? 'ปลดล็อกแล้ว (รอส่ง)' : 'ปลดล็อกเครื่อง';
+  var paused = d.pauseUntil>now;
+  $('kState').innerHTML = locked ? '<span class="state s-lock">🔒 ล็อกทั้งเครื่อง'+(pendLock?' (รอส่ง)':'')+'</span>'
+    : paused ? '<span class="state s-pause">⏸ หยุดควบคุมถึง '+tm(d.pauseUntil)+'</span>' : '<span class="state s-ok">✓ ควบคุมปกติ</span>';
+
+  // คำขอ
+  var rq = d.requests || [];
+  $('reqList').innerHTML = rq.map(function(r, i){
+    return '<div class="glass req" style="animation-delay:'+(.12+i*.06)+'s">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:15px;font-weight:600">⏰ '+esc(d.name)+' ขอเพิ่ม '+r.minutes+' นาที</span>'+
+      '<span style="font-size:11px;color:#E9E1B8;flex:0 0 auto">'+(r.app?esc(r.app)+' · ':'')+tm(r.createdAt)+'</span></div>'+
+      '<div class="two"><button class="bok" onclick="decide(\''+r.id+'\',true,'+r.minutes+',this)">อนุมัติ</button><button class="bno" onclick="decide(\''+r.id+'\',false,0,this)">ไม่อนุมัติ</button></div></div>';
+  }).join('');
+  $('reqBadge').textContent = rq.length; $('reqBadge').classList.toggle('hidden', !rq.length);
+
+  // ปุ่มลัด
+  $('qa').innerHTML =
+    (locked ? '<button onclick="cmd(\'unlock\')"><div class="ic cool">🔓</div>ปลดล็อก</button>' : '<button onclick="cmd(\'lock\')"><div class="ic hot">🔒</div>ล็อกเลย</button>')+
+    '<button onclick="cmd(\'bonus\',15)"><div class="ic">⏱️</div>+15 นาที</button>'+
+    '<button onclick="cmd(\'bonus\',30)"><div class="ic">⏰</div>+30 นาที</button>'+
+    (paused ? '<button onclick="cmd(\'resume\')"><div class="ic cool">▶️</div>คุมต่อ</button>' : '<button onclick="cmd(\'pause\',60)"><div class="ic">⏸️</div>พัก 1 ชม.</button>');
+  $('note').textContent = d.pending.length ? 'มีคำสั่งรอส่ง '+d.pending.length+' รายการ · ถึงเครื่องลูกภายใน ~2 นาที' : 'คำสั่งถึงเครื่องลูกภายในประมาณ 2 นาที';
+
+  // แอป
+  var cfgApps = (d.cfg && d.cfg.apps) || {};
+  var list = (d.isToday ? d.usage : []).filter(function(u){ return u.ms>=60000; }).sort(function(a,b){return b.ms-a.ms;});
+  var mx = list.length ? list[0].ms : 1;
+  function appRows(arr){
+    return arr.length ? arr.map(function(u,i){
+      return '<div class="app">'+aIcon(u.label)+'<div class="ab"><div class="at"><span>'+esc(u.label)+'</span><span class="mut">'+dur(u.ms)+'</span></div>'+
+        '<div class="bar"><i style="width:'+Math.max(4,Math.round(u.ms/mx*100))+'%;animation-delay:'+(.3+i*.08)+'s"></i></div></div>'+ruleBadge(cfgApps[u.pkg])+'</div>';
+    }).join('') : '<div class="mut">ยังไม่ได้ใช้แอปไหนวันนี้ 🎉</div>';
+  }
+  $('topApps').innerHTML = appRows(list.slice(0,4));
+  $('allApps').innerHTML = appRows(list.slice(0,25));
+
+  // รายงาน
+  var hist = d.history || [], lim = d.limitMin*60000, max = Math.max(lim,1);
+  hist.forEach(function(h){ if(h.ms>max) max=h.ms; }); max*=1.12;
+  var sum = hist.reduce(function(a,h){return a+h.ms;},0), avg = hist.length? sum/hist.length : 0;
+  var over = hist.filter(function(h){return lim>0 && h.ms>lim;}).length;
+  $('stats').innerHTML = '<div class="glass stat"><div class="num">'+clock(used)+'</div><div class="mut">วันนี้</div></div>'+
+    '<div class="glass stat"><div class="num">'+clock(avg)+'</div><div class="mut">เฉลี่ย/วัน</div></div>'+
+    '<div class="glass stat"><div class="num">'+over+'</div><div class="mut">วันที่เกิน</div></div>';
+  $('chart').innerHTML = (lim>0 ? '<div class="limline" style="bottom:'+Math.round(lim/max*100)+'%"></div>' : '') +
+    hist.map(function(h,i){ var today=i===hist.length-1;
+      return '<div class="col"><div class="cb'+(today?' today':'')+(lim>0&&h.ms>lim?' over':'')+'" style="height:'+Math.max(2,Math.round(h.ms/max*100))+'%;animation-delay:'+(i*.07)+'s" title="'+dur(h.ms)+'"></div></div>'; }).join('');
+  $('chartX').innerHTML = hist.map(function(h,i){ return '<div>'+(i===hist.length-1?'<b>วันนี้</b>':esc(h.label))+'<br>'+clock(h.ms)+'</div>'; }).join('');
+
   if(!DRAFT || DRAFT._id!==d.deviceId) fillRules();
+  if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); }
 }
 
 function ruleBadge(r){
-  if(!r) return '<span class="muted">ปกติ</span>';
-  if(r.mode==='block') return '<span class="badge b-dark">บล็อก</span>';
-  if(r.mode==='always') return '<span class="badge b-green">ใช้ได้เสมอ</span>';
-  if(r.mode==='limit' && r.min>0) return '<span class="badge b-blue">'+r.min+' นาที/วัน</span>';
-  return '<span class="muted">ปกติ</span>';
+  if(!r) return '';
+  if(r.mode==='block') return '<span class="rb r-blk">⛔ บล็อก</span>';
+  if(r.mode==='always') return '<span class="rb r-alw">✓ เสมอ</span>';
+  if(r.mode==='limit' && r.min>0) return '<span class="rb r-lim">⏱ '+r.min+' น.</span>';
+  return '';
 }
 
-function pick(id){ CUR=id; DRAFT=null; render(); }
-function tab(t){
-  $('ov').classList.toggle('hidden', t!=='ov'); $('ru').classList.toggle('hidden', t!=='ru');
-  $('tabOv').classList.toggle('on', t==='ov'); $('tabRu').classList.toggle('on', t==='ru');
+function pick(id){ CUR=id; DRAFT=null; LASTDASH=null; render(); }
+function tab(t){ TAB=t; showTab(); window.scrollTo({top:0,behavior:'smooth'}); }
+function showTab(){
+  var has = DATA && DATA.devices && DATA.devices.length;
+  $('pOv').classList.toggle('hidden', !has || TAB!=='ov'); $('pRp').classList.toggle('hidden', !has || TAB!=='rp'); $('pRu').classList.toggle('hidden', !has || TAB!=='ru');
+  $('tOv').classList.toggle('on', TAB==='ov'); $('tRp').classList.toggle('on', TAB==='rp'); $('tRu').classList.toggle('on', TAB==='ru');
 }
 
-function decide(id, ok, m){
-  call('decide', {id:id, approve:ok, minutes:m}).then(function(r){ toast(r.text); load(); })
-    .catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); });
+function decide(id, ok, m, btn){
+  if(btn){ btn.disabled=true; btn.textContent='กำลังส่ง…'; }
+  call('decide', {id:id, approve:ok, minutes:m}).then(function(r){ toast(ok?'✅ '+r.text:r.text); load(); })
+    .catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); if(btn){btn.disabled=false;} });
 }
 
 function cmd(c, arg){
   var d = dev();
   if(c==='lock' && !confirm('ล็อกทั้งเครื่องของ '+d.name+' ? (ยังโทรออกได้)')) return;
+  var msg = {lock:'🔒 ส่งคำสั่งล็อกแล้ว',unlock:'🔓 ส่งคำสั่งปลดล็อกแล้ว',bonus:'⏱️ เพิ่มเวลา '+arg+' นาทีแล้ว',pause:'⏸️ หยุดควบคุม 1 ชม.',resume:'▶️ กลับมาควบคุมแล้ว'}[c]||'ส่งคำสั่งแล้ว';
   call('command', {deviceId:d.deviceId, cmd:c, arg:arg||0}).then(function(){
-    toast('ส่งคำสั่งแล้ว จะถึงเครื่องภายใน ~2 นาที'); load();
+    toast(msg+' · ถึงเครื่องภายใน ~2 นาที'); if(navigator.vibrate) navigator.vibrate(15); load();
   }).catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); });
 }
 
 // ===== ตั้งกฎ =====
+function limTxt(v){ v=+v; return v<=0 ? 'ไม่จำกัด' : Math.floor(v/60)+':'+('0'+(v%60)).slice(-2); }
+function showLim(){ $('vWd').textContent=limTxt($('rWd').value); $('vWe').textContent=limTxt($('rWe').value); }
 function fillRules(){
   var d = dev();
   var c = d.cfg ? JSON.parse(JSON.stringify(d.cfg)) : null;
@@ -343,13 +488,12 @@ function fillRules(){
   if(!c){ DRAFT=null; return; }
   c.apps = c.apps || {};
   DRAFT = c; DRAFT._id = d.deviceId;
-  $('rWd').value = c.weekdayLimit; $('rWe').value = c.weekendLimit;
+  $('rWd').value = c.weekdayLimit; $('rWe').value = c.weekendLimit; showLim();
   $('rBedOn').checked = !!c.bedOn; $('rBedS').value = hm(c.bedStart); $('rBedE').value = hm(c.bedEnd);
   $('rSchOn').checked = !!c.schoolOn; $('rSchS').value = hm(c.schoolStart); $('rSchE').value = hm(c.schoolEnd);
   $('rProt').checked = !!c.protectSettings;
   renderApps();
 }
-
 function renderApps(){
   var d = dev(); if(!DRAFT) return;
   var q = ($('appSearch').value||'').toLowerCase();
@@ -358,17 +502,14 @@ function renderApps(){
   apps = apps.filter(function(a){ return !q || a.label.toLowerCase().indexOf(q)>=0; })
     .sort(function(a,b){ var ra=DRAFT.apps[a.pkg]?0:1, rb=DRAFT.apps[b.pkg]?0:1; return ra-rb || a.label.localeCompare(b.label,'th'); });
   $('appsRules').innerHTML = apps.length ? apps.map(function(a){
-    var r = DRAFT.apps[a.pkg], mode = r ? r.mode : 'normal', min = r && r.min ? r.min : 30;
-    var k = encodeURIComponent(a.pkg);
-    return '<div class="app"><span class="n">'+esc(a.label)+'</span>'+
-      '<select onchange="setMode(\''+k+'\',this.value)">'+
-        opt('normal','ปกติ',mode)+opt('limit','จำกัดเวลา',mode)+opt('block','บล็อก',mode)+opt('always','ใช้ได้เสมอ',mode)+
-      '</select>'+
-      (mode==='limit' ? '<input type="number" min="1" value="'+min+'" onchange="setMin(\''+k+'\',this.value)" aria-label="นาทีต่อวัน"><span class="muted">นาที</span>' : '')+
+    var r = DRAFT.apps[a.pkg], mode = r ? r.mode : 'normal', min = r && r.min ? r.min : 30, k = encodeURIComponent(a.pkg);
+    function sb(m,t,cls){ return '<button class="'+(mode===m?'on ':'')+cls+'" onclick="setMode(\''+k+'\',\''+m+'\')">'+t+'</button>'; }
+    return '<div class="arow">'+aIcon(a.label)+'<span class="n">'+esc(a.label)+'</span>'+
+      '<div class="seg">'+sb('normal','ปกติ','')+sb('limit','จำกัด','lim')+sb('block','บล็อก','blk')+sb('always','เสมอ','alw')+'</div>'+
+      (mode==='limit' ? '<input type="number" min="1" value="'+min+'" onchange="setMin(\''+k+'\',this.value)" aria-label="นาทีต่อวัน"><span class="mut">นาที/วัน</span>' : '')+
     '</div>';
-  }).join('') : '<div class="muted">ยังไม่มีรายชื่อแอปจากเครื่องนี้ (จะส่งมาในการซิงค์ครั้งแรกของวัน)</div>';
+  }).join('') : '<div class="mut">ยังไม่มีรายชื่อแอปจากเครื่องนี้ (จะส่งมาในการซิงค์ครั้งแรกของวัน)</div>';
 }
-function opt(v,t,cur){ return '<option value="'+v+'"'+(v===cur?' selected':'')+'>'+t+'</option>'; }
 function setMode(k, m){
   var p = decodeURIComponent(k);
   if(m==='normal') delete DRAFT.apps[p];
@@ -376,7 +517,6 @@ function setMode(k, m){
   renderApps();
 }
 function setMin(k, v){ var p=decodeURIComponent(k); var n=parseInt(v,10); if(n>0) DRAFT.apps[p].min=n; }
-
 function saveRules(){
   var d = dev(); if(!DRAFT) return;
   var c = JSON.parse(JSON.stringify(DRAFT)); delete c._id;
@@ -387,16 +527,18 @@ function saveRules(){
   c.protectSettings = $('rProt').checked;
   if([c.bedStart,c.bedEnd,c.schoolStart,c.schoolEnd].some(function(x){return x==null;})){ toast('กรอกเวลาให้ครบ'); return; }
   call('saveConfig', {deviceId:d.deviceId, cfg:c}).then(function(){
-    toast('บันทึกแล้ว จะถึงเครื่องลูกภายใน ~2 นาที'); DRAFT=null; load();
+    toast('✅ บันทึกแล้ว จะถึงเครื่องลูกภายใน ~2 นาที'); DRAFT=null; load();
   }).catch(function(e){ toast('บันทึกไม่ได้: '+(e.message||e)); });
 }
 
 // เริ่มต้น
 (function(){
+  $('lgLogo').innerHTML = CHICK(116); $('avatar').innerHTML = CHICK(36);
   var saved = null; try{ saved = localStorage.getItem('kgpw'); }catch(e){}
-  if(saved){ PW = saved; $('app').classList.remove('hidden'); load(); }
+  if(saved){ PW = saved; showApp(); load(); }
   else $('login').classList.remove('hidden');
-  setInterval(function(){ if(PW && !document.hidden) load(); }, 60000);
+  setInterval(function(){ if(PW && !document.hidden && !$('app').classList.contains('hidden')) load(); }, 60000);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden && PW) load(); });
 })();
 </script>
 </body>
