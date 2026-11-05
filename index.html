@@ -245,6 +245,13 @@ select option{background:#1A1438}
 .dlg .e{font-size:44px}.dlg h3{margin:6px 0;font-size:20px}.dlg p{margin:0 0 16px;color:var(--mut);font-size:15px}
 .dlg .two{margin-top:0}
 
+.ver{padding:16px;display:flex;flex-direction:column;gap:12px}
+.vrow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:16px}
+.vtag{padding:4px 12px;border-radius:99px;font-size:14px;font-weight:600;background:rgba(255,255,255,.1)}
+.vtag.ok{background:rgba(60,245,160,.16);color:#A7FFD8}.vtag.up{background:rgba(255,210,90,.18);color:#FFE7A1;animation:edge 2.6s ease-in-out infinite;border:1px solid transparent}
+.vlog{border-left:2px solid rgba(167,139,250,.5);padding-left:12px;display:flex;flex-direction:column;gap:10px}
+.vlog b{font-size:15px}.vlog span{display:block;font-size:14px;color:var(--mut)}
+.vfoot{text-align:center;font-size:13px;color:var(--mut2);margin-top:4px}
 /* หลังโหลดครั้งแรก ไม่เล่นแอนิเมชันเข้าซ้ำ */
 .calm .bar i,.calm .cb{animation:none}
 .calm .req{animation:edge 2.6s ease-in-out infinite}
@@ -312,6 +319,7 @@ select option{background:#1A1438}
       <div class="sh"><span>แอปที่ใช้วันนี้</span><a onclick="tab('rp')">ดูทั้งหมด</a></div>
       <div id="topApps" style="display:flex;flex-direction:column;gap:12px"></div>
     </div>
+    <div class="vfoot" id="vFoot" onclick="tab('ru');setTimeout(function(){$('verCard').scrollIntoView({behavior:'smooth'});},300)"></div>
   </div>
 
   <!-- รายงาน -->
@@ -354,6 +362,7 @@ select option{background:#1A1438}
       <button class="big shine rise" style="animation-delay:.24s" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
       <div class="note">กฎใหม่ถึงเครื่องลูกภายในประมาณ 2 นาที</div>
     </div>
+    <div class="glass ver rise" id="verCard"></div>
   </div>
 </div>
 
@@ -370,6 +379,14 @@ select option{background:#1A1438}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
+var WEB_VER = '1.5', WEB_DATE = '5 พ.ย. 2569', LATEST_APP = '1.5';
+var CHANGES = [
+  ['1.5','5 พ.ย. 2569','แตะแอปเพื่อเปิดแผ่นควบคุม · สั่งด่วน ให้เล่นอีก/ล็อกชั่วคราว · เสียงและเอฟเฟกต์ปุ่ม'],
+  ['1.4','5 พ.ย. 2569','ไอคอนแอปจริงจากเครื่องลูก · ดีไซน์ใหม่ธีมมืด ตัวหนังสือใหญ่ขึ้น'],
+  ['1.3','4 พ.ย. 2569','ขอเวลาเพิ่มผ่าน LINE · หน้าล็อกลูกเจี๊ยบสีม่วง'],
+  ['1.0','3 พ.ย. 2569','เริ่มใช้งาน: จำกัดเวลา บล็อกแอป เวลานอน รายงาน']
+];
+function vnum(v){ var a=String(v||'0').split('.'); return (+a[0]||0)*100+(+a[1]||0); }
 var LASTDASH = null, PW = '', DATA = null, CUR = null, DRAFT = null, TAB = 'ov', FIRST = true;
 var API = 'https://script.google.com/macros/s/AKfycbxh2xcNY_iRgaweNHMA1XERFsy5J_1S7Be9-XcVlvHBBw60soAYcmDxvYtoKbKXjdck/exec';
 var CHICK = function(s){ return '<svg class="chick" viewBox="0 0 120 120" width="'+s+'" height="'+s+'" aria-hidden="true"><path d="M14 70 C14 40 36 20 60 20 C84 20 106 40 106 70 C96 58 80 52 60 52 C40 52 24 58 14 70 Z" fill="#7A4FD0"/><circle cx="60" cy="74" r="28" fill="#FFD25A"/><circle class="eye" cx="50" cy="70" r="4" fill="#2B2340"/><circle class="eye" cx="70" cy="70" r="4" fill="#2B2340"/><path d="M55 78 L65 78 L60 85 Z" fill="#FF8A4C"/><ellipse cx="45" cy="80" rx="4" ry="2.6" fill="#FFB4B4"/><ellipse cx="75" cy="80" rx="4" ry="2.6" fill="#FFB4B4"/><path d="M14 70 C22 92 40 104 60 104 C80 104 98 92 106 70 C98 86 82 96 60 96 C38 96 22 86 14 70 Z" fill="#B79BF0"/></svg>'; };
@@ -469,7 +486,11 @@ function render(){
 
   $('kName').textContent = d.name;
   var bat = (d.battery!=='' && Number(d.battery)>=0) ? '<span class="chip">'+(Number(d.battery)<20?'🪫':'🔋')+' '+d.battery+'%</span>' : '';
-  $('kChips').innerHTML = '<span class="chip"><span class="dot'+(d.online?'':' off')+'"></span>'+(d.online?'ออนไลน์':'ออฟไลน์')+'</span>'+bat;
+  var av = d.appVersion ? String(d.appVersion) : '';
+  var needUp = av && vnum(av) < vnum(LATEST_APP);
+  $('kChips').innerHTML = '<span class="chip"><span class="dot'+(d.online?'':' off')+'"></span>'+(d.online?'ออนไลน์':'ออฟไลน์')+'</span>'+bat+
+    (av ? '<span class="chip" style="'+(needUp?'background:rgba(255,210,90,.18);color:#FFE7A1':'')+'">'+(needUp?'⬆️ ':'📱 ')+'v'+esc(av)+'</span>' : '');
+  renderVer(d, av, needUp);
   var bed = d.cfg && d.cfg.bedOn ? ' · นอน '+hm(d.cfg.bedStart) : '';
   $('kInfo').innerHTML = 'ใช้ไป '+dur(used)+(unlimited?'':' จาก '+dur(total))+(d.bonusMin>0?' (รวมเพิ่ม '+d.bonusMin+' น.)':'')+'<br>'+esc(d.model||'')+bed;
 
@@ -525,6 +546,16 @@ function render(){
 
   if(!DRAFT || DRAFT._id!==d.deviceId) fillRules();
   if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); }
+}
+
+function renderVer(d, av, needUp){
+  $('verCard').innerHTML = '<div class="sh"><span>🧩 เวอร์ชันระบบ</span></div>'+
+    '<div class="vrow"><span>🌐 เว็บผู้ปกครอง</span><span class="vtag ok">v'+WEB_VER+' · ล่าสุด</span></div>'+
+    '<div class="vrow"><span>📱 แอปเครื่อง'+esc(d.name)+'</span>'+(av ? (needUp ? '<span class="vtag up">v'+esc(av)+' → มี v'+LATEST_APP+'</span>' : '<span class="vtag ok">v'+esc(av)+' · ล่าสุด</span>') : '<span class="vtag">ยังไม่ทราบ</span>')+'</div>'+
+    (needUp ? '<div class="mut">ติดตั้งไฟล์ KidGuard-v'+LATEST_APP+'.apk ทับของเดิมที่เครื่องลูก แล้วกด "บันทึกและซิงค์ทันที" ในหน้าผู้ปกครองของแอป</div>' : '')+
+    '<div class="sh" style="font-size:16px;margin-top:4px"><span>มีอะไรใหม่</span></div>'+
+    '<div class="vlog">'+CHANGES.map(function(c){ return '<div><b>v'+c[0]+'</b> <span class="mut" style="display:inline;font-size:13px">· '+c[1]+'</span><span>'+c[2]+'</span></div>'; }).join('')+'</div>';
+  $('vFoot').textContent = 'KidGuard เว็บ v'+WEB_VER+(av?' · เครื่องลูก v'+av:'')+(needUp?' · มีอัปเดต ⬆️':'');
 }
 
 function ruleBadge(r){
