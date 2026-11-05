@@ -91,6 +91,7 @@ button:disabled{opacity:.5}
 .sh{display:flex;justify-content:space-between;align-items:center;font-size:18px;font-weight:600}
 .sh a{font-size:15px;color:#A78BFA;font-weight:500;cursor:pointer}
 .app{display:flex;align-items:center;gap:10px}
+.ai.img{background:none;object-fit:contain}
 .ai{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex:0 0 auto;color:#fff}
 .ab{flex:1;min-width:0}
 .at{display:flex;justify-content:space-between;gap:8px;font-size:16px;margin-bottom:6px}
@@ -317,7 +318,16 @@ function toMin(s){ var p=String(s||'').split(':'); return p.length===2 ? (+p[0])
 function ago(t){ if(!t) return 'ยังไม่เคยซิงค์'; var s=Math.round((Date.now()-t)/1000); if(s<60) return 'ซิงค์ '+s+' วินาทีที่แล้ว'; var m=Math.round(s/60); if(m<60) return 'ซิงค์ '+m+' นาทีที่แล้ว'; return 'ซิงค์ '+new Date(t).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
 function tm(t){ return new Date(t).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}); }
 var COLORS=['#E8505B','#FF6B3D','#F5A524','#22C55E','#06B6D4','#3B82F6','#8B5CF6','#EC4899'];
-function aIcon(label){ var s=String(label||'?'), h=0; for(var i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return '<div class="ai" style="background:'+COLORS[h%COLORS.length]+'">'+esc(s.charAt(0).toUpperCase())+'</div>'; }
+var ICONS = {}; try{ ICONS = JSON.parse(localStorage.getItem('kgicons')||'{}'); }catch(e){}
+var ICONS_AT = 0;
+function loadIcons(force){
+  if(!force && Date.now()-ICONS_AT < 5*60000) return;
+  ICONS_AT = Date.now();
+  call('icons').then(function(m){ if(!m) return; ICONS = m; try{ localStorage.setItem('kgicons', JSON.stringify(m)); }catch(e){} if(DATA) render(); }).catch(function(){});
+}
+function aIcon(label, pkg){
+  if(pkg && ICONS[pkg]) return '<img class="ai img" src="'+ICONS[pkg]+'" alt="">';
+  var s=String(label||'?'), h=0; for(var i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return '<div class="ai" style="background:'+COLORS[h%COLORS.length]+'">'+esc(s.charAt(0).toUpperCase())+'</div>'; }
 
 function call(action, data){
   return fetch(API, {method:'POST', body: JSON.stringify({action:'api', pw:PW, api:action, data:data||null})})
@@ -347,6 +357,8 @@ function load(){
     if(!d.devices.length){ $('empty').classList.remove('hidden'); ['pOv','pRp','pRu'].forEach(function(p){$(p).classList.add('hidden');}); $('updated').textContent='ยังไม่มีเครื่องลูก'; return; }
     $('empty').classList.add('hidden');
     if(!CUR || !dev()) CUR = d.devices[0].deviceId;
+    var miss = d.devices.some(function(x){ return (x.usage||[]).some(function(u){ return u.ms>=60000 && !ICONS[u.pkg]; }); });
+    if(FIRST || miss) loadIcons(FIRST);
     render(); showTab();
   }).catch(function(e){
     if(String(e.message||'').indexOf('รหัสผ่าน')>=0){ try{localStorage.removeItem('kgpw');}catch(x){} location.reload(); }
@@ -425,7 +437,7 @@ function render(){
   var mx = list.length ? list[0].ms : 1;
   function appRows(arr){
     return arr.length ? arr.map(function(u,i){
-      return '<div class="app">'+aIcon(u.label)+'<div class="ab"><div class="at"><span>'+esc(u.label)+'</span><span class="mut">'+dur(u.ms)+'</span></div>'+
+      return '<div class="app">'+aIcon(u.label,u.pkg)+'<div class="ab"><div class="at"><span>'+esc(u.label)+'</span><span class="mut">'+dur(u.ms)+'</span></div>'+
         '<div class="bar"><i style="width:'+Math.max(4,Math.round(u.ms/mx*100))+'%;animation-delay:'+(.3+i*.08)+'s"></i></div></div>'+ruleBadge(cfgApps[u.pkg])+'</div>';
     }).join('') : '<div class="mut">ยังไม่ได้ใช้แอปไหนวันนี้ 🎉</div>';
   }
@@ -506,7 +518,7 @@ function renderApps(){
   $('appsRules').innerHTML = apps.length ? apps.map(function(a){
     var r = DRAFT.apps[a.pkg], mode = r ? r.mode : 'normal', min = r && r.min ? r.min : 30, k = encodeURIComponent(a.pkg);
     function sb(m,t,cls){ return '<button class="'+(mode===m?'on ':'')+cls+'" onclick="setMode(\''+k+'\',\''+m+'\')">'+t+'</button>'; }
-    return '<div class="arow">'+aIcon(a.label)+'<span class="n">'+esc(a.label)+'</span>'+
+    return '<div class="arow">'+aIcon(a.label,a.pkg)+'<span class="n">'+esc(a.label)+'</span>'+
       '<div class="seg">'+sb('normal','ปกติ','')+sb('limit','จำกัด','lim')+sb('block','บล็อก','blk')+sb('always','เสมอ','alw')+'</div>'+
       (mode==='limit' ? '<input type="number" min="1" value="'+min+'" onchange="setMin(\''+k+'\',this.value)" aria-label="นาทีต่อวัน"><span class="mut">นาที/วัน</span>' : '')+
     '</div>';
