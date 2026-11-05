@@ -184,6 +184,67 @@ select option{background:#1A1438}
 .shake{animation:shake .4s}
 @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
 
+
+/* ===== เอฟเฟกต์กดปุ่ม ===== */
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.35);transform:scale(0);animation:rip .55s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+.rp{position:relative;overflow:hidden}
+.sndb{width:46px;height:46px;border-radius:15px;border:0;background:rgba(255,255,255,.1);font-size:20px;flex:0 0 auto}
+.app.tap{cursor:pointer;border-radius:16px;margin:-6px -8px;padding:6px 8px;transition:background .2s}
+.app.tap:active{background:rgba(255,255,255,.08)}
+.chev{color:var(--mut2);font-size:22px;flex:0 0 auto;margin-left:-4px}
+.burst{position:fixed;z-index:30;pointer-events:none;width:8px;height:8px;border-radius:50%;animation:burst .8s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes burst{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+
+/* ===== แผ่นควบคุมรายแอป ===== */
+.sbg{position:fixed;inset:0;z-index:20;background:rgba(5,3,15,.55);opacity:0;transition:opacity .3s;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.sbg.show{opacity:1}
+.sheet{position:fixed;z-index:21;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;max-height:90vh;overflow-y:auto;
+  background:linear-gradient(180deg,rgba(40,28,88,.96),rgba(16,11,40,.98));border:1px solid rgba(255,255,255,.16);border-bottom:0;border-radius:30px 30px 0 0;
+  padding:10px 18px calc(env(safe-area-inset-bottom) + 18px);transform:translateY(105%);transition:transform .45s cubic-bezier(.2,.9,.25,1.08);box-shadow:0 -20px 60px rgba(0,0,0,.5)}
+.sheet.show{transform:translateY(0)}
+.grab{width:46px;height:5px;border-radius:5px;background:rgba(255,255,255,.3);margin:4px auto 14px}
+.sh-top{display:flex;align-items:center;gap:14px}
+.sh-ic{width:72px;height:72px;border-radius:20px;flex:0 0 auto;animation:pop .5s cubic-bezier(.2,.9,.3,1.4) backwards;box-shadow:0 0 30px rgba(139,92,246,.45)}
+.sh-ic.ai{font-size:30px}
+@keyframes pop{from{transform:scale(.4) rotate(-12deg);opacity:0}}
+.sh-name{font-size:24px;font-weight:700;line-height:1.2}
+.sh-sub{font-size:15px;color:var(--mut)}
+.prog{margin-top:14px;padding:14px;border-radius:18px;background:rgba(255,255,255,.06)}
+.prog .bar{height:12px}
+.prog .row{display:flex;justify-content:space-between;font-size:15px;margin-bottom:8px}
+.sec-t{font-size:16px;font-weight:600;margin:18px 0 10px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:18px;padding:14px 12px;text-align:left;display:flex;flex-direction:column;gap:4px;font-size:16px;font-weight:600;transition:all .25s}
+.mode small{font-size:13px;font-weight:400;color:var(--mut)}
+.mode .e{font-size:24px}
+.mode.on{border-color:transparent;box-shadow:0 0 0 2px #A78BFA,0 0 22px rgba(139,92,246,.45);background:rgba(139,92,246,.22)}
+.mode.on.m-block{box-shadow:0 0 0 2px #F43F5E,0 0 22px rgba(244,63,94,.4);background:rgba(244,63,94,.18)}
+.mode.on.m-always{box-shadow:0 0 0 2px #3CF5A0,0 0 22px rgba(60,245,160,.3);background:rgba(60,245,160,.12)}
+.chips2{display:flex;flex-wrap:wrap;gap:8px}
+.c2{min-width:64px;height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:16px}
+.c2.on{background:var(--grad);border-color:transparent;font-weight:700}
+.stepper{display:flex;align-items:center;gap:10px;margin-top:10px}
+.stepper button{width:46px;height:46px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.08);font-size:22px}
+.stepper .num{font-size:28px;min-width:90px;text-align:center}
+.quick{padding:14px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);margin-bottom:10px}
+.quick .qt{font-size:16px;font-weight:600;margin-bottom:4px}
+.quick .qd{font-size:14px;color:var(--mut);margin-bottom:10px}
+.qbtns{display:flex;flex-wrap:wrap;gap:8px}
+.qb{height:44px;padding:0 14px;border-radius:14px;border:0;font-size:15px;font-weight:600}
+.qb.play{background:rgba(60,245,160,.18);color:#A7FFD8}
+.qb.lock{background:rgba(244,63,94,.22);color:#FFC2CD}
+.sh-act{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:18px}
+.ghost{height:56px;border-radius:18px;border:1px solid var(--line);background:transparent;font-size:17px}
+.tmp{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 12px;border-radius:99px;font-size:13px;background:rgba(255,210,90,.15);color:#FFE7A1}
+
+/* ===== กล่องยืนยัน ===== */
+.dlg{position:fixed;z-index:31;left:50%;top:50%;width:min(88vw,380px);transform:translate(-50%,-46%) scale(.92);opacity:0;transition:.3s cubic-bezier(.2,.9,.3,1.2);pointer-events:none;
+  background:rgba(30,22,64,.97);border:1px solid var(--line);border-radius:26px;padding:22px;text-align:center}
+.dlg.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+.dlg .e{font-size:44px}.dlg h3{margin:6px 0;font-size:20px}.dlg p{margin:0 0 16px;color:var(--mut);font-size:15px}
+.dlg .two{margin-top:0}
+
 /* หลังโหลดครั้งแรก ไม่เล่นแอนิเมชันเข้าซ้ำ */
 .calm .bar i,.calm .cb{animation:none}
 .calm .req{animation:edge 2.6s ease-in-out infinite}
@@ -223,7 +284,8 @@ select option{background:#1A1438}
       <div class="who">คุณพ่อคุณแม่</div>
       <button class="sync" id="sync" onclick="refresh()"><i>⟳</i><span id="updated">กำลังโหลด…</span></button>
     </div>
-    <button class="avatar" id="avatar" aria-label="ออกจากระบบ" onclick="logout()"></button>
+    <div style="display:flex;gap:10px;align-items:center"><button class="sndb" id="sndBtn" aria-label="เปิด/ปิดเสียง" onclick="toggleSnd()">🔊</button>
+    <button class="avatar" id="avatar" aria-label="ออกจากระบบ" onclick="logout()"></button></div>
   </div>
   <div class="devs" id="devChips"></div>
 
@@ -302,6 +364,10 @@ select option{background:#1A1438}
 </nav>
 
 <div class="toast" id="toast"></div>
+<div class="sbg hidden" id="sbg" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+<div class="sbg hidden" id="dbg" style="z-index:30" onclick="dlgAns(false)"></div>
+<div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
 var LASTDASH = null, PW = '', DATA = null, CUR = null, DRAFT = null, TAB = 'ov', FIRST = true;
@@ -348,7 +414,7 @@ function doLogin(){
 }
 function shake(){ var c=$('lgCard'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
 function showApp(){ $('login').classList.add('hidden'); $('app').classList.remove('hidden'); $('tabbar').classList.remove('hidden'); }
-function logout(){ if(!confirm('ออกจากระบบในมือถือเครื่องนี้?')) return; try{localStorage.removeItem('kgpw');}catch(e){} location.reload(); }
+function logout(){ askConfirm('👋','ออกจากระบบ?','ต้องใส่รหัสผ่านใหม่ครั้งหน้า','ออกจากระบบ',function(){ try{localStorage.removeItem('kgpw');}catch(e){} location.reload(); }); }
 
 function refresh(){ $('sync').classList.add('spin'); load().then(function(){ $('sync').classList.remove('spin'); }); }
 function load(){
@@ -437,8 +503,8 @@ function render(){
   var mx = list.length ? list[0].ms : 1;
   function appRows(arr){
     return arr.length ? arr.map(function(u,i){
-      return '<div class="app">'+aIcon(u.label,u.pkg)+'<div class="ab"><div class="at"><span>'+esc(u.label)+'</span><span class="mut">'+dur(u.ms)+'</span></div>'+
-        '<div class="bar"><i style="width:'+Math.max(4,Math.round(u.ms/mx*100))+'%;animation-delay:'+(.3+i*.08)+'s"></i></div></div>'+ruleBadge(cfgApps[u.pkg])+'</div>';
+      return '<div class="app tap" onclick="openApp(\''+encodeURIComponent(u.pkg)+'\')">'+aIcon(u.label,u.pkg)+'<div class="ab"><div class="at"><span>'+esc(u.label)+'</span><span class="mut">'+dur(u.ms)+'</span></div>'+
+        '<div class="bar"><i style="width:'+Math.max(4,Math.round(u.ms/mx*100))+'%;animation-delay:'+(.3+i*.08)+'s"></i></div></div>'+ruleBadge(cfgApps[u.pkg])+'<span class="chev">›</span></div>';
     }).join('') : '<div class="mut">ยังไม่ได้ใช้แอปไหนวันนี้ 🎉</div>';
   }
   $('topApps').innerHTML = appRows(list.slice(0,4));
@@ -479,18 +545,20 @@ function showTab(){
 
 function decide(id, ok, m, btn){
   if(btn){ btn.disabled=true; btn.textContent='กำลังส่ง…'; }
-  call('decide', {id:id, approve:ok, minutes:m}).then(function(r){ toast(ok?'✅ '+r.text:r.text); load(); })
+  call('decide', {id:id, approve:ok, minutes:m}).then(function(r){ if(ok){ sfx('ok'); burstAt(btn); } else sfx('close'); toast(ok?'✅ '+r.text:r.text); load(); })
     .catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); if(btn){btn.disabled=false;} });
 }
 
 function cmd(c, arg){
   var d = dev();
-  if(c==='lock' && !confirm('ล็อกทั้งเครื่องของ '+d.name+' ? (ยังโทรออกได้)')) return;
+  if(c==='lock' && !arguments[2]){ askConfirm('🔒','ล็อกทั้งเครื่องของ '+d.name+'?','ลูกยังโทรออกได้ ปลดล็อกได้จากหน้านี้','ล็อกเลย',function(){ cmd('lock',0,true); }); return; }
   var msg = {lock:'🔒 ส่งคำสั่งล็อกแล้ว',unlock:'🔓 ส่งคำสั่งปลดล็อกแล้ว',bonus:'⏱️ เพิ่มเวลา '+arg+' นาทีแล้ว',pause:'⏸️ หยุดควบคุม 1 ชม.',resume:'▶️ กลับมาควบคุมแล้ว'}[c]||'ส่งคำสั่งแล้ว';
   call('command', {deviceId:d.deviceId, cmd:c, arg:arg||0}).then(function(){
-    toast(msg+' · ถึงเครื่องภายใน ~2 นาที'); if(navigator.vibrate) navigator.vibrate(15); load();
+    sfx(c==='lock'?'lock':c==='unlock'||c==='resume'?'unlock':'ok'); toast(msg+' · ถึงเครื่องภายใน ~2 นาที'); load();
   }).catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); });
 }
+
+function sendAppTemp(kind, m){ var d=dev(); return call('command',{deviceId:d.deviceId, cmd: kind==='allow'?'appAllow':kind==='clear'?'appClear':'appLock', arg:m, pkg:SH.pkg}); }
 
 // ===== ตั้งกฎ =====
 function limTxt(v){ v=+v; return v<=0 ? 'ไม่จำกัด' : Math.floor(v/60)+':'+('0'+(v%60)).slice(-2); }
@@ -541,13 +609,133 @@ function saveRules(){
   c.protectSettings = $('rProt').checked;
   if([c.bedStart,c.bedEnd,c.schoolStart,c.schoolEnd].some(function(x){return x==null;})){ toast('กรอกเวลาให้ครบ'); return; }
   call('saveConfig', {deviceId:d.deviceId, cfg:c}).then(function(){
-    toast('✅ บันทึกแล้ว จะถึงเครื่องลูกภายใน ~2 นาที'); DRAFT=null; load();
+    sfx('ok'); toast('✅ บันทึกแล้ว จะถึงเครื่องลูกภายใน ~2 นาที'); DRAFT=null; load();
   }).catch(function(e){ toast('บันทึกไม่ได้: '+(e.message||e)); });
 }
 
+
+// ===== เสียง (สร้างด้วย Web Audio ไม่ต้องโหลดไฟล์) =====
+var SND_ON = true; try{ SND_ON = localStorage.getItem('kgsnd')!=='0'; }catch(e){}
+var AC = null;
+function ac(){ if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } } if(AC.state==='suspended') AC.resume(); return AC; }
+function tone(f1, f2, dur, type, vol, delay){
+  if(!SND_ON) return; var c=ac(); if(!c) return;
+  var t=c.currentTime+(delay||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.setValueAtTime(f1,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.08,t+0.012); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+var SFX = {
+  tap:   function(){ tone(1400,900,0.05,'sine',0.05); },
+  open:  function(){ tone(420,880,0.16,'triangle',0.07); },
+  close: function(){ tone(760,360,0.14,'triangle',0.06); },
+  pick:  function(){ tone(980,1320,0.07,'sine',0.06); },
+  ok:    function(){ tone(660,0,0.12,'sine',0.07); tone(880,0,0.12,'sine',0.07,0.08); tone(1320,0,0.2,'sine',0.06,0.16); },
+  lock:  function(){ tone(300,140,0.16,'square',0.04); tone(180,90,0.12,'sine',0.08,0.06); },
+  unlock:function(){ tone(400,900,0.14,'triangle',0.06); tone(1200,0,0.08,'sine',0.05,0.1); },
+  err:   function(){ tone(220,160,0.22,'sawtooth',0.04); }
+};
+function sfx(n){ try{ SFX[n] && SFX[n](); }catch(e){} if(navigator.vibrate) navigator.vibrate(n==='lock'||n==='err'?[18,40,18]:10); }
+function toggleSnd(){ SND_ON=!SND_ON; try{ localStorage.setItem('kgsnd', SND_ON?'1':'0'); }catch(e){} $('sndBtn').textContent = SND_ON?'🔊':'🔇'; if(SND_ON) sfx('pick'); toast(SND_ON?'🔊 เปิดเสียงแล้ว':'🔇 ปิดเสียงแล้ว'); }
+
+// ระลอกน้ำเวลาแตะปุ่ม + เสียงแตะเบาๆ
+document.addEventListener('pointerdown', function(e){
+  var b = e.target.closest('button,.app.tap'); if(!b || b.disabled) return;
+  if(getComputedStyle(b).position==='static') b.classList.add('rp');
+  var r=b.getBoundingClientRect(), d=Math.max(r.width,r.height), sp=document.createElement('span');
+  sp.className='rip'; sp.style.width=sp.style.height=d+'px'; sp.style.left=(e.clientX-r.left-d/2)+'px'; sp.style.top=(e.clientY-r.top-d/2)+'px';
+  b.appendChild(sp); setTimeout(function(){ sp.remove(); },600);
+  if(!b.hasAttribute('data-snd')) sfx('tap');
+}, {passive:true});
+// ประกายเล็กๆ ตอนสำเร็จ
+function burst(x,y){
+  var cols=['#3CF5A0','#22D3EE','#A78BFA','#FFD25A','#FF8FB1'];
+  for(var i=0;i<16;i++){ var p=document.createElement('i'); p.className='burst'; var a=Math.PI*2*i/16, r=50+Math.random()*50;
+    p.style.left=x+'px'; p.style.top=y+'px'; p.style.background=cols[i%cols.length]; p.style.setProperty('--dx',Math.cos(a)*r+'px'); p.style.setProperty('--dy',Math.sin(a)*r+'px');
+    document.body.appendChild(p); setTimeout((function(el){return function(){el.remove();};})(p),850); }
+}
+function burstAt(el){ if(!el) return; var r=el.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2); }
+
+// ===== กล่องยืนยัน (แทน confirm ของเบราว์เซอร์) =====
+var DLG_CB=null;
+function askConfirm(emoji, title, text, okLabel, cb){
+  $('dE').textContent=emoji; $('dT').textContent=title; $('dP').textContent=text; $('dOk').textContent=okLabel||'ตกลง'; $('dOk').style.background = emoji==='🔒' ? 'linear-gradient(90deg,#F43F5E,#8B5CF6)' : ''; $('dOk').style.color = emoji==='🔒' ? '#fff' : ''; DLG_CB=cb;
+  $('dbg').classList.remove('hidden'); requestAnimationFrame(function(){ $('dbg').classList.add('show'); $('dlg').classList.add('show'); }); sfx('open');
+}
+function dlgAns(ok){ $('dlg').classList.remove('show'); $('dbg').classList.remove('show'); setTimeout(function(){ $('dbg').classList.add('hidden'); },300); var cb=DLG_CB; DLG_CB=null; if(ok&&cb) cb(); else sfx('close'); }
+
+// ===== แผ่นควบคุมรายแอป =====
+var SH = null; // {pkg,label,ms,mode,min}
+function usageOf(pkg){ var d=dev(); return ((d.isToday?d.usage:[])||[]).filter(function(u){return u.pkg===pkg;})[0]; }
+function openApp(k){
+  var pkg=decodeURIComponent(k), d=dev(), u=usageOf(pkg) || {pkg:pkg,label:pkg,ms:0};
+  var lab = u.label; (d.apps||[]).forEach(function(a){ if(a.pkg===pkg) lab=a.label; });
+  var r=((d.cfg&&d.cfg.apps)||{})[pkg];
+  SH={pkg:pkg,label:lab,ms:u.ms||0,mode:r?r.mode:'normal',min:(r&&r.min)||60,orig:r?r.mode+':'+(r.min||0):'normal:0'};
+  drawSheet(); $('sbg').classList.remove('hidden');
+  requestAnimationFrame(function(){ $('sbg').classList.add('show'); $('sheet').classList.add('show'); });
+  document.body.style.overflow='hidden'; sfx('open');
+}
+function closeSheet(silent){
+  $('sheet').classList.remove('show'); $('sbg').classList.remove('show'); document.body.style.overflow='';
+  setTimeout(function(){ $('sbg').classList.add('hidden'); },320); if(!silent) sfx('close');
+}
+function drawSheet(){
+  var s=SH, used=s.ms, lim=s.min*60000, left=Math.max(0,lim-used);
+  var ic = aIcon(s.label,s.pkg).replace('class="ai','class="ai sh-ic');
+  var stat = s.mode==='block' ? '⛔ บล็อกอยู่' : s.mode==='always' ? '✓ ใช้ได้เสมอ' : s.mode==='limit' ? '⏱ จำกัด '+s.min+' นาที/วัน' : 'ใช้ตามเวลารวมของวัน';
+  var prog = s.mode==='limit'
+    ? '<div class="prog"><div class="row"><span>ใช้ไป '+dur(used)+'</span><span class="mut">เหลือ '+dur(left)+'</span></div><div class="bar"><i style="width:'+Math.min(100,Math.round(used/Math.max(lim,1)*100))+'%;'+(used>=lim?'background:linear-gradient(90deg,#F43F5E,#FF8A4C)':'')+'"></i></div></div>'
+    : '<div class="prog"><div class="row"><span>ใช้ไปวันนี้</span><span class="num" style="font-size:20px">'+clock(used)+'</span></div></div>';
+  function mode(m,e,t,sub){ return '<button class="mode m-'+m+(s.mode===m?' on':'')+'" data-snd onclick="pickMode(\''+m+'\')"><span class="e">'+e+'</span>'+t+'<small>'+sub+'</small></button>'; }
+  var limUI = s.mode==='limit' ? '<div class="sec-t">เล่นได้วันละ</div><div class="chips2">'+[15,30,45,60,90,120].map(function(m){ return '<button class="c2'+(s.min===m?' on':'')+'" data-snd onclick="pickMin('+m+')">'+m+' น.</button>'; }).join('')+'</div>'+
+      '<div class="stepper"><button data-snd onclick="pickMin(SH.min-5)">−</button><div class="num">'+s.min+' <span style="font-size:15px;font-weight:500">นาที</span></div><button data-snd onclick="pickMin(SH.min+5)">+</button></div>' : '';
+  $('sheet').innerHTML = '<div class="grab"></div>'+
+    '<div class="sh-top">'+ic+'<div style="min-width:0"><div class="sh-name">'+esc(s.label)+'</div><div class="sh-sub">'+stat+'</div></div></div>'+ prog +
+    '<div class="sec-t">กฎประจำของแอปนี้</div><div class="modes">'+
+      mode('normal','🙂','ปกติ','นับรวมเวลาของวัน')+ mode('limit','⏱️','จำกัดเวลา','กำหนดนาทีต่อวัน')+
+      mode('block','⛔','บล็อก','เปิดไม่ได้เลย')+ mode('always','✅','ใช้ได้เสมอ','ไม่นับเวลา ไม่ล็อก')+
+    '</div>'+ limUI +
+    '<div class="sec-t">สั่งด่วน (ชั่วคราว เฉพาะวันนี้)</div>'+
+    '<div class="quick"><div class="qt">⏳ ให้เล่นอีก… แล้วล็อกแอปนี้</div><div class="qd">ครบเวลาแล้วแอปนี้จะล็อกจนถึงพรุ่งนี้</div><div class="qbtns">'+
+      [5,15,30,60].map(function(m){ return '<button class="qb play" data-snd onclick="quick(\'allow\','+m+',this)">+'+m+' นาที</button>'; }).join('')+'</div></div>'+
+    '<div class="quick"><div class="qt">🔒 ล็อกแอปนี้ตอนนี้ แล้วปลดเองใน…</div><div class="qd">พักสายตาสักครู่ ครบเวลาแล้วกลับมาใช้ได้</div><div class="qbtns">'+
+      [[30,'30 นาที'],[60,'1 ชม.'],[120,'2 ชม.'],[-1,'ถึงพรุ่งนี้']].map(function(x){ return '<button class="qb lock" data-snd onclick="quick(\'lock\','+x[0]+',this)">'+x[1]+'</button>'; }).join('')+'</div></div>'+
+    '<button class="qb" style="background:rgba(255,255,255,.08);color:var(--mut);width:100%" data-snd onclick="quick(\'clear\',0,this)">↺ ยกเลิกคำสั่งชั่วคราวของแอปนี้</button>'+
+    (oldApp() ? '<div class="tmp" style="margin-top:12px">⚠️ สั่งด่วนต้องใช้แอปเครื่องลูก v1.5 ขึ้นไป (ตอนนี้ '+esc(dev().appVersion||'?')+')</div>' : '')+
+    '<div class="sh-act"><button class="ghost" onclick="closeSheet()">ปิด</button><button class="big shine" data-snd onclick="saveApp(this)">บันทึกกฎ</button></div>';
+}
+function pickMode(m){ SH.mode=m; sfx(m==='block'?'lock':m==='always'?'unlock':'pick'); drawSheet(); }
+function pickMin(m){ SH.min=Math.max(5,Math.min(480,m)); sfx('pick'); drawSheet(); }
+function oldApp(){ var v=String(dev().appVersion||'0').split('.'); return (+v[0]||0)*100+(+v[1]||0) < 105; }
+function quick(kind, m, btn){
+  if(kind==='clear'){ sendAppTemp('clear',0).then(function(){ sfx('unlock'); toast('↺ ยกเลิกคำสั่งชั่วคราวของ '+SH.label+' แล้ว'); }).catch(function(e){ sfx('err'); toast('ส่งไม่ได้: '+(e.message||e)); }); return; }
+  var t = kind==='allow' ? 'ให้ '+SH.label+' เล่นอีก '+m+' นาที แล้วล็อก?' : (m<0 ? 'ล็อก '+SH.label+' จนถึงพรุ่งนี้?' : 'ล็อก '+SH.label+' ตอนนี้ แล้วปลดใน '+(m>=60?m/60+' ชม.':m+' นาที')+'?');
+  askConfirm(kind==='allow'?'⏳':'🔒', t, 'คำสั่งถึงเครื่องลูกภายในประมาณ 2 นาที', kind==='allow'?'ให้เล่นต่อ':'ล็อกเลย', function(){
+    sendAppTemp(kind, m).then(function(){ sfx(kind==='allow'?'unlock':'lock'); burstAt(btn); toast((kind==='allow'?'⏳ ':'🔒 ')+'ส่งคำสั่งแล้ว · ถึงเครื่องลูกภายใน ~2 นาที'); load(); })
+      .catch(function(e){ sfx('err'); toast('ส่งไม่ได้: '+(e.message||e)); });
+  });
+}
+function saveApp(btn){
+  var d=dev(); if(!DRAFT) fillRules(); if(!DRAFT){ sfx('err'); toast('ยังไม่มีข้อมูลกฎจากเครื่องนี้'); return; }
+  if(SH.mode==='normal') delete DRAFT.apps[SH.pkg]; else DRAFT.apps[SH.pkg]={mode:SH.mode,min:SH.mode==='limit'?SH.min:0};
+  var c=JSON.parse(JSON.stringify(DRAFT)); delete c._id;
+  btn.disabled=true; btn.textContent='กำลังบันทึก…';
+  call('saveConfig',{deviceId:d.deviceId,cfg:c}).then(function(){
+    sfx('ok'); burstAt(btn); toast('✅ บันทึกกฎของ '+SH.label+' แล้ว'); setTimeout(function(){ closeSheet(true); DRAFT=null; load(); },450);
+  }).catch(function(e){ sfx('err'); btn.disabled=false; btn.textContent='บันทึกกฎ'; toast('บันทึกไม่ได้: '+(e.message||e)); });
+}
+// ปัดแผ่นลงเพื่อปิด
+(function(){
+  var y0=null, sh=null;
+  document.addEventListener('touchstart',function(e){ sh=$('sheet'); if(!sh.classList.contains('show')||!sh.contains(e.target)||sh.scrollTop>0){y0=null;return;} y0=e.touches[0].clientY; },{passive:true});
+  document.addEventListener('touchmove',function(e){ if(y0==null) return; var dy=e.touches[0].clientY-y0; if(dy>0){ sh.style.transition='none'; sh.style.transform='translateY('+dy+'px)'; } },{passive:true});
+  document.addEventListener('touchend',function(e){ if(y0==null) return; var dy=e.changedTouches[0].clientY-y0; sh.style.transition=''; sh.style.transform=''; y0=null; if(dy>110) closeSheet(); },{passive:true});
+})();
+
 // เริ่มต้น
 (function(){
-  $('lgLogo').innerHTML = CHICK(156); $('avatar').innerHTML = CHICK(60);
+  $('lgLogo').innerHTML = CHICK(156); $('sndBtn').textContent = SND_ON?'🔊':'🔇'; $('avatar').innerHTML = CHICK(60);
   var saved = null; try{ saved = localStorage.getItem('kgpw'); }catch(e){}
   if(saved){ PW = saved; showApp(); load(); }
   else $('login').classList.remove('hidden');
