@@ -298,6 +298,7 @@ textarea.mt:focus{border-color:#A78BFA}
 .kpin .h i{display:flex;width:100%;height:100%;border-radius:50%;background:#FFE7A8;transform:rotate(45deg);align-items:center;justify-content:center;font-style:normal;font-size:24px}
 .kpin.old .h{background:linear-gradient(135deg,#6B6790,#4B4870)}.kpin.old .r{display:none}
 .leaflet-container{background:#1A1638;font-family:inherit}
+.dk{filter:invert(1) hue-rotate(195deg) brightness(.82) contrast(.92) saturate(.7)}
 .leaflet-control-attribution{font-size:9px!important;background:rgba(16,11,40,.6)!important;color:#8F89C2!important}
 .leaflet-control-attribution a{color:#B9B3E6!important}
 .tdot{width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid #8B5CF6;box-shadow:0 2px 6px rgba(0,0,0,.5)}
@@ -475,7 +476,7 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.10', WEB_DATE = '6 พ.ย. 2569', LATEST_APP = '1.10';
+var WEB_VER = '1.10.1', WEB_DATE = '6 พ.ย. 2569', LATEST_APP = '1.10';
 var CHANGES = [
   ['1.10','6 พ.ย. 2569','สวิตช์ "บังคับเปิดตำแหน่ง" ในแท็บตั้งกฎ: ลูกปิด Location แล้วเครื่องล็อกจนกว่าจะเปิดกลับ (กดปุ่มเดียวเปิดได้) · LINE แจ้งเมื่อลูกเปิดตำแหน่งกลับ'],
   ['1.9','6 พ.ย. 2569','ดูตำแหน่งลูกบนแผนที่ (ประหยัดแบต ทุก ~15 นาที) · ปุ่มหาตอนนี้ด้วย GPS · เส้นทางย้อนหลัง 7 วัน · ถาม "ลูกอยู่ไหน" ใน LINE · เตือนเมื่อลูกปิดตำแหน่ง'],
@@ -554,7 +555,7 @@ function load(){
 }
 // ===== ตำแหน่งลูก =====
 var LMAP=null, LMK=null, LCIRC=null, BMAP=null, BLAYER=null, MAPOPEN=false, MDAY='', LOCWAIT=0, LOCTIMER=null, PLACES={};
-var TILE='https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', TATTR='© OpenStreetMap © CARTO';
+var TILE='https://tile.openstreetmap.org/{z}/{x}/{y}.png', TATTR='© OpenStreetMap';
 function todayKey(t){ var d=t?new Date(t):new Date(); return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2); }
 function lago(t){ var m=Math.floor((Date.now()-t)/60000); if(m<1) return 'เมื่อสักครู่'; if(m<60) return m+' นาทีที่แล้ว'; if(m<1440) return Math.floor(m/60)+' ชม.'+(m%60?' '+(m%60)+' นาที':'')+'ที่แล้ว'; return new Date(t).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
 function pinIcon(old){ return L.divIcon({className:'',html:'<div class="kpin'+(old?' old':'')+'"><div class="r"></div><div class="r b"></div><div class="h"><i>🐥</i></div></div>',iconSize:[52,52],iconAnchor:[26,52]}); }
@@ -580,7 +581,7 @@ function renderLoc(d){
   var ll=[l.lat,l.lng];
   if(!LMAP){
     LMAP=L.map('locMap',{zoomControl:false,attributionControl:true,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,touchZoom:false,boxZoom:false,keyboard:false,tap:false}).setView(ll,16);
-    L.tileLayer(TILE,{maxZoom:19,subdomains:'abcd',attribution:TATTR}).addTo(LMAP);
+    L.tileLayer(TILE,{maxZoom:19,attribution:TATTR,className:'dk'}).addTo(LMAP);
     LMAP.on('click',openMap);
   }
   if(!LMK){ LMK=L.marker(ll,{icon:pinIcon(stale)}).addTo(LMAP); LCIRC=L.circle(ll,{radius:Math.max(l.acc||0,10),color:'#22D3EE',weight:1,fillColor:'#22D3EE',fillOpacity:.12}).addTo(LMAP); }
@@ -622,7 +623,7 @@ function openMap(){
   $('mDays').innerHTML=days.map(function(x){ return '<button data-k="'+x[0]+'" onclick="loadDay(\''+x[0]+'\')">'+x[1]+'</button>'; }).join('');
   if(!BMAP){
     BMAP=L.map('bigMap',{zoomControl:false,attributionControl:true}).setView([8.3,98.7],13);
-    L.tileLayer(TILE,{maxZoom:19,subdomains:'abcd',attribution:TATTR}).addTo(BMAP);
+    L.tileLayer(TILE,{maxZoom:19,attribution:TATTR,className:'dk'}).addTo(BMAP);
     BLAYER=L.layerGroup().addTo(BMAP);
   }
   setTimeout(function(){ BMAP.invalidateSize(); loadDay(todayKey()); },460);
