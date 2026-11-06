@@ -318,6 +318,8 @@ textarea.mt:focus{border-color:#A78BFA}
 .tli .t{font-family:Inter,sans-serif;font-weight:700;width:48px;color:#C9C3F5;font-size:14px;padding-top:2px;flex:0 0 auto}
 .tli .d{width:12px;height:12px;border-radius:50%;margin-top:6px;flex:none;background:#8B5CF6;box-shadow:0 0 0 4px rgba(139,92,246,.25)}
 .tli.now .d{background:#22D3EE;box-shadow:0 0 0 4px rgba(34,211,238,.3)}
+.locf{border-color:rgba(34,211,238,.45)}
+.lfbox{border-radius:18px;background:rgba(34,211,238,.10);border:1px solid rgba(34,211,238,.35);padding:12px 14px!important;margin:2px 0 4px}
 .tli small{display:block;font-size:13px;color:var(--mut)}
 </style>
 </head>
@@ -426,6 +428,11 @@ textarea.mt:focus{border-color:#A78BFA}
         <div class="times"><label>เริ่ม<input type="time" id="rSchS"></label><label>ถึง<input type="time" id="rSchE"></label></div>
         <div class="trow"><div class="e">🛡️</div><div class="t"><b>กันเข้าการตั้งค่าเครื่อง</b><span class="mut">ต้องใช้ PIN พ่อแม่</span></div><label class="sw"><input type="checkbox" id="rProt"><span></span></label></div>
       </div>
+      <div class="glass sec rise locf" style="animation-delay:.12s">
+        <div class="sh"><span>📍 ตำแหน่งลูก</span></div>
+        <div class="trow lfbox"><div class="e">🔒</div><div class="t"><b>บังคับเปิดตำแหน่ง</b><span class="mut">ถ้าลูกปิด Location เครื่องจะล็อกจนกว่าจะเปิดกลับ</span></div><label class="sw"><input type="checkbox" id="rLocF" onchange="locfWarn(this)"><span></span></label></div>
+        <div class="mut" id="locfNote" style="line-height:1.7">✓ ระหว่างล็อก ลูกยังโทรออก และใช้แอปที่ตั้ง "ใช้ได้เสมอ" ได้<br>✓ ปิดสวิตช์นี้ = แค่เตือนทาง LINE ไม่ล็อกเครื่อง<br>✓ ลูกกดปุ่มเดียวก็เปิดตำแหน่งได้ (ต้องใช้แอปเครื่องลูก v1.10)</div>
+      </div>
       <div class="glass sec rise" style="animation-delay:.16s">
         <div class="sh"><span>กฎรายแอป</span></div>
         <input type="search" id="appSearch" placeholder="🔍 ค้นหาแอป…" oninput="renderApps()">
@@ -468,8 +475,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.9', WEB_DATE = '6 พ.ย. 2569', LATEST_APP = '1.9';
+var WEB_VER = '1.10', WEB_DATE = '6 พ.ย. 2569', LATEST_APP = '1.10';
 var CHANGES = [
+  ['1.10','6 พ.ย. 2569','สวิตช์ "บังคับเปิดตำแหน่ง" ในแท็บตั้งกฎ: ลูกปิด Location แล้วเครื่องล็อกจนกว่าจะเปิดกลับ (กดปุ่มเดียวเปิดได้) · LINE แจ้งเมื่อลูกเปิดตำแหน่งกลับ'],
   ['1.9','6 พ.ย. 2569','ดูตำแหน่งลูกบนแผนที่ (ประหยัดแบต ทุก ~15 นาที) · ปุ่มหาตอนนี้ด้วย GPS · เส้นทางย้อนหลัง 7 วัน · ถาม "ลูกอยู่ไหน" ใน LINE · เตือนเมื่อลูกปิดตำแหน่ง'],
   ['1.8','6 พ.ย. 2569','ส่งข้อความขึ้นจอเครื่องลูก ลูกกดตอบได้ แจ้งกลับทาง LINE · แก้ข้อความด่วนได้ในแท็บตั้งกฎ · พิมพ์ "บอกลูก" ใน LINE'],
   ['1.7','5 พ.ย. 2569','คำสั่งถึงเครื่องลูกเร็วขึ้น (ช้าสุด ~30 วินาที) · ซิงค์ทันทีเมื่อลูกเปิดจอ · เมนูลัดใน LINE'],
@@ -828,6 +836,7 @@ function fillRules(){
   $('rBedOn').checked = !!c.bedOn; $('rBedS').value = hm(c.bedStart); $('rBedE').value = hm(c.bedEnd);
   $('rSchOn').checked = !!c.schoolOn; $('rSchS').value = hm(c.schoolStart); $('rSchE').value = hm(c.schoolEnd);
   $('rProt').checked = !!c.protectSettings;
+  $('rLocF').checked = !!c.forceLoc;
   renderApps();
 }
 function renderApps(){
@@ -853,6 +862,14 @@ function setMode(k, m){
   renderApps();
 }
 function setMin(k, v){ var p=decodeURIComponent(k); var n=parseInt(v,10); if(n>0) DRAFT.apps[p].min=n; }
+function locfWarn(el){
+  sfx(el.checked?'lock':'pick');
+  if(!el.checked) return;
+  var d=dev();
+  if(vnum(d.appVersion||'0')<vnum('1.10')) toast('⚠️ ต้องอัปเดตแอปเครื่องลูกเป็น v1.10 ก่อน สวิตช์นี้ถึงจะมีผล');
+  else if(d.locState==='noperm') toast('⚠️ เครื่องลูกยังไม่ได้อนุญาตตำแหน่ง บันทึกแล้วจะล็อกจนกว่าลูกกดอนุญาต');
+  else if(d.locState==='off') toast('⚠️ ตอนนี้เครื่องลูกปิดตำแหน่งอยู่ บันทึกแล้วจะล็อกทันที');
+}
 function saveRules(){
   var d = dev(); if(!DRAFT) return;
   var c = JSON.parse(JSON.stringify(DRAFT)); delete c._id;
@@ -861,6 +878,7 @@ function saveRules(){
   c.bedOn = $('rBedOn').checked; c.bedStart = toMin($('rBedS').value); c.bedEnd = toMin($('rBedE').value);
   c.schoolOn = $('rSchOn').checked; c.schoolStart = toMin($('rSchS').value); c.schoolEnd = toMin($('rSchE').value);
   c.protectSettings = $('rProt').checked;
+  c.forceLoc = $('rLocF').checked;
   if([c.bedStart,c.bedEnd,c.schoolStart,c.schoolEnd].some(function(x){return x==null;})){ toast('กรอกเวลาให้ครบ'); return; }
   call('saveConfig', {deviceId:d.deviceId, cfg:c}).then(function(){
     sfx('ok'); toast('✅ บันทึกแล้ว จะถึงเครื่องลูกภายใน ~30 วินาที'); DRAFT=null; load();
