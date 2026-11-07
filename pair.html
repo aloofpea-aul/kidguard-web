@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>เชื่อมเครื่องลูก · KidGuard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;600;700&family=Inter:wght@800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;min-height:100vh;font-family:'IBM Plex Sans Thai',sans-serif;background:linear-gradient(180deg,#E9DEFF,#FFE3EF 60%,#FFF3C4);color:#3A2A66;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;box-sizing:border-box;text-align:center}
+h1{font-size:26px;margin:10px 0 6px}
+p{color:#6B5C8F;font-size:16px;line-height:1.6;margin:4px 0}
+.code{display:flex;gap:8px;justify-content:center;margin:18px 0}
+.code div{width:44px;height:58px;border-radius:14px;background:#fff;border:2px solid #E3D8FF;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;font-size:28px;font-weight:800;box-shadow:0 4px 0 #E3D8FF}
+a.btn{display:block;width:100%;max-width:340px;box-sizing:border-box;padding:18px;border-radius:22px;background:#7A4FD0;color:#fff;font-size:19px;font-weight:700;text-decoration:none;box-shadow:0 6px 0 #5A35A8;margin-top:10px}
+.small{font-size:14px;margin-top:18px}
+</style>
+</head>
+<body>
+<div style="font-size:64px">🐥</div>
+<h1>เชื่อมเครื่องนี้กับพ่อแม่</h1>
+<p>รหัสเชื่อมของคุณ</p>
+<div class="code" id="code"></div>
+<a class="btn" id="open" href="#">เปิดในแอป KidGuard</a>
+<p class="small">ถ้ากดแล้วไม่มีอะไรเกิดขึ้น: เปิดแอป KidGuard เอง<br>แล้วพิมพ์รหัส 6 หลักด้านบน</p>
+<p class="small">ยังไม่มีแอป? <a href="KidGuard.apk">ดาวน์โหลด KidGuard</a></p>
+<script>
+var c=(new URLSearchParams(location.search).get('c')||'').replace(/\D/g,'').slice(0,6);
+document.getElementById('code').innerHTML=c.split('').map(function(x){return '<div>'+x+'</div>';}).join('');
+document.getElementById('open').href='intent://pair?c='+c+'#Intent;scheme=kidguard;package=com.aloofpea.kidguard;end';
+</script>
+</body>
+</html>

@@ -14,6 +14,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@600;700;800&family=Mali:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -50,6 +51,13 @@ button:disabled{opacity:.5}
 @keyframes blink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.1)}}
 .devs{display:flex;gap:8px;overflow-x:auto}
 .dchip{flex:0 0 auto;height:42px;padding:0 18px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:16px}
+.dchip.add{background:transparent;border:1px dashed rgba(34,211,238,.6);color:#9BEFFF;font-size:15px}
+.pcode{display:flex;justify-content:center;gap:8px;margin-top:16px}
+.pcode div{width:44px;height:58px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(34,211,238,.5);display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;font-size:30px;font-weight:800;animation:pop .5s both}
+.pinp{width:100%;box-sizing:border-box;height:50px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;font-size:17px;padding:0 14px;font-family:inherit;outline:none}
+.pinp:focus{border-color:#22D3EE}
+.pqr{display:inline-block;padding:12px;border-radius:18px;background:#fff;line-height:0}
+.pqr svg{width:150px;height:150px}
 .dchip.on{background:var(--grad);border:0;font-weight:600}
 
 /* การ์ดหลัก */
@@ -364,7 +372,8 @@ textarea.mt:focus{border-color:#A78BFA}
 
   <div id="empty" class="glass sec hidden">
     <div class="sh">ยังไม่มีเครื่องลูกเชื่อมต่อ</div>
-    <div class="mut">ในแอป KidGuard บนเครื่องลูก: หน้าผู้ปกครอง &gt; ข้อ 7 ใส่ลิงก์เว็บนี้และรหัสครอบครัว แล้วกด "บันทึกและซิงค์ทันที"</div>
+    <div class="mut">ลงแอป KidGuard ที่เครื่องลูก แล้วกดปุ่มด้านล่างเพื่อรับรหัสเชื่อม 6 หลัก</div>
+    <button class="big shine" style="margin-top:12px;width:100%" data-snd onclick="openPair()">➕ เพิ่มเครื่องลูก</button>
   </div>
 
   <!-- ภาพรวม -->
@@ -476,8 +485,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.10.1', WEB_DATE = '6 พ.ย. 2569', LATEST_APP = '1.10';
+var WEB_VER = '1.11', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.11';
 var CHANGES = [
+  ['1.11','7 พ.ย. 2569','เพิ่มเครื่องลูกด้วยรหัส 6 หลัก/QR ไม่ต้องคัดลอกลิงก์ · ตัวช่วยตั้งค่าทีละขั้นในเครื่องลูก · ตั้งค่าที่แนะนำอัตโนมัติ · ปุ่มเปิดหน้าเริ่มอัตโนมัติของ OPPO/Redmi'],
   ['1.10','6 พ.ย. 2569','สวิตช์ "บังคับเปิดตำแหน่ง" ในแท็บตั้งกฎ: ลูกปิด Location แล้วเครื่องล็อกจนกว่าจะเปิดกลับ (กดปุ่มเดียวเปิดได้) · LINE แจ้งเมื่อลูกเปิดตำแหน่งกลับ'],
   ['1.9','6 พ.ย. 2569','ดูตำแหน่งลูกบนแผนที่ (ประหยัดแบต ทุก ~15 นาที) · ปุ่มหาตอนนี้ด้วย GPS · เส้นทางย้อนหลัง 7 วัน · ถาม "ลูกอยู่ไหน" ใน LINE · เตือนเมื่อลูกปิดตำแหน่ง'],
   ['1.8','6 พ.ย. 2569','ส่งข้อความขึ้นจอเครื่องลูก ลูกกดตอบได้ แจ้งกลับทาง LINE · แก้ข้อความด่วนได้ในแท็บตั้งกฎ · พิมพ์ "บอกลูก" ใน LINE'],
@@ -697,8 +707,9 @@ function render(){
   var d = dev(), now = Date.now();
   $('hello').textContent = greet();
   $('updated').textContent = ago(d.lastSeen);
-  $('devChips').innerHTML = DATA.devices.length>1 ? DATA.devices.map(function(x){
-    return '<button class="dchip'+(x.deviceId===CUR?' on':'')+'" onclick="pick(\''+x.deviceId+'\')">'+esc(x.name)+'</button>'; }).join('') : '';
+  $('devChips').innerHTML = (DATA.devices.length>1 ? DATA.devices.map(function(x){
+    return '<button class="dchip'+(x.deviceId===CUR?' on':'')+'" onclick="pick(\''+x.deviceId+'\')">'+esc(x.name)+'</button>'; }).join('') : '')+
+    '<button class="dchip add" data-snd onclick="openPair()">➕ เพิ่มเครื่องลูก</button>';
 
   // วงแหวนเวลา
   var used = d.isToday ? d.countedMs : 0, unlimited = d.limitMin<=0 || d.remainingMs<0;
@@ -948,6 +959,52 @@ function openApp(k){
   drawSheet(); $('sbg').classList.remove('hidden');
   requestAnimationFrame(function(){ $('sbg').classList.add('show'); $('sheet').classList.add('show'); });
   document.body.style.overflow='hidden'; sfx('open');
+}
+// ===== เพิ่มเครื่องลูกด้วยรหัส 6 หลัก =====
+var PAIRT=null;
+function openPair(){
+  SH=null; clearInterval(PAIRT);
+  var d=dev();
+  $('sheet').innerHTML='<div class="grab"></div>'+
+    '<div class="sh-top"><div style="font-size:38px">➕</div><div><div class="sh-name">เพิ่มเครื่องลูก</div><div class="sh-sub">ใส่ชื่อลูกแล้วกดรับรหัส ระบบจะตั้งค่าที่แนะนำให้อัตโนมัติ</div></div></div>'+
+    '<div class="sec-t">ชื่อเล่นลูก</div><input class="pinp" id="pName" maxlength="20" placeholder="เช่น น้องเฟิร์น">'+
+    '<div class="sec-t">เบอร์โทรพ่อแม่ (ปุ่ม "โทรหาพ่อแม่")</div><input class="pinp" id="pPhone" inputmode="tel" maxlength="15" value="'+esc((d&&d.cfg&&d.cfg.parentPhone)||'')+'">'+
+    '<div class="trow" style="margin-top:8px"><div class="e">✅</div><div class="t"><b>ตั้งค่าที่แนะนำ</b><span class="mut">กันเข้าการตั้งค่าเครื่อง · LINE ใช้ได้เสมอ · 2 ชม./วัน (เสาร์-อาทิตย์ 3 ชม.) · นอน 21:00–07:00</span></div><label class="sw"><input type="checkbox" id="pRec" checked><span></span></label></div>'+
+    '<div id="pOut"></div>'+
+    '<div class="sh-act"><button class="ghost" onclick="closePair()">ปิด</button><button class="big shine" id="pBtn" data-snd onclick="makePair(this)">🔑 รับรหัส 6 หลัก</button></div>';
+  $('sbg').classList.remove('hidden');
+  requestAnimationFrame(function(){ $('sbg').classList.add('show'); $('sheet').classList.add('show'); });
+  document.body.style.overflow='hidden'; sfx('open');
+}
+function closePair(){ clearInterval(PAIRT); closeSheet(); }
+function makePair(btn){
+  var name=$('pName').value.trim(), phone=$('pPhone').value.trim();
+  btn.disabled=true; btn.textContent='กำลังสร้างรหัส…';
+  call('pairCode',{name:name,phone:phone,recommended:$('pRec').checked}).then(function(r){
+    sfx('ok'); burstAt(btn);
+    var link='https://aloofpea-aul.github.io/kidguard-web/pair.html?c='+r.code;
+    var qr='';
+    try{ var q=qrcode(0,'M'); q.addData(link); q.make(); qr=q.createSvgTag({cellSize:4,margin:0}); }catch(e){}
+    $('pOut').innerHTML='<div style="text-align:center;margin-top:14px">'+
+      '<div class="mut">เปิด KidGuard ที่เครื่องลูก แล้วพิมพ์รหัสนี้</div>'+
+      '<div class="pcode">'+r.code.split('').map(function(c,i){return '<div style="animation-delay:'+(i*0.07)+'s">'+c+'</div>';}).join('')+'</div>'+
+      '<div style="font-size:13px;color:#7DFFC4;margin-top:10px" id="pLeft">⏱ ใช้ได้ 10:00 นาที · ใช้ได้ครั้งเดียว</div>'+
+      (qr?'<div class="mut" style="margin:16px 0 10px">หรือสแกน QR ด้วยกล้องเครื่องลูก</div><div class="pqr">'+qr+'</div>':'')+
+      '</div>';
+    btn.textContent='🔄 สร้างรหัสใหม่'; btn.disabled=false;
+    var end=Date.now()+600000, n0=(DATA&&DATA.devices||[]).length;
+    clearInterval(PAIRT);
+    PAIRT=setInterval(function(){
+      var left=Math.max(0,end-Date.now()), m=Math.floor(left/60000), sec=Math.floor(left/1000)%60;
+      var el=$('pLeft'); if(!el){ clearInterval(PAIRT); return; }
+      el.textContent = left? '⏱ ใช้ได้ '+m+':'+('0'+sec).slice(-2)+' นาที · ใช้ได้ครั้งเดียว' : 'รหัสหมดอายุ กดสร้างรหัสใหม่';
+      if(left && Math.floor(left/1000)%10===0) load().then(function(){
+        var ds=(DATA&&DATA.devices)||[];
+        if(ds.length>n0){ clearInterval(PAIRT); sfx('ok'); toast('🎉 เชื่อมเครื่องใหม่แล้ว: '+ds[ds.length-1].name); closeSheet(true); CUR=ds[ds.length-1].deviceId; render(); }
+      });
+      if(!left) clearInterval(PAIRT);
+    },1000);
+  }).catch(function(e){ sfx('err'); btn.disabled=false; btn.textContent='🔑 รับรหัส 6 หลัก'; toast('สร้างรหัสไม่ได้: '+(e.message||e)); });
 }
 function closeSheet(silent){
   $('sheet').classList.remove('show'); $('sbg').classList.remove('show'); document.body.style.overflow='';
