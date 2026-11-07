@@ -78,6 +78,7 @@ button:disabled{opacity:.5}
 
 /* การ์ดหลัก */
 .hero{padding:16px;display:flex;gap:14px;align-items:center}
+.hero .chip{font-size:13px;padding:5px 10px;gap:4px}
 .ring{position:relative;flex:0 0 auto}
 .ring svg{transform:rotate(-90deg);display:block}
 .ring .arc{transition:stroke-dasharray 1.6s cubic-bezier(.2,.8,.2,1)}
@@ -296,6 +297,31 @@ textarea.mt:focus{border-color:#A78BFA}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 <style>
+/* ===== กลุ่มพับได้ ===== */
+.foldgrp{background:var(--glass);border:1px solid var(--line);border-radius:24px;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);overflow:hidden}
+.fold+.fold{border-top:1px solid rgba(255,255,255,.08)}
+.fh{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fh:active{background:rgba(255,255,255,.04)}
+.ft{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 auto;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.fx{flex:1;min-width:0}
+.fn{font-size:16.5px;font-weight:700}
+.fs{font-size:13.5px;color:var(--mut);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-top:2px;line-height:1.4}
+.fr{flex:0 0 auto;display:flex;align-items:center}
+.fc{flex:0 0 auto;font-size:20px;color:var(--mut2);transition:transform .3s;line-height:1;margin-top:-6px}
+.fold.open .fc{transform:rotate(180deg);margin-top:6px}
+.fb{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
+.fold.open .fb{grid-template-rows:1fr}
+.fb>div{overflow:hidden;min-height:0}
+.fin{padding:2px 16px 16px}
+.fb .loc{margin:0 12px 12px;border-radius:18px;overflow:hidden;border:1px solid rgba(34,211,238,.35)}
+.fb .lmap{height:190px}
+.fmore{display:block;text-align:center;margin-top:12px;font-size:15px;color:#A78BFA;cursor:pointer}
+.fpill{padding:4px 10px;border-radius:99px;font-size:13px;font-weight:700;background:rgba(60,245,160,.16);color:#7DFFC4}
+.fpill.bad{background:rgba(244,63,94,.2);color:#FFB3BF}
+.fpill.warn{background:rgba(255,210,90,.18);color:#FFE7A1}
+.fic{display:flex}.fic>*{width:28px!important;height:28px!important;border-radius:9px!important;border:2px solid #1E1840;margin-left:-8px;font-size:14px!important}
+.fic>*:first-child{margin-left:0}
+.fgo{height:34px;padding:0 12px;border-radius:12px;border:0;background:linear-gradient(90deg,#8B5CF6,#22D3EE);color:#fff;font-size:13.5px;font-weight:700}
 /* ===== ตำแหน่งลูก ===== */
 .loc{padding:0;overflow:hidden;border-color:rgba(34,211,238,.45)}
 .lmap{position:relative;height:230px;background:#1A1638}
@@ -418,22 +444,35 @@ textarea.mt:focus{border-color:#A78BFA}
     </div>
     <div id="hBan"></div>
     <div id="reqList" style="display:flex;flex-direction:column;gap:10px"></div>
-    <div class="glass sec rise hidden" style="animation-delay:.14s" id="hCard"></div>
-    <div class="glass loc rise" style="animation-delay:.16s" id="locCard">
+    <div class="qa rise" style="animation-delay:.14s" id="qa"></div>
+    <div style="display:flex;gap:10px"><button class="msgbtn rise" style="animation-delay:.18s;flex:1.3" id="msgBtn" onclick="openMsg()">💬 ส่งข้อความถึงลูก</button>
+    <button class="msgbtn rise ringbtn" style="animation-delay:.2s;flex:1" id="ringBtn" onclick="openRing()">📢 เรียกลูก</button></div>
+    <div class="note" id="note">คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
+    <div class="foldgrp rise" style="animation-delay:.26s">
+    <div class="fold" id="fLoc" data-k="loc">
+      <div class="fh" onclick="fold('loc')"><div class="ft" style="background:linear-gradient(135deg,#22D3EE,#3B82F6)">📍</div>
+        <div class="fx"><div class="fn">ตำแหน่งลูก</div><div class="fs" id="fsLoc">-</div></div><div class="fr" id="frLoc"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="loc" id="locCard">
       <div class="lmap" id="locMapBox"><div class="lm" id="locMap"></div>
         <div class="ov l"><span class="lchip">📍 ตำแหน่งลูก</span></div><div class="ov r" id="locAcc"></div></div>
       <div class="linfo">
         <div class="lrow"><div class="e" id="locE">📍</div><div style="flex:1;min-width:0"><div class="lplace" id="locPlace">-</div><div class="mut" id="locSub"></div></div></div>
         <div class="lbtn"><button class="p shine" id="locNow" data-snd onclick="locateNow(this)">🎯 หาตอนนี้</button><button class="s" data-snd onclick="openMap()">🗺️ ดูเส้นทาง</button></div>
-      </div>
+      </div></div></div></div>
     </div>
-    <div class="qa rise" style="animation-delay:.24s" id="qa"></div>
-    <div style="display:flex;gap:10px"><button class="msgbtn rise" style="animation-delay:.28s;flex:1.3" id="msgBtn" onclick="openMsg()">💬 ส่งข้อความถึงลูก</button>
-    <button class="msgbtn rise ringbtn" style="animation-delay:.3s;flex:1" id="ringBtn" onclick="openRing()">📢 เรียกลูก</button></div>
-    <div class="note" id="note">คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
-    <div class="glass sec rise" style="animation-delay:.32s">
-      <div class="sh"><span>แอปที่ใช้วันนี้</span><a onclick="tab('rp')">ดูทั้งหมด</a></div>
-      <div id="topApps" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div class="fold" id="fApps" data-k="apps">
+      <div class="fh" onclick="fold('apps')"><div class="ft" style="background:linear-gradient(135deg,#A78BFA,#EC4899)">📊</div>
+        <div class="fx"><div class="fn">แอปที่ใช้วันนี้</div><div class="fs" id="fsApps">-</div></div><div class="fr" id="frApps"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin">
+        <div id="topApps" style="display:flex;flex-direction:column;gap:12px"></div>
+        <a class="fmore" onclick="tab('rp')">ดูทั้งหมดในรายงาน ›</a>
+      </div></div></div>
+    </div>
+    <div class="fold" id="fHp" data-k="hp">
+      <div class="fh" onclick="fold('hp')"><div class="ft" id="ftHp" style="background:linear-gradient(135deg,#3CF5A0,#10B981)">🛡️</div>
+        <div class="fx"><div class="fn">สถานะการป้องกัน</div><div class="fs" id="fsHp">-</div></div><div class="fr" id="frHp"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin" id="hCard"></div></div></div>
+    </div>
     </div>
     <div class="vfoot" id="vFoot" onclick="tab('ru');setTimeout(function(){$('verCard').scrollIntoView({behavior:'smooth'});},300)"></div>
   </div>
@@ -533,8 +572,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.14', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.3';
+var WEB_VER = '1.15', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.3';
 var CHANGES = [
+  ['1.15','7 พ.ย. 2569','หน้าภาพรวมสั้นลง: ปุ่มสั่งด่วนขึ้นไปอยู่บน · ตำแหน่ง / แอปที่ใช้ / สถานะการป้องกัน พับเหลือแถวเดียว แตะเพื่อกาง (จำไว้ให้) · มีปัญหาจะกางเองเป็นสีแดง · ซ่อนหน้าจอโฮมจากรายการแอป · หน้าล็อกแบบหน้าต่างลอยสำหรับ OPPO (แอป v1.14.3)'],
   ['1.14','7 พ.ย. 2569','🎙️ เสียงของเราเอง: อัดเสียงพ่อแม่ หรืออัปโหลดเพลง ใช้ตอนเรียกลูก (โหลดเก็บในเครื่องลูกล่วงหน้า ดังทันที) · แบบปลุกสั่นด้วย'],
   ['1.13','7 พ.ย. 2569','📢 เรียกลูก / ปลุก / หามือถือ: จอเปิดเองพร้อมเสียงแม้ปิดเสียง · ระบบ Push ทำให้ทุกคำสั่งถึงเครื่องลูกภายในไม่กี่วินาที แม้จอดับ · เมนูลัด LINE มีปุ่มเรียกลูก'],
   ['1.12','7 พ.ย. 2569','สถานะการป้องกันในหน้าภาพรวม · LINE เตือนเมื่อสิทธิ์สำคัญถูกปิด / มีคนพยายามถอดกันลบแอป / เครื่องรีสตาร์ท / เครื่องเงียบนาน (ตั้งเวลาได้) · ตัวช่วยตั้งค่ามีปุ่มปิดโหมดผู้เยี่ยมชม'],
@@ -624,18 +664,40 @@ function placeE(p){ p=String(p||''); return /โรงเรียน|วิท�
 // ===== สถานะการป้องกัน =====
 function renderHealth(d){
   var h=d.health, ban=$('hBan'), card=$('hCard');
-  if(!h){ ban.innerHTML=''; card.classList.add('hidden'); return; }
+  if(!h){ ban.innerHTML=''; $('fHp').classList.add('hidden'); return; }
+  $('fHp').classList.remove('hidden');
   var rows=[['usage','📊','ดูการใช้งานแอป'],['overlay','🪟','แสดงทับแอปอื่น'],['admin','🛡️','กันลบแอป'],['protect','⚙️','กันเข้าการตั้งค่าเครื่อง'],['battery','🔋','ไม่ประหยัดแบต']];
   var bad=rows.filter(function(r){ return h[r[0]]===false && r[0]!=='protect'; });
   var critical=h.usage===false||h.overlay===false;
   ban.innerHTML = bad.length ? '<div class="glass hban rise"><div class="hb"><div style="font-size:30px">🚨</div><div style="flex:1"><div style="font-size:16px;font-weight:700">'+(critical?'ระบบควบคุมเวลาไม่ทำงาน':'การป้องกันบางส่วนถูกปิด')+'</div><div style="font-size:13px;color:#FFC9CB">'+bad.map(function(r){return r[2];}).join(' · ')+' ถูกปิด</div></div></div>'+
     '<div class="how">วิธีแก้: ที่เครื่องลูก เปิด KidGuard → หน้าผู้ปกครอง → 🧭 ตัวช่วยตั้งค่า → กดปุ่มม่วง</div></div>' : '';
   var pill=function(ok,warn){ return ok?'<span class="hpill">ปกติ</span>':'<span class="hpill '+(warn?'warn':'bad')+'">'+(warn||'ถูกปิด')+'</span>'; };
-  var html='<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div style="font-size:18px;font-weight:700;flex:1">🛡️ สถานะการป้องกัน</div><div class="mut" style="font-size:12px">'+ago(d.lastSeen)+'</div></div>';
-  rows.forEach(function(r){ var v=h[r[0]]; html+='<div class="hlr"><div class="e">'+r[1]+'</div><div class="t">'+r[2]+'</div>'+(r[0]==='protect'&&v===false?pill(false,'ปิดอยู่'):pill(v!==false))+'</div>'; });
-  var ls=h.loc||d.locState; html+='<div class="hlr"><div class="e">📍</div><div class="t">ตำแหน่ง</div>'+(ls==='ok'?pill(true):pill(false,ls==='off'?'ปิด Location':'ไม่ได้อนุญาต'))+'</div>';
+  var html='';
+  rows.forEach(function(r,i){ var v=h[r[0]]; html+='<div class="hlr"'+(i===0?' style="border-top:0"':'')+'><div class="e">'+r[1]+'</div><div class="t">'+r[2]+'</div>'+(r[0]==='protect'&&v===false?pill(false,'ปิดอยู่'):pill(v!==false))+'</div>'; });
+  var ls=h.loc||d.locState, locOk=ls==='ok'; html+='<div class="hlr"><div class="e">📍</div><div class="t">ตำแหน่ง</div>'+(locOk?pill(true):pill(false,ls==='off'?'ปิด Location':'ไม่ได้อนุญาต'))+'</div>';
   if(d.bootAt) html+='<div class="hlr"><div class="e">🔁</div><div class="t">เปิดเครื่องล่าสุด</div><div class="mut" style="font-size:13px">'+new Date(d.bootAt).toLocaleString('th-TH',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</div></div>';
-  card.innerHTML=html; card.classList.remove('hidden');
+  card.innerHTML=html;
+  // สรุปบนแถบพับ: นับ 5 ข้อหลัก
+  var keys=['usage','overlay','admin','battery'], ok=keys.filter(function(k){return h[k]!==false;}).length+(locOk?1:0), all=keys.length+1;
+  var off=bad.map(function(r){return r[2];}); if(!locOk) off.push('ตำแหน่ง');
+  $('fsHp').textContent = ok===all ? 'ครบทุกข้อ · '+ago(d.lastSeen) : 'ถูกปิด: '+off.join(', ');
+  $('frHp').innerHTML='<span class="fpill'+(ok===all?'':(bad.length?' bad':' warn'))+'">'+ok+'/'+all+'</span>';
+  $('ftHp').style.background = ok===all ? 'linear-gradient(135deg,#3CF5A0,#10B981)' : bad.length ? 'linear-gradient(135deg,#F43F5E,#F97316)' : 'linear-gradient(135deg,#FBBF24,#F97316)';
+  FOLDFORCE.hp = bad.length>0; applyFold();
+}
+// ===== กลุ่มพับได้ (จำสถานะไว้ในเครื่อง) =====
+var FOLDFORCE={};
+function foldState(){ try{ return JSON.parse(localStorage.getItem('kgFold')||'{}')||{}; }catch(e){ return {}; } }
+function applyFold(){
+  var st=foldState(), map={loc:'fLoc',apps:'fApps',hp:'fHp'};
+  Object.keys(map).forEach(function(k){ var el=$(map[k]); if(el) el.classList.toggle('open', !!(st[k]||FOLDFORCE[k])); });
+}
+function fold(k){
+  var st=foldState(), el=$({loc:'fLoc',apps:'fApps',hp:'fHp'}[k]); var open=!el.classList.contains('open');
+  st[k]=open; if(!open) FOLDFORCE[k]=false;
+  try{ localStorage.setItem('kgFold',JSON.stringify(st)); }catch(e){}
+  el.classList.toggle('open',open); if(typeof sfx==='function') sfx('pick');
+  if(k==='loc'&&open&&window.LMAP) setTimeout(function(){ LMAP.invalidateSize(); var d=dev(); if(d&&d.loc) LMAP.setView([d.loc.lat+0.0006,d.loc.lng],16,{animate:false}); },380);
 }
 // ===== ตั้งค่าแจ้งเตือนความปลอดภัย =====
 var ALERT_DEF={perm:true,admin:true,boot:true,offlineMin:30,quietBed:true};
@@ -651,7 +713,10 @@ function saveAlert(k,v){
   call('saveAlerts',d).then(function(r){ if(DATA&&r&&r.alerts){ DATA.alerts=r.alerts; fillAlerts(); } toast('บันทึกการแจ้งเตือนแล้ว'); }).catch(function(e){ sfx('err'); toast('บันทึกไม่ได้: '+(e.message||e)); });
 }
 function renderLoc(d){
-  if(!window.L){ $('locCard').classList.add('hidden'); return; }
+  if(!window.L){ $('fLoc').classList.add('hidden'); return; }
+  var fl=d.loc;
+  $('fsLoc').textContent = fl ? (fl.place||'ตำแหน่งล่าสุด')+' · '+lago(fl.t) : (d.locState==='noperm'?'ยังไม่ได้เปิดสิทธิ์ตำแหน่ง':d.locState==='off'?'เครื่องลูกปิดตำแหน่งอยู่':'รอตำแหน่งแรกจากเครื่องลูก');
+  $('frLoc').innerHTML='<button class="fgo" data-snd onclick="event.stopPropagation();locateNow(this)">🎯 หา</button>';
   var l=d.loc, st=d.locState, old=vnum(d.appVersion||'0')<vnum('1.9');
   var btn=$('locNow');
   if(!LOCWAIT){ btn.disabled=false; btn.textContent=d.locPending?'⏳ รอเครื่องลูก…':'🎯 หาตอนนี้'; }
@@ -811,12 +876,12 @@ function render(){
   $('kChips').innerHTML = '<span class="chip"><span class="dot'+(d.online?'':' off')+'"></span>'+(d.online?'ออนไลน์':'ออฟไลน์')+'</span>'+bat+
     (av ? '<span class="chip" style="'+(needUp?'background:rgba(255,210,90,.18);color:#FFE7A1':'')+'">'+(needUp?'⬆️ ':'📱 ')+'v'+esc(av)+'</span>' : '');
   renderVer(d, av, needUp);
-  $('msgBtn').textContent='💬 ส่งข้อความถึง'+d.name;
+  $('msgBtn').textContent='💬 ส่งข้อความ';
   renderLoc(d);
   renderHealth(d);
   if(!QEDIT) drawQm();
   var bed = d.cfg && d.cfg.bedOn ? ' · นอน '+hm(d.cfg.bedStart) : '';
-  $('kInfo').innerHTML = 'ใช้ไป '+dur(used)+(unlimited?'':' จาก '+dur(total))+(d.bonusMin>0?' (รวมเพิ่ม '+d.bonusMin+' น.)':'')+'<br>'+esc(d.model||'')+bed;
+  $('kInfo').innerHTML = 'ใช้ไป '+dur(used)+(unlimited?'':' จาก '+dur(total))+(d.bonusMin>0?' (รวมเพิ่ม '+d.bonusMin+' น.)':'')+(bed?'<br>'+bed.replace(' · ',''):'');
 
   var pendLock = d.pending.filter(function(p){return p.cmd==='lock'||p.cmd==='unlock';}).pop();
   var locked = pendLock ? pendLock.cmd==='lock' : d.forceLock;
@@ -852,7 +917,10 @@ function render(){
         '<div class="bar"><i style="width:'+Math.max(4,Math.round(u.ms/mx*100))+'%;animation-delay:'+(.3+i*.08)+'s"></i></div></div>'+ruleBadge(cfgApps[u.pkg])+'<span class="chev">›</span></div>';
     }).join('') : '<div class="mut">ยังไม่ได้ใช้แอปไหนวันนี้ 🎉</div>';
   }
-  $('topApps').innerHTML = appRows(list.slice(0,4));
+  $('topApps').innerHTML = appRows(list.slice(0,5));
+  var tot=list.reduce(function(a,u){return a+u.ms;},0);
+  $('fsApps').textContent = list.length ? list.slice(0,2).map(function(u){return u.label+' '+clock(u.ms);}).join(' · ')+(list.length>2?' · อีก '+(list.length-2)+' แอป':'') : 'ยังไม่ได้ใช้แอปไหนวันนี้';
+  $('frApps').innerHTML = '<div class="fic">'+list.slice(0,3).map(function(u){return aIcon(u.label,u.pkg);}).join('')+'</div>';
   $('allApps').innerHTML = appRows(list.slice(0,25));
 
   // รายงาน
@@ -869,6 +937,7 @@ function render(){
   $('chartX').innerHTML = hist.map(function(h,i){ return '<div>'+(i===hist.length-1?'<b>วันนี้</b>':esc(h.label))+'<br>'+clock(h.ms)+'</div>'; }).join('');
 
   if(!DRAFT || DRAFT._id!==d.deviceId) fillRules();
+  applyFold();
   if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); }
 }
 
