@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js" crossorigin=""></script>
+<script src="https://unpkg.com/lamejs@1.2.1/lame.min.js" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@600;700;800&family=Mali:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -53,6 +54,13 @@ button:disabled{opacity:.5}
 .dchip{flex:0 0 auto;height:42px;padding:0 18px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:16px}
 .ringbtn{background:linear-gradient(90deg,rgba(244,114,182,.35),rgba(139,92,246,.35))!important;border-color:rgba(244,114,182,.6)!important}
 .rmodes{display:flex;gap:8px}
+.mic{position:relative;width:110px;height:110px;margin:14px auto 8px;border-radius:50%;border:0;background:linear-gradient(135deg,#F472B6,#8B5CF6);font-size:48px;box-shadow:0 10px 30px rgba(244,114,182,.45);color:#fff}
+.mic.rec::before{content:'';position:absolute;inset:-14px;border-radius:50%;border:3px solid rgba(244,114,182,.6);animation:micp 1.3s ease-out infinite}
+@keyframes micp{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.35);opacity:0}}
+.sitem{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05)}
+.sitem .ic{width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:21px;flex:0 0 auto}
+.sitem .t{flex:1;min-width:0}.sitem b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sitem small{font-size:12.5px;color:#B9B3E6}
+.rbtn{width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:15px;flex:0 0 auto}
 .rmode{flex:1;border-radius:18px;padding:12px 6px;text-align:center;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;font-family:inherit}
 .rmode.on{border:2px solid #22D3EE;background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(34,211,238,.2));box-shadow:0 0 24px rgba(34,211,238,.25)}
 .rmode b{display:block;font-size:15px;margin-top:4px}.rmode small{display:block;font-size:11.5px;color:#B9B3E6;margin-top:2px;line-height:1.35}
@@ -462,6 +470,11 @@ textarea.mt:focus{border-color:#A78BFA}
         <div class="times"><label>เริ่ม<input type="time" id="rSchS"></label><label>ถึง<input type="time" id="rSchE"></label></div>
         <div class="trow"><div class="e">🛡️</div><div class="t"><b>กันเข้าการตั้งค่าเครื่อง</b><span class="mut">ต้องใช้ PIN พ่อแม่</span></div><label class="sw"><input type="checkbox" id="rProt"><span></span></label></div>
       </div>
+      <div class="glass sec rise" style="animation-delay:.08s">
+        <div class="sh"><span>🎙️ เสียงเรียกลูก</span></div>
+        <div class="mut" style="margin:-4px 0 10px">อัดเสียงพ่อแม่ หรืออัปโหลดเพลง ใช้ตอนกด 📢 เรียกลูก</div>
+        <button class="big shine" style="width:100%" data-snd onclick="openSounds()">🎙️ จัดการเสียง <span id="sndCount"></span></button>
+      </div>
       <div class="glass sec rise alc" style="animation-delay:.1s">
         <div class="sh"><span>🚨 แจ้งเตือนความปลอดภัย (LINE)</span></div>
         <div class="mut" style="margin:-4px 0 4px">เปลี่ยนแล้วบันทึกทันที ใช้กับทุกเครื่อง</div>
@@ -520,8 +533,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.13', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.13.1';
+var WEB_VER = '1.14', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14';
 var CHANGES = [
+  ['1.14','7 พ.ย. 2569','🎙️ เสียงของเราเอง: อัดเสียงพ่อแม่ หรืออัปโหลดเพลง ใช้ตอนเรียกลูก (โหลดเก็บในเครื่องลูกล่วงหน้า ดังทันที) · แบบปลุกสั่นด้วย'],
   ['1.13','7 พ.ย. 2569','📢 เรียกลูก / ปลุก / หามือถือ: จอเปิดเองพร้อมเสียงแม้ปิดเสียง · ระบบ Push ทำให้ทุกคำสั่งถึงเครื่องลูกภายในไม่กี่วินาที แม้จอดับ · เมนูลัด LINE มีปุ่มเรียกลูก'],
   ['1.12','7 พ.ย. 2569','สถานะการป้องกันในหน้าภาพรวม · LINE เตือนเมื่อสิทธิ์สำคัญถูกปิด / มีคนพยายามถอดกันลบแอป / เครื่องรีสตาร์ท / เครื่องเงียบนาน (ตั้งเวลาได้) · ตัวช่วยตั้งค่ามีปุ่มปิดโหมดผู้เยี่ยมชม'],
   ['1.11','7 พ.ย. 2569','เพิ่มเครื่องลูกด้วยรหัส 6 หลัก/QR ไม่ต้องคัดลอกลิงก์ · ตัวช่วยตั้งค่าทีละขั้นในเครื่องลูก · ตั้งค่าที่แนะนำอัตโนมัติ · ปุ่มเปิดหน้าเริ่มอัตโนมัติของ OPPO/Redmi'],
@@ -917,6 +931,7 @@ function fillRules(){
   $('rProt').checked = !!c.protectSettings;
   $('rLocF').checked = !!c.forceLoc;
   fillAlerts();
+  if(SOUNDS===null) loadSounds().catch(function(){});
   renderApps();
 }
 function renderApps(){
@@ -1029,10 +1044,11 @@ function openApp(k){
   document.body.style.overflow='hidden'; sfx('open');
 }
 // ===== เรียกลูก / ปลุก / หามือถือ =====
-var RG={mode:'call',text:'🍚 มากินข้าว',sec:60}, RINGT=null;
+var RG={mode:'call',text:'🍚 มากินข้าว',sec:60,sound:''}, RINGT=null;
 var RTEXTS=['🍚 มากินข้าว','🏠 กลับบ้านได้แล้ว','📞 โทรหาพ่อแม่ด่วน','🛁 ไปอาบน้ำ','📚 ทำการบ้าน'];
 function openRing(){
   var d=dev(); if(!d) return; SH=null; clearInterval(RINGT);
+  if(SOUNDS===null) loadSounds().then(function(){ if($('rgBtn')) drawRing(); });
   drawRing(); $('sbg').classList.remove('hidden');
   requestAnimationFrame(function(){ $('sbg').classList.add('show'); $('sheet').classList.add('show'); });
   document.body.style.overflow='hidden'; sfx('open');
@@ -1046,7 +1062,14 @@ function drawRing(){
     h+='<div class="sec-t">ข้อความบนจอ</div><div class="rchips">'+RTEXTS.map(function(t){ return '<button class="rchip'+(RG.text===t?' on':'')+'" onclick="RG.text=this.textContent;sfx(\'pick\');drawRing()">'+esc(t)+'</button>'; }).join('')+'</div>'+
       '<input class="pinp" style="margin-top:8px" id="rgTxt" maxlength="40" placeholder="✏️ หรือพิมพ์เอง…" oninput="RG.text=this.value" value="'+(RTEXTS.indexOf(RG.text)<0?esc(RG.text):'')+'">';
   }
-  h+='<div class="sec-t">ดังนานสุด</div><div class="segs">'+[[30,'30 วิ'],[60,'1 นาที'],[180,'3 นาที']].map(function(x){ return '<button class="'+(RG.sec===x[0]?'on':'')+'" onclick="RG.sec='+x[0]+';sfx(\'pick\');drawRing()">'+x[1]+'</button>'; }).join('')+'</div>'+
+  if(RG.mode!=='find'){
+    var sl=SOUNDS||[];
+    h+='<div class="sec-t">เสียง</div><div class="rchips">'+
+      '<button class="rchip'+(!RG.sound?' on':'')+'" onclick="RG.sound=\'\';sfx(\'pick\');drawRing()">🔔 เสียงเครื่อง</button>'+
+      sl.map(function(x){ return '<button class="rchip'+(RG.sound===x.id?' on':'')+'" onclick="RG.sound=\''+x.id+'\';playSound(\''+x.id+'\');drawRing()">'+(x.kind==='music'?'🎵 ':'🎙️ ')+esc(x.name)+'</button>'; }).join('')+
+      '<button class="rchip" onclick="openSounds()">＋ อัดเสียงใหม่</button></div>';
+  }
+  h+='<div class="sec-t">'+(RG.sound&&RG.mode!=='find'?'เล่นซ้ำนานสุด':'ดังนานสุด')+'</div><div class="segs">'+[[30,'30 วิ'],[60,'1 นาที'],[180,'3 นาที']].map(function(x){ return '<button class="'+(RG.sec===x[0]?'on':'')+'" onclick="RG.sec='+x[0]+';sfx(\'pick\');drawRing()">'+x[1]+'</button>'; }).join('')+'</div>'+
     '<div id="rgOut"></div>'+
     (old?'<div class="note" style="color:#FFD98A;margin-top:10px">⚠️ เครื่องลูกยังเป็น v'+esc(d.appVersion||'?')+' ต้องอัปเดตเป็น v1.13 ก่อน</div>':'')+
     '<div class="sh-act"><button class="ghost" onclick="closeRing()">ปิด</button><button class="big shine" id="rgBtn" data-snd onclick="sendRing(this)" style="background:linear-gradient(90deg,#F472B6,#8B5CF6,#22D3EE)">📢 เรียกเลย</button></div>'+
@@ -1057,7 +1080,7 @@ function closeRing(){ clearInterval(RINGT); closeSheet(); }
 function sendRing(btn){
   var d=dev(), text=RG.mode==='find'?'':String(RG.text||'').trim();
   btn.disabled=true; btn.textContent='กำลังส่ง…';
-  call('command',{deviceId:d.deviceId,cmd:'ring',mode:RG.mode,text:text,arg:RG.sec}).then(function(r){
+  call('command',{deviceId:d.deviceId,cmd:'ring',mode:RG.mode,text:text,arg:RG.sec,sound:RG.mode==='find'?'':(RG.sound||'')}).then(function(r){
     sfx('ok'); burstAt(btn);
     $('rgOut').innerHTML='<div class="glass" style="margin-top:14px;padding:14px;text-align:center"><div style="font-size:34px">📲</div><div style="font-weight:700" id="rgSt">'+(r&&r.pushed?'ส่งแล้ว รอเครื่องลูกรับ…':'ส่งแล้ว รอเครื่องลูกซิงค์…')+'</div><div class="mut" id="rgSub">ลูกกดรับทราบแล้วจะแจ้งที่นี่และใน LINE</div>'+
       '<button class="ghost" style="margin-top:10px" onclick="stopRing()">🔇 หยุดเสียง</button></div>';
@@ -1075,6 +1098,101 @@ function sendRing(btn){
 }
 function stopRing(){
   var d=dev(); call('command',{deviceId:d.deviceId,cmd:'ringStop',arg:0}).then(function(){ sfx('ok'); toast('🔇 สั่งหยุดเสียงแล้ว'); });
+}
+
+// ===== เสียงของเราเอง: อัดเสียง / อัปโหลดเพลง (แปลงเป็น MP3 ในเครื่องก่อนส่ง) =====
+var SOUNDS=null, SNDCACHE={}, REC=null, RECT=null, RECBLOB=null, AUD=null;
+function loadSounds(){ return call('sounds').then(function(r){ SOUNDS=(r&&r.sounds)||[]; var c=$('sndCount'); if(c) c.textContent=SOUNDS.length?'('+SOUNDS.length+')':''; return SOUNDS; }); }
+function playSound(id){
+  try{ if(AUD){ AUD.pause(); } }catch(e){}
+  var go=function(u){ AUD=new Audio(u); AUD.play().catch(function(){}); };
+  if(SNDCACHE[id]) return go(SNDCACHE[id]);
+  call('soundData',{id:id}).then(function(r){ if(r&&r.b64){ SNDCACHE[id]='data:'+(r.mime||'audio/mpeg')+';base64,'+r.b64; go(SNDCACHE[id]); } });
+}
+function openSounds(){
+  SH=null; clearInterval(RINGT); RECBLOB=null;
+  drawSounds(); $('sbg').classList.remove('hidden');
+  requestAnimationFrame(function(){ $('sbg').classList.add('show'); $('sheet').classList.add('show'); });
+  document.body.style.overflow='hidden'; sfx('open');
+  if(SOUNDS===null) loadSounds().then(drawSounds);
+}
+function drawSounds(){
+  var sl=SOUNDS||[];
+  $('sheet').innerHTML='<div class="grab"></div><div class="sh-top"><div style="font-size:38px">🎙️</div><div><div class="sh-name">เสียงของเราเอง</div><div class="sh-sub">ใช้ตอนกด 📢 เรียกลูก · เก็บได้ 10 เสียง</div></div></div>'+
+    '<div class="glass" style="padding:16px;text-align:center"><div class="mut" id="recHint">แตะไมค์เพื่อเริ่มอัด แตะอีกครั้งเพื่อหยุด (สูงสุด 15 วินาที)</div>'+
+    '<button class="mic" id="micBtn" onclick="toggleRec()">🎙️</button>'+
+    '<div style="font-family:Inter,sans-serif;font-size:22px;font-weight:800;color:#FF9EC4" id="recTime">0:00</div>'+
+    '<div id="recDone" class="hidden" style="margin-top:12px"><div style="display:flex;gap:8px;justify-content:center;margin-bottom:10px"><button class="ghost" onclick="playBlob()">▶ ฟังก่อน</button><button class="ghost" onclick="RECBLOB=null;$(\'recDone\').classList.add(\'hidden\');$(\'recTime\').textContent=\'0:00\'">🗑 อัดใหม่</button></div>'+
+    '<div style="display:flex;gap:8px"><input class="pinp" id="recName" maxlength="30" placeholder="ตั้งชื่อ เช่น พ่อเรียกกินข้าว"><button class="big" style="width:auto;padding:0 18px" id="recSave" onclick="saveRec(this)">บันทึก</button></div></div></div>'+
+    '<div style="display:flex;align-items:center;margin:16px 0 10px"><div style="font-size:16px;font-weight:700;flex:1">เสียงที่บันทึกไว้</div>'+
+    '<label style="font-size:14px;color:#9BEFFF;cursor:pointer">📁 อัปโหลดเพลง<input type="file" accept="audio/*" style="display:none" onchange="uploadSound(this)"></label></div>'+
+    '<div id="upSt" class="mut"></div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px">'+(SOUNDS===null?'<div class="mut">กำลังโหลด…</div>':sl.length?sl.map(function(x){
+      return '<div class="sitem"><div class="ic">'+(x.kind==='music'?'🎵':'🎙️')+'</div><div class="t"><b>'+esc(x.name)+'</b><small>'+(x.kind==='music'?'อัปโหลด':'อัดเสียง')+' · '+Math.floor(x.dur/60)+':'+('0'+(x.dur%60)).slice(-2)+' · '+Math.round(x.size/1024)+' KB</small></div>'+
+        '<button class="rbtn" onclick="playSound(\''+x.id+'\')">▶</button><button class="rbtn" onclick="delSound(\''+x.id+'\',this)">🗑</button></div>'; }).join(''):'<div class="mut">ยังไม่มีเสียง ลองอัดเสียงด้านบนดูครับ</div>')+'</div>'+
+    '<div class="note" style="margin-top:10px">บันทึกแล้วจะส่งไปเก็บในเครื่องลูกล่วงหน้า (เครื่องลูกต้องเป็น v1.14 ขึ้นไป) · เพลงยาวเกิน 30 วินาทีจะตัดเหลือ 30 วินาทีแรก</div>'+
+    '<div class="sh-act"><button class="ghost" onclick="stopRecAll();closeSheet()">ปิด</button><button class="big" onclick="stopRecAll();openRing()">📢 ไปหน้าเรียกลูก</button></div>';
+}
+function stopRecAll(){ try{ if(REC&&REC.state==='recording') REC.stop(); }catch(e){} clearInterval(RECT); }
+function toggleRec(){
+  if(REC&&REC.state==='recording'){ REC.stop(); return; }
+  if(!navigator.mediaDevices||!window.MediaRecorder){ toast('มือถือนี้อัดเสียงในเว็บไม่ได้ ลองอัปโหลดไฟล์แทน'); return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    var chunks=[], t0=Date.now();
+    REC=new MediaRecorder(stream);
+    REC.ondataavailable=function(e){ if(e.data&&e.data.size) chunks.push(e.data); };
+    REC.onstop=function(){
+      clearInterval(RECT); stream.getTracks().forEach(function(t){ t.stop(); });
+      $('micBtn').classList.remove('rec'); $('recHint').textContent='อัดเสร็จแล้ว ฟังก่อนแล้วตั้งชื่อ';
+      RECBLOB=new Blob(chunks,{type:REC.mimeType||'audio/mp4'}); RECBLOB._dur=Math.round((Date.now()-t0)/1000);
+      $('recDone').classList.remove('hidden'); sfx('ok');
+    };
+    REC.start(); sfx('pick'); $('micBtn').classList.add('rec'); $('recHint').textContent='กำลังอัด… แตะอีกครั้งเพื่อหยุด';
+    RECT=setInterval(function(){ var s=Math.floor((Date.now()-t0)/1000); $('recTime').textContent='● 0:'+('0'+s).slice(-2); if(s>=15) REC.stop(); },250);
+  }).catch(function(){ sfx('err'); toast('ไม่ได้รับอนุญาตใช้ไมค์ · ตั้งค่า > Safari > ไมโครโฟน'); });
+}
+function playBlob(){ if(RECBLOB){ try{ if(AUD) AUD.pause(); }catch(e){} AUD=new Audio(URL.createObjectURL(RECBLOB)); AUD.play().catch(function(){}); } }
+// แปลงไฟล์เสียงใดๆ → MP3 โมโน (ตัด 30 วิ) เล่นได้ทุกเครื่อง
+function toMp3(blob, maxSec, kbps){
+  return blob.arrayBuffer().then(function(buf){
+    var AC=window.AudioContext||window.webkitAudioContext; var ac=new AC();
+    return new Promise(function(res,rej){ ac.decodeAudioData(buf,res,rej); }).then(function(ab){
+      var sr=ab.sampleRate, n=Math.min(ab.length, Math.floor(maxSec*sr)), ch=ab.numberOfChannels;
+      var target=sr>=44100?22050:sr, step=sr/target, outN=Math.floor(n/step), pcm=new Int16Array(outN);
+      var c0=ab.getChannelData(0), c1=ch>1?ab.getChannelData(1):null, peak=0.01;
+      for(var i=0;i<n;i++){ var v=c1?(c0[i]+c1[i])/2:c0[i]; if(Math.abs(v)>peak) peak=Math.abs(v); }
+      var g=Math.min(4, 0.95/peak); // ปรับให้ดังเต็มที่
+      for(var j=0;j<outN;j++){ var k=Math.floor(j*step), x=(c1?(c0[k]+c1[k])/2:c0[k])*g; pcm[j]=Math.max(-32768,Math.min(32767,x*32767)); }
+      try{ ac.close(); }catch(e){}
+      var enc=new lamejs.Mp3Encoder(1,target,kbps), out=[];
+      for(var p=0;p<pcm.length;p+=1152){ var b=enc.encodeBuffer(pcm.subarray(p,p+1152)); if(b.length) out.push(new Uint8Array(b)); }
+      var e2=enc.flush(); if(e2.length) out.push(new Uint8Array(e2));
+      return { blob:new Blob(out,{type:'audio/mpeg'}), dur:Math.round(n/sr) };
+    });
+  });
+}
+function blobB64(b){ return new Promise(function(res){ var r=new FileReader(); r.onload=function(){ res(String(r.result).split(',')[1]); }; r.readAsDataURL(b); }); }
+function uploadAudio(blob, name, kind, btn){
+  var maxSec=kind==='music'?30:15, kb=kind==='music'?64:48;
+  return toMp3(blob,maxSec,kb).then(function(m){
+    return blobB64(m.blob).then(function(b64){ return call('saveSound',{name:name,kind:kind,mime:'audio/mpeg',dur:m.dur,b64:b64}); });
+  }).then(function(r){ sfx('ok'); toast('✅ บันทึกเสียงแล้ว กำลังส่งไปเก็บในเครื่องลูก'); RG.sound=r.id; return loadSounds(); }).then(drawSounds);
+}
+function saveRec(btn){
+  if(!RECBLOB) return; var name=($('recName').value||'').trim()||'เสียงพ่อแม่';
+  btn.disabled=true; btn.textContent='กำลังส่ง…';
+  uploadAudio(RECBLOB,name,'voice',btn).catch(function(e){ sfx('err'); btn.disabled=false; btn.textContent='บันทึก'; toast('บันทึกไม่ได้: '+(e.message||e)); });
+}
+function uploadSound(inp){
+  var f=inp.files&&inp.files[0]; if(!f) return;
+  if(f.size>30*1024*1024){ toast('ไฟล์ใหญ่เกินไป'); return; }
+  $('upSt').textContent='⏳ กำลังแปลงและส่ง "'+f.name+'"…';
+  uploadAudio(f, f.name.replace(/\.[^.]+$/,'').slice(0,30),'music').catch(function(e){ sfx('err'); $('upSt').textContent=''; toast('อัปโหลดไม่ได้: '+(e.message||e)); });
+}
+function delSound(id,btn){
+  askConfirm('🗑','ลบเสียงนี้?','เครื่องลูกจะลบเสียงนี้ด้วย','ลบ',function(){
+    btn.disabled=true; call('delSound',{id:id}).then(function(){ sfx('ok'); if(RG.sound===id) RG.sound=''; return loadSounds(); }).then(drawSounds);
+  });
 }
 
 // ===== เพิ่มเครื่องลูกด้วยรหัส 6 หลัก =====
