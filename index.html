@@ -318,10 +318,16 @@ textarea.mt:focus{border-color:#A78BFA}
 .fmore{display:block;text-align:center;margin-top:12px;font-size:15px;color:#A78BFA;cursor:pointer}
 .fpill{padding:4px 10px;border-radius:99px;font-size:13px;font-weight:700;background:rgba(60,245,160,.16);color:#7DFFC4}
 .fpill.bad{background:rgba(244,63,94,.2);color:#FFB3BF}
+.fpill.off{background:rgba(255,255,255,.1);color:#C9C3F5}
 .fpill.warn{background:rgba(255,210,90,.18);color:#FFE7A1}
 .fic{display:flex}.fic>*{width:28px!important;height:28px!important;border-radius:9px!important;border:2px solid #1E1840;margin-left:-8px;font-size:14px!important}
 .fic>*:first-child{margin-left:0}
 .fgo{height:34px;padding:0 12px;border-radius:12px;border:0;background:linear-gradient(90deg,#8B5CF6,#22D3EE);color:#fff;font-size:13.5px;font-weight:700}
+.glabel{font-size:15px;font-weight:700;color:#C9C3F5;margin:6px 4px -4px;display:flex;justify-content:space-between;align-items:baseline}
+.glabel span{font-size:12.5px;font-weight:400;color:var(--mut2)}
+.morebtn{width:100%;margin-top:12px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#C4B5FD;font-size:15px;font-weight:600}
+.morebtn:empty{display:none}
+.fin .trow:first-child{border-top:0}
 /* ===== ตำแหน่งลูก ===== */
 .loc{padding:0;overflow:hidden;border-color:rgba(34,211,238,.45)}
 .lmap{position:relative;height:230px;background:#1A1638}
@@ -486,8 +492,10 @@ textarea.mt:focus{border-color:#A78BFA}
       <div class="xl" id="chartX"></div>
     </div>
     <div class="glass sec rise" style="animation-delay:.16s">
-      <div class="sh"><span>ทุกแอปวันนี้</span></div>
+      <div class="sh"><span>ทุกแอปวันนี้</span><span class="mut" id="allCnt"></span></div>
       <div id="allApps" style="display:flex;flex-direction:column;gap:12px"></div>
+      <div class="fold" data-k="rpmore" id="fRpMore" style="border:0"><div class="fb"><div><div id="moreApps" style="display:flex;flex-direction:column;gap:12px;padding-top:12px"></div></div></div>
+        <button class="morebtn" id="moreBtn" onclick="fold('rpmore')"></button></div>
     </div>
   </div>
 
@@ -509,14 +517,43 @@ textarea.mt:focus{border-color:#A78BFA}
         <div class="times"><label>เริ่ม<input type="time" id="rSchS"></label><label>ถึง<input type="time" id="rSchE"></label></div>
         <div class="trow"><div class="e">🛡️</div><div class="t"><b>กันเข้าการตั้งค่าเครื่อง</b><span class="mut">ต้องใช้ PIN พ่อแม่</span></div><label class="sw"><input type="checkbox" id="rProt"><span></span></label></div>
       </div>
-      <div class="glass sec rise" style="animation-delay:.08s">
-        <div class="sh"><span>🎙️ เสียงเรียกลูก</span></div>
-        <div class="mut" style="margin:-4px 0 10px">อัดเสียงพ่อแม่ หรืออัปโหลดเพลง ใช้ตอนกด 📢 เรียกลูก</div>
-        <button class="big shine" style="width:100%" data-snd onclick="openSounds()">🎙️ จัดการเสียง <span id="sndCount"></span></button>
+      <div class="glabel rise" style="animation-delay:.1s">กฎเพิ่มเติม <span>บันทึกพร้อมปุ่มด้านล่าง</span></div>
+      <div class="foldgrp rise" style="animation-delay:.12s">
+    <div class="fold" data-k="rapps">
+      <div class="fh" onclick="fold('rapps')"><div class="ft" style="background:linear-gradient(135deg,#A78BFA,#EC4899)">📱</div>
+        <div class="fx"><div class="fn">กฎรายแอป</div><div class="fs" id="fsRApps">-</div></div><div class="fr" id="fsRAppsR"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin">
+        <input type="search" id="appSearch" placeholder="🔍 ค้นหาแอป…" oninput="renderApps()">
+        <div id="appsRules"></div>
+      </div></div></div>
+    </div>
+    <div class="fold locf" data-k="rlocf">
+      <div class="fh" onclick="fold('rlocf')"><div class="ft" style="background:linear-gradient(135deg,#22D3EE,#3B82F6)">📍</div>
+        <div class="fx"><div class="fn">บังคับเปิดตำแหน่ง</div><div class="fs" id="fsRLoc">-</div></div><div class="fr" id="fsRLocR"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin">
+        <div class="trow lfbox"><div class="e">🔒</div><div class="t"><b>บังคับเปิดตำแหน่ง</b><span class="mut">ถ้าลูกปิด Location เครื่องจะล็อกจนกว่าจะเปิดกลับ</span></div><label class="sw"><input type="checkbox" id="rLocF" onchange="locfWarn(this)"><span></span></label></div>
+        <div class="mut" id="locfNote" style="line-height:1.7">✓ ระหว่างล็อก ลูกยังโทรออก และใช้แอปที่ตั้ง "ใช้ได้เสมอ" ได้<br>✓ ปิดสวิตช์นี้ = แค่เตือนทาง LINE ไม่ล็อกเครื่อง<br>✓ ลูกกดปุ่มเดียวก็เปิดตำแหน่งได้ (ต้องใช้แอปเครื่องลูก v1.10)</div>
+      </div></div></div>
+    </div>
       </div>
-      <div class="glass sec rise alc" style="animation-delay:.1s">
-        <div class="sh"><span>🚨 แจ้งเตือนความปลอดภัย (LINE)</span></div>
-        <div class="mut" style="margin:-4px 0 4px">เปลี่ยนแล้วบันทึกทันที ใช้กับทุกเครื่อง</div>
+      <button class="big shine rise" style="animation-delay:.16s" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
+      <div class="note">กฎใหม่ถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
+    </div>
+    <div class="glabel rise" style="animation-delay:.2s">ตั้งค่าอื่นๆ <span>เปลี่ยนแล้วบันทึกทันที</span></div>
+    <div class="foldgrp rise" style="animation-delay:.22s">
+    <div class="fold" data-k="rsnd">
+      <div class="fh" onclick="fold('rsnd')"><div class="ft" style="background:linear-gradient(135deg,#F472B6,#8B5CF6)">🎙️</div>
+        <div class="fx"><div class="fn">เสียงเรียกลูก</div><div class="fs" id="fsRSnd">-</div></div><div class="fr" id="fsRSndR"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin">
+        <div class="mut" style="margin-bottom:10px">อัดเสียงพ่อแม่ หรืออัปโหลดเพลง ใช้ตอนกด 📢 เรียกลูก</div>
+        <button class="big shine" style="width:100%" data-snd onclick="openSounds()">🎙️ จัดการเสียง <span id="sndCount"></span></button>
+      </div></div></div>
+    </div>
+    <div class="fold alc" data-k="ralert">
+      <div class="fh" onclick="fold('ralert')"><div class="ft" style="background:linear-gradient(135deg,#F43F5E,#F97316)">🚨</div>
+        <div class="fx"><div class="fn">แจ้งเตือนทาง LINE</div><div class="fs" id="fsRAlert">-</div></div><div class="fr" id="fsRAlertR"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin">
+                <div class="mut" style="margin:-4px 0 4px">เปลี่ยนแล้วบันทึกทันที ใช้กับทุกเครื่อง</div>
         <div class="trow"><div class="e">🔓</div><div class="t"><b>สิทธิ์สำคัญถูกปิด</b><span class="mut">ดูการใช้งาน · แสดงทับ · กันลบแอป · แบต</span></div><label class="sw"><input type="checkbox" id="aPerm" onchange="saveAlert('perm',this.checked)"><span></span></label></div>
         <div class="trow"><div class="e">🛡️</div><div class="t"><b>มีคนพยายามถอดกันลบแอป</b><span class="mut">แจ้งทันที + พาออกจากหน้าตั้งค่า</span></div><label class="sw"><input type="checkbox" id="aAdmin" onchange="saveAlert('admin',this.checked)"><span></span></label></div>
         <div class="trow"><div class="e">🔁</div><div class="t"><b>เครื่องรีสตาร์ท</b><span class="mut">แจ้งเมื่อเครื่องกลับมา พร้อมบอกว่าหายไปนานเท่าไร</span></div><label class="sw"><input type="checkbox" id="aBoot" onchange="saveAlert('boot',this.checked)"><span></span></label></div>
@@ -524,27 +561,23 @@ textarea.mt:focus{border-color:#A78BFA}
           <div class="segs" id="aOff" style="width:100%;margin-top:8px"></div></div>
         <div class="trow"><div class="e">🌙</div><div class="t"><b>ไม่แจ้ง "เครื่องเงียบ" ช่วงเวลานอน</b><span class="mut">ตามเวลานอนที่ตั้งไว้ของแต่ละเครื่อง</span></div><label class="sw"><input type="checkbox" id="aQuiet" onchange="saveAlert('quietBed',this.checked)"><span></span></label></div>
         <div class="note" style="margin-top:6px">ตอนจอดับ เครื่องลูกส่งข้อมูลทุก ~15 นาที จึงเริ่มที่ 20 นาที เพื่อไม่ให้เตือนผิด</div>
-      </div>
-      <div class="glass sec rise locf" style="animation-delay:.12s">
-        <div class="sh"><span>📍 ตำแหน่งลูก</span></div>
-        <div class="trow lfbox"><div class="e">🔒</div><div class="t"><b>บังคับเปิดตำแหน่ง</b><span class="mut">ถ้าลูกปิด Location เครื่องจะล็อกจนกว่าจะเปิดกลับ</span></div><label class="sw"><input type="checkbox" id="rLocF" onchange="locfWarn(this)"><span></span></label></div>
-        <div class="mut" id="locfNote" style="line-height:1.7">✓ ระหว่างล็อก ลูกยังโทรออก และใช้แอปที่ตั้ง "ใช้ได้เสมอ" ได้<br>✓ ปิดสวิตช์นี้ = แค่เตือนทาง LINE ไม่ล็อกเครื่อง<br>✓ ลูกกดปุ่มเดียวก็เปิดตำแหน่งได้ (ต้องใช้แอปเครื่องลูก v1.10)</div>
-      </div>
-      <div class="glass sec rise" style="animation-delay:.16s">
-        <div class="sh"><span>กฎรายแอป</span></div>
-        <input type="search" id="appSearch" placeholder="🔍 ค้นหาแอป…" oninput="renderApps()">
-        <div id="appsRules"></div>
-      </div>
-      <button class="big shine rise" style="animation-delay:.24s" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
-      <div class="note">กฎใหม่ถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
+      </div></div></div>
     </div>
-    <div class="glass sec rise" id="qmCard">
-      <div class="sh"><span>💬 ข้อความด่วน</span></div>
+    <div class="fold" data-k="rqm" id="qmCard">
+      <div class="fh" onclick="fold('rqm')"><div class="ft" style="background:linear-gradient(135deg,#FBBF24,#F59E0B)">💬</div>
+        <div class="fx"><div class="fn">ข้อความด่วน</div><div class="fs" id="fsRQm">-</div></div><div class="fr" id="fsRQmR"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin">
       <div class="mut">ปุ่มข้อความสำเร็จรูปตอนส่งข้อความถึงลูก แก้ เพิ่ม หรือลบได้ (สูงสุด 12 ข้อความ)</div>
-      <div id="qmList" style="display:flex;flex-direction:column;gap:8px"></div>
-      <div class="two" style="margin-top:2px"><button class="bno" onclick="qmAdd()">+ เพิ่มข้อความ</button><button class="bok" onclick="qmSave(this)">บันทึกข้อความด่วน</button></div>
+      <div id="qmList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
+      <div class="two" style="margin-top:10px"><button class="bno" onclick="qmAdd()">+ เพิ่มข้อความ</button><button class="bok" onclick="qmSave(this)">บันทึกข้อความด่วน</button></div>
+      </div></div></div>
     </div>
-    <div class="glass ver rise" id="verCard"></div>
+    <div class="fold" data-k="rver">
+      <div class="fh" onclick="fold('rver')"><div class="ft" style="background:linear-gradient(135deg,#64748B,#475569)">ℹ️</div>
+        <div class="fx"><div class="fn">เวอร์ชันและสิ่งที่อัปเดต</div><div class="fs" id="fsRVer">-</div></div><div class="fr" id="fsRVerR"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin"><div class="ver" id="verCard"></div></div></div></div>
+    </div>
+    </div>
   </div>
 </div>
 
@@ -572,8 +605,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.15', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.3';
+var WEB_VER = '1.16', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.3';
 var CHANGES = [
+  ['1.16','7 พ.ย. 2569','หน้าตั้งกฎสั้นลง: กฎหลักเปิดไว้ ส่วนอื่นพับเป็นแถวพร้อมสรุป · ปุ่มบันทึกอยู่ใกล้ขึ้น · รายงานแสดง 5 แอปแรก กดดูเพิ่มได้'],
   ['1.15','7 พ.ย. 2569','หน้าภาพรวมสั้นลง: ปุ่มสั่งด่วนขึ้นไปอยู่บน · ตำแหน่ง / แอปที่ใช้ / สถานะการป้องกัน พับเหลือแถวเดียว แตะเพื่อกาง (จำไว้ให้) · มีปัญหาจะกางเองเป็นสีแดง · ซ่อนหน้าจอโฮมจากรายการแอป · หน้าล็อกแบบหน้าต่างลอยสำหรับ OPPO (แอป v1.14.3)'],
   ['1.14','7 พ.ย. 2569','🎙️ เสียงของเราเอง: อัดเสียงพ่อแม่ หรืออัปโหลดเพลง ใช้ตอนเรียกลูก (โหลดเก็บในเครื่องลูกล่วงหน้า ดังทันที) · แบบปลุกสั่นด้วย'],
   ['1.13','7 พ.ย. 2569','📢 เรียกลูก / ปลุก / หามือถือ: จอเปิดเองพร้อมเสียงแม้ปิดเสียง · ระบบ Push ทำให้ทุกคำสั่งถึงเครื่องลูกภายในไม่กี่วินาที แม้จอดับ · เมนูลัด LINE มีปุ่มเรียกลูก'],
@@ -688,16 +722,42 @@ function renderHealth(d){
 // ===== กลุ่มพับได้ (จำสถานะไว้ในเครื่อง) =====
 var FOLDFORCE={};
 function foldState(){ try{ return JSON.parse(localStorage.getItem('kgFold')||'{}')||{}; }catch(e){ return {}; } }
+function fEl(k){ return document.querySelector('.fold[data-k="'+k+'"]'); }
 function applyFold(){
-  var st=foldState(), map={loc:'fLoc',apps:'fApps',hp:'fHp'};
-  Object.keys(map).forEach(function(k){ var el=$(map[k]); if(el) el.classList.toggle('open', !!(st[k]||FOLDFORCE[k])); });
+  var st=foldState();
+  document.querySelectorAll('.fold[data-k]').forEach(function(el){ var k=el.getAttribute('data-k'); el.classList.toggle('open', !!(st[k]||FOLDFORCE[k])); });
+  var mb=$('moreBtn'); if(mb&&mb.textContent) mb.textContent = fEl('rpmore').classList.contains('open') ? 'ย่อรายการ ⌃' : mb.getAttribute('data-t');
 }
 function fold(k){
-  var st=foldState(), el=$({loc:'fLoc',apps:'fApps',hp:'fHp'}[k]); var open=!el.classList.contains('open');
+  var st=foldState(), el=fEl(k); if(!el) return; var open=!el.classList.contains('open');
   st[k]=open; if(!open) FOLDFORCE[k]=false;
   try{ localStorage.setItem('kgFold',JSON.stringify(st)); }catch(e){}
   el.classList.toggle('open',open); if(typeof sfx==='function') sfx('pick');
+  applyFold();
   if(k==='loc'&&open&&window.LMAP) setTimeout(function(){ LMAP.invalidateSize(); var d=dev(); if(d&&d.loc) LMAP.setView([d.loc.lat+0.0006,d.loc.lng],16,{animate:false}); },380);
+}
+/** สรุปบรรทัดเดียวของแต่ละแถวในหน้าตั้งกฎ */
+function ruleSums(){
+  var d=dev(); if(!d) return;
+  var c=DRAFT||d.cfg||{}, ap=c.apps||{}, n={block:0,limit:0,always:0};
+  Object.keys(ap).forEach(function(k){ if(n[ap[k].mode]!==undefined) n[ap[k].mode]++; });
+  var parts=[]; if(n.block) parts.push('บล็อก '+n.block); if(n.limit) parts.push('จำกัดเวลา '+n.limit); if(n.always) parts.push('ใช้ได้เสมอ '+n.always);
+  $('fsRApps').textContent = parts.length ? parts.join(' · ') : 'ทุกแอปใช้ตามเวลารวมของวัน';
+  var lf=$('rLocF').checked;
+  $('fsRLoc').textContent = lf ? 'เปิดอยู่ · ปิด Location แล้วเครื่องล็อก' : 'ปิดอยู่ · แค่เตือนทาง LINE';
+  $('fsRLocR').innerHTML = '<span class="fpill'+(lf?'':' off')+'">'+(lf?'เปิด':'ปิด')+'</span>';
+  $('fsRSnd').textContent = SOUNDS&&SOUNDS.length ? SOUNDS.map(function(x){return x.name;}).slice(0,2).join(' · ')+(SOUNDS.length>2?' · อีก '+(SOUNDS.length-2):'') : 'ยังไม่มีเสียงของเรา · ใช้เสียงเครื่อง';
+  $('fsRSndR').innerHTML = SOUNDS&&SOUNDS.length ? '<span class="fpill off">'+SOUNDS.length+' เสียง</span>' : '';
+  var A=Object.assign({},ALERT_DEF,(DATA&&DATA.alerts)||{}), on=['perm','admin','boot'].filter(function(k){return A[k];}).length;
+  $('fsRAlert').textContent = 'เปิด '+on+' จาก 3 เรื่อง · เงียบเกิน '+(A.offlineMin>=60?(A.offlineMin/60)+' ชม.':A.offlineMin+' นาที');
+  $('fsRAlertR').innerHTML = '<span class="fpill'+(on===3?'':' warn')+'">'+on+'/3</span>';
+  var q=(QEDIT||QUICK||[]).filter(function(x){return String(x).trim();});
+  $('fsRQm').textContent = q.length ? q.slice(0,2).join(' · ') : 'ยังไม่มีข้อความ';
+  $('fsRQmR').innerHTML = '<span class="fpill off">'+q.length+'</span>';
+  var av=d.appVersion?String(d.appVersion):'', up=av&&vnum(av)<vnum(LATEST_APP);
+  $('fsRVer').textContent = 'เว็บ v'+WEB_VER+(av?' · เครื่องลูก v'+av:'')+(up?' · มีแอปใหม่ v'+LATEST_APP:'');
+  $('fsRVerR').innerHTML = up ? '<span class="fpill warn">อัปเดต</span>' : '';
+  if(up) FOLDFORCE.rver=true;
 }
 // ===== ตั้งค่าแจ้งเตือนความปลอดภัย =====
 var ALERT_DEF={perm:true,admin:true,boot:true,offlineMin:30,quietBed:true};
@@ -921,7 +981,10 @@ function render(){
   var tot=list.reduce(function(a,u){return a+u.ms;},0);
   $('fsApps').textContent = list.length ? list.slice(0,2).map(function(u){return u.label+' '+clock(u.ms);}).join(' · ')+(list.length>2?' · อีก '+(list.length-2)+' แอป':'') : 'ยังไม่ได้ใช้แอปไหนวันนี้';
   $('frApps').innerHTML = '<div class="fic">'+list.slice(0,3).map(function(u){return aIcon(u.label,u.pkg);}).join('')+'</div>';
-  $('allApps').innerHTML = appRows(list.slice(0,25));
+  $('allApps').innerHTML = appRows(list.slice(0,5));
+  var rest=list.slice(5,40); $('moreApps').innerHTML = rest.length ? appRows(rest) : '';
+  $('allCnt').textContent = list.length ? list.length+' แอป' : '';
+  var mb=$('moreBtn'); mb.setAttribute('data-t', rest.length ? 'ดูอีก '+rest.length+' แอป ⌄' : ''); mb.textContent = rest.length ? mb.getAttribute('data-t') : '';
 
   // รายงาน
   var hist = d.history || [], lim = d.limitMin*60000, max = Math.max(lim,1);
@@ -937,6 +1000,7 @@ function render(){
   $('chartX').innerHTML = hist.map(function(h,i){ return '<div>'+(i===hist.length-1?'<b>วันนี้</b>':esc(h.label))+'<br>'+clock(h.ms)+'</div>'; }).join('');
 
   if(!DRAFT || DRAFT._id!==d.deviceId) fillRules();
+  try{ ruleSums(); }catch(e){}
   applyFold();
   if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); }
 }
@@ -1001,7 +1065,7 @@ function fillRules(){
   $('rLocF').checked = !!c.forceLoc;
   fillAlerts();
   if(SOUNDS===null) loadSounds().catch(function(){});
-  renderApps();
+  renderApps(); try{ ruleSums(); }catch(e){}
 }
 function renderApps(){
   var d = dev(); if(!DRAFT) return;
@@ -1171,7 +1235,7 @@ function stopRing(){
 
 // ===== เสียงของเราเอง: อัดเสียง / อัปโหลดเพลง (แปลงเป็น MP3 ในเครื่องก่อนส่ง) =====
 var SOUNDS=null, SNDCACHE={}, REC=null, RECT=null, RECBLOB=null, AUD=null;
-function loadSounds(){ return call('sounds').then(function(r){ SOUNDS=(r&&r.sounds)||[]; var c=$('sndCount'); if(c) c.textContent=SOUNDS.length?'('+SOUNDS.length+')':''; return SOUNDS; }); }
+function loadSounds(){ return call('sounds').then(function(r){ SOUNDS=(r&&r.sounds)||[]; var c=$('sndCount'); if(c) c.textContent=SOUNDS.length?'('+SOUNDS.length+')':''; try{ ruleSums(); }catch(e){} return SOUNDS; }); }
 function playSound(id){
   try{ if(AUD){ AUD.pause(); } }catch(e){}
   var go=function(u){ AUD=new Audio(u); AUD.play().catch(function(){}); };
@@ -1420,6 +1484,9 @@ function qmSave(btn){
   call('saveQuickMsgs',{list:list}).then(function(r){ QUICK=r.list; QEDIT=QUICK.slice(); try{localStorage.setItem('kgquick',JSON.stringify(QUICK));}catch(e){} drawQm(); sfx('ok'); burstAt(btn); toast('✅ บันทึกข้อความด่วนแล้ว'); btn.disabled=false; })
     .catch(function(e){ sfx('err'); btn.disabled=false; toast('บันทึกไม่ได้: '+(e.message||e)); });
 }
+
+// สรุปแถวพับอัปเดตทันทีเมื่อแก้กฎ
+['change','click','input'].forEach(function(ev){ document.addEventListener(ev,function(e){ if(e.target.closest&&e.target.closest('#pRu')) setTimeout(function(){ try{ ruleSums(); }catch(x){} },60); },true); });
 
 // เริ่มต้น
 (function(){
