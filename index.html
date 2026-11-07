@@ -328,6 +328,19 @@ textarea.mt:focus{border-color:#A78BFA}
 .tli .d{width:12px;height:12px;border-radius:50%;margin-top:6px;flex:none;background:#8B5CF6;box-shadow:0 0 0 4px rgba(139,92,246,.25)}
 .tli.now .d{background:#22D3EE;box-shadow:0 0 0 4px rgba(34,211,238,.3)}
 .locf{border-color:rgba(34,211,238,.45)}
+.alc{border-color:rgba(229,72,77,.45)}
+.segs{display:flex;gap:6px}
+.segs button{flex:1;padding:10px 0;border-radius:12px;border:0;background:rgba(255,255,255,.07);color:#fff;font-size:14px;font-weight:600;font-family:inherit}
+.segs button.on{background:var(--grad)}
+.hban{padding:14px 16px;border-color:rgba(229,72,77,.55)!important;background:linear-gradient(135deg,rgba(229,72,77,.22),rgba(40,28,88,.6))!important}
+.hban .hb{display:flex;gap:12px;align-items:center}
+.hban .how{margin-top:12px;padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.25);font-size:13px;line-height:1.6}
+.hlr{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid rgba(255,255,255,.08)}
+.hlr .e{font-size:20px;width:26px;text-align:center}
+.hlr .t{flex:1;font-size:15px}
+.hpill{padding:4px 10px;border-radius:99px;font-size:12px;font-weight:700;background:rgba(60,245,160,.15);color:#7DFFC4;white-space:nowrap}
+.hpill.bad{background:rgba(229,72,77,.2);color:#FF8A8E}
+.hpill.warn{background:rgba(255,176,32,.18);color:#FFD98A}
 .lfbox{border-radius:18px;background:rgba(34,211,238,.10);border:1px solid rgba(34,211,238,.35);padding:12px 14px!important;margin:2px 0 4px}
 .tli small{display:block;font-size:13px;color:var(--mut)}
 </style>
@@ -387,7 +400,9 @@ textarea.mt:focus{border-color:#A78BFA}
         <div id="kState"></div>
       </div>
     </div>
+    <div id="hBan"></div>
     <div id="reqList" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div class="glass sec rise hidden" style="animation-delay:.14s" id="hCard"></div>
     <div class="glass loc rise" style="animation-delay:.16s" id="locCard">
       <div class="lmap" id="locMapBox"><div class="lm" id="locMap"></div>
         <div class="ov l"><span class="lchip">📍 ตำแหน่งลูก</span></div><div class="ov r" id="locAcc"></div></div>
@@ -438,6 +453,17 @@ textarea.mt:focus{border-color:#A78BFA}
         <div class="times"><label>เริ่ม<input type="time" id="rSchS"></label><label>ถึง<input type="time" id="rSchE"></label></div>
         <div class="trow"><div class="e">🛡️</div><div class="t"><b>กันเข้าการตั้งค่าเครื่อง</b><span class="mut">ต้องใช้ PIN พ่อแม่</span></div><label class="sw"><input type="checkbox" id="rProt"><span></span></label></div>
       </div>
+      <div class="glass sec rise alc" style="animation-delay:.1s">
+        <div class="sh"><span>🚨 แจ้งเตือนความปลอดภัย (LINE)</span></div>
+        <div class="mut" style="margin:-4px 0 4px">เปลี่ยนแล้วบันทึกทันที ใช้กับทุกเครื่อง</div>
+        <div class="trow"><div class="e">🔓</div><div class="t"><b>สิทธิ์สำคัญถูกปิด</b><span class="mut">ดูการใช้งาน · แสดงทับ · กันลบแอป · แบต</span></div><label class="sw"><input type="checkbox" id="aPerm" onchange="saveAlert('perm',this.checked)"><span></span></label></div>
+        <div class="trow"><div class="e">🛡️</div><div class="t"><b>มีคนพยายามถอดกันลบแอป</b><span class="mut">แจ้งทันที + พาออกจากหน้าตั้งค่า</span></div><label class="sw"><input type="checkbox" id="aAdmin" onchange="saveAlert('admin',this.checked)"><span></span></label></div>
+        <div class="trow"><div class="e">🔁</div><div class="t"><b>เครื่องรีสตาร์ท</b><span class="mut">แจ้งเมื่อเครื่องกลับมา พร้อมบอกว่าหายไปนานเท่าไร</span></div><label class="sw"><input type="checkbox" id="aBoot" onchange="saveAlert('boot',this.checked)"><span></span></label></div>
+        <div class="trow" style="flex-wrap:wrap"><div class="e">📴</div><div class="t"><b>เครื่องเงียบไปนานเกิน</b><span class="mut">ปิดเน็ต ปิดเครื่อง หรือ Safe Mode</span></div>
+          <div class="segs" id="aOff" style="width:100%;margin-top:8px"></div></div>
+        <div class="trow"><div class="e">🌙</div><div class="t"><b>ไม่แจ้ง "เครื่องเงียบ" ช่วงเวลานอน</b><span class="mut">ตามเวลานอนที่ตั้งไว้ของแต่ละเครื่อง</span></div><label class="sw"><input type="checkbox" id="aQuiet" onchange="saveAlert('quietBed',this.checked)"><span></span></label></div>
+        <div class="note" style="margin-top:6px">ตอนจอดับ เครื่องลูกส่งข้อมูลทุก ~15 นาที จึงเริ่มที่ 20 นาที เพื่อไม่ให้เตือนผิด</div>
+      </div>
       <div class="glass sec rise locf" style="animation-delay:.12s">
         <div class="sh"><span>📍 ตำแหน่งลูก</span></div>
         <div class="trow lfbox"><div class="e">🔒</div><div class="t"><b>บังคับเปิดตำแหน่ง</b><span class="mut">ถ้าลูกปิด Location เครื่องจะล็อกจนกว่าจะเปิดกลับ</span></div><label class="sw"><input type="checkbox" id="rLocF" onchange="locfWarn(this)"><span></span></label></div>
@@ -485,8 +511,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.11', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.11';
+var WEB_VER = '1.12', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.12';
 var CHANGES = [
+  ['1.12','7 พ.ย. 2569','สถานะการป้องกันในหน้าภาพรวม · LINE เตือนเมื่อสิทธิ์สำคัญถูกปิด / มีคนพยายามถอดกันลบแอป / เครื่องรีสตาร์ท / เครื่องเงียบนาน (ตั้งเวลาได้) · ตัวช่วยตั้งค่ามีปุ่มปิดโหมดผู้เยี่ยมชม'],
   ['1.11','7 พ.ย. 2569','เพิ่มเครื่องลูกด้วยรหัส 6 หลัก/QR ไม่ต้องคัดลอกลิงก์ · ตัวช่วยตั้งค่าทีละขั้นในเครื่องลูก · ตั้งค่าที่แนะนำอัตโนมัติ · ปุ่มเปิดหน้าเริ่มอัตโนมัติของ OPPO/Redmi'],
   ['1.10','6 พ.ย. 2569','สวิตช์ "บังคับเปิดตำแหน่ง" ในแท็บตั้งกฎ: ลูกปิด Location แล้วเครื่องล็อกจนกว่าจะเปิดกลับ (กดปุ่มเดียวเปิดได้) · LINE แจ้งเมื่อลูกเปิดตำแหน่งกลับ'],
   ['1.9','6 พ.ย. 2569','ดูตำแหน่งลูกบนแผนที่ (ประหยัดแบต ทุก ~15 นาที) · ปุ่มหาตอนนี้ด้วย GPS · เส้นทางย้อนหลัง 7 วัน · ถาม "ลูกอยู่ไหน" ใน LINE · เตือนเมื่อลูกปิดตำแหน่ง'],
@@ -570,6 +597,35 @@ function todayKey(t){ var d=t?new Date(t):new Date(); return d.getFullYear()+('0
 function lago(t){ var m=Math.floor((Date.now()-t)/60000); if(m<1) return 'เมื่อสักครู่'; if(m<60) return m+' นาทีที่แล้ว'; if(m<1440) return Math.floor(m/60)+' ชม.'+(m%60?' '+(m%60)+' นาที':'')+'ที่แล้ว'; return new Date(t).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
 function pinIcon(old){ return L.divIcon({className:'',html:'<div class="kpin'+(old?' old':'')+'"><div class="r"></div><div class="r b"></div><div class="h"><i>🐥</i></div></div>',iconSize:[52,52],iconAnchor:[26,52]}); }
 function placeE(p){ p=String(p||''); return /โรงเรียน|วิทยาลัย|school/i.test(p)?'🏫':/วัด/.test(p)?'🛕':/ตลาด|ห้าง|ร้าน|เซเว่น|7-Eleven|มาร์ท|โลตัส|บิ๊กซี/i.test(p)?'🛍️':/โรงพยาบาล|คลินิก/.test(p)?'🏥':/สวน|สนาม/.test(p)?'🌳':'📍'; }
+// ===== สถานะการป้องกัน =====
+function renderHealth(d){
+  var h=d.health, ban=$('hBan'), card=$('hCard');
+  if(!h){ ban.innerHTML=''; card.classList.add('hidden'); return; }
+  var rows=[['usage','📊','ดูการใช้งานแอป'],['overlay','🪟','แสดงทับแอปอื่น'],['admin','🛡️','กันลบแอป'],['protect','⚙️','กันเข้าการตั้งค่าเครื่อง'],['battery','🔋','ไม่ประหยัดแบต']];
+  var bad=rows.filter(function(r){ return h[r[0]]===false && r[0]!=='protect'; });
+  var critical=h.usage===false||h.overlay===false;
+  ban.innerHTML = bad.length ? '<div class="glass hban rise"><div class="hb"><div style="font-size:30px">🚨</div><div style="flex:1"><div style="font-size:16px;font-weight:700">'+(critical?'ระบบควบคุมเวลาไม่ทำงาน':'การป้องกันบางส่วนถูกปิด')+'</div><div style="font-size:13px;color:#FFC9CB">'+bad.map(function(r){return r[2];}).join(' · ')+' ถูกปิด</div></div></div>'+
+    '<div class="how">วิธีแก้: ที่เครื่องลูก เปิด KidGuard → หน้าผู้ปกครอง → 🧭 ตัวช่วยตั้งค่า → กดปุ่มม่วง</div></div>' : '';
+  var pill=function(ok,warn){ return ok?'<span class="hpill">ปกติ</span>':'<span class="hpill '+(warn?'warn':'bad')+'">'+(warn||'ถูกปิด')+'</span>'; };
+  var html='<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div style="font-size:18px;font-weight:700;flex:1">🛡️ สถานะการป้องกัน</div><div class="mut" style="font-size:12px">'+ago(d.lastSeen)+'</div></div>';
+  rows.forEach(function(r){ var v=h[r[0]]; html+='<div class="hlr"><div class="e">'+r[1]+'</div><div class="t">'+r[2]+'</div>'+(r[0]==='protect'&&v===false?pill(false,'ปิดอยู่'):pill(v!==false))+'</div>'; });
+  var ls=h.loc||d.locState; html+='<div class="hlr"><div class="e">📍</div><div class="t">ตำแหน่ง</div>'+(ls==='ok'?pill(true):pill(false,ls==='off'?'ปิด Location':'ไม่ได้อนุญาต'))+'</div>';
+  if(d.bootAt) html+='<div class="hlr"><div class="e">🔁</div><div class="t">เปิดเครื่องล่าสุด</div><div class="mut" style="font-size:13px">'+new Date(d.bootAt).toLocaleString('th-TH',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</div></div>';
+  card.innerHTML=html; card.classList.remove('hidden');
+}
+// ===== ตั้งค่าแจ้งเตือนความปลอดภัย =====
+var ALERT_DEF={perm:true,admin:true,boot:true,offlineMin:30,quietBed:true};
+function fillAlerts(){
+  var a=Object.assign({},ALERT_DEF,(DATA&&DATA.alerts)||{});
+  $('aPerm').checked=!!a.perm; $('aAdmin').checked=!!a.admin; $('aBoot').checked=!!a.boot; $('aQuiet').checked=!!a.quietBed;
+  $('aOff').innerHTML=[[20,'20 นาที'],[30,'30 นาที'],[60,'1 ชม.'],[120,'2 ชม.']].map(function(x){
+    return '<button class="'+(a.offlineMin==x[0]?'on':'')+'" onclick="saveAlert(\'offlineMin\','+x[0]+')">'+x[1]+'</button>'; }).join('');
+}
+function saveAlert(k,v){
+  var d={}; d[k]=v; sfx('pick');
+  if(DATA){ DATA.alerts=Object.assign({},ALERT_DEF,DATA.alerts||{}); DATA.alerts[k]=v; } fillAlerts();
+  call('saveAlerts',d).then(function(r){ if(DATA&&r&&r.alerts){ DATA.alerts=r.alerts; fillAlerts(); } toast('บันทึกการแจ้งเตือนแล้ว'); }).catch(function(e){ sfx('err'); toast('บันทึกไม่ได้: '+(e.message||e)); });
+}
 function renderLoc(d){
   if(!window.L){ $('locCard').classList.add('hidden'); return; }
   var l=d.loc, st=d.locState, old=vnum(d.appVersion||'0')<vnum('1.9');
@@ -733,6 +789,7 @@ function render(){
   renderVer(d, av, needUp);
   $('msgBtn').textContent='💬 ส่งข้อความถึง'+d.name;
   renderLoc(d);
+  renderHealth(d);
   if(!QEDIT) drawQm();
   var bed = d.cfg && d.cfg.bedOn ? ' · นอน '+hm(d.cfg.bedStart) : '';
   $('kInfo').innerHTML = 'ใช้ไป '+dur(used)+(unlimited?'':' จาก '+dur(total))+(d.bonusMin>0?' (รวมเพิ่ม '+d.bonusMin+' น.)':'')+'<br>'+esc(d.model||'')+bed;
@@ -849,6 +906,7 @@ function fillRules(){
   $('rSchOn').checked = !!c.schoolOn; $('rSchS').value = hm(c.schoolStart); $('rSchE').value = hm(c.schoolEnd);
   $('rProt').checked = !!c.protectSettings;
   $('rLocF').checked = !!c.forceLoc;
+  fillAlerts();
   renderApps();
 }
 function renderApps(){
