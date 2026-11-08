@@ -602,11 +602,12 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="sbg hidden" id="sbg" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
 <div class="sbg hidden" id="dbg" style="z-index:30" onclick="dlgAns(false)"></div>
-<div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
+<div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.16', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.4';
+var WEB_VER = '1.17', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.4';
 var CHANGES = [
+  ['1.17','8 พ.ย. 2569','ถามยืนยันก่อนส่งทุกปุ่มสั่งด่วน (ล็อก/ปลดล็อก/เพิ่มเวลา/พัก/คุมต่อ) · บอกเวลาคงเหลือก่อน-หลัง · เตือนเมื่อเพิ่มเวลาในช่วงเวลานอน'],
   ['1.16','7 พ.ย. 2569','หน้าตั้งกฎสั้นลง: กฎหลักเปิดไว้ ส่วนอื่นพับเป็นแถวพร้อมสรุป · ปุ่มบันทึกอยู่ใกล้ขึ้น · รายงานแสดง 5 แอปแรก กดดูเพิ่มได้'],
   ['1.15','7 พ.ย. 2569','หน้าภาพรวมสั้นลง: ปุ่มสั่งด่วนขึ้นไปอยู่บน · ตำแหน่ง / แอปที่ใช้ / สถานะการป้องกัน พับเหลือแถวเดียว แตะเพื่อกาง (จำไว้ให้) · มีปัญหาจะกางเองเป็นสีแดง · ซ่อนหน้าจอโฮมจากรายการแอป · หน้าล็อกแบบหน้าต่างลอยสำหรับ OPPO (แอป v1.14.3)'],
   ['1.14','7 พ.ย. 2569','🎙️ เสียงของเราเอง: อัดเสียงพ่อแม่ หรืออัปโหลดเพลง ใช้ตอนเรียกลูก (โหลดเก็บในเครื่องลูกล่วงหน้า ดังทันที) · แบบปลุกสั่นด้วย'],
@@ -1039,7 +1040,21 @@ function decide(id, ok, m, btn){
 
 function cmd(c, arg){
   var d = dev();
-  if(c==='lock' && !arguments[2]){ askConfirm('🔒','ล็อกทั้งเครื่องของ '+d.name+'?','ลูกยังโทรออกได้ ปลดล็อกได้จากหน้านี้','ล็อกเลย',function(){ cmd('lock',0,true); }); return; }
+  if(!arguments[2]){
+    var limHm=function(m){ return ('0'+Math.floor(m/60)).slice(-2)+':'+('0'+(m%60)).slice(-2); };
+    var hm=function(ms){ var t=new Date(Date.now()+ms); return ('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2); };
+    var rem=Math.max(0,d.remainingMs||0), cf=d.cfg||{}, nm=new Date().getHours()*60+new Date().getMinutes();
+    var inBed=cf.bedOn && (cf.bedStart<=cf.bedEnd ? (nm>=cf.bedStart&&nm<cf.bedEnd) : (nm>=cf.bedStart||nm<cf.bedEnd));
+    var bedNote=inBed ? '\n🌙 ตอนนี้เป็นเวลานอน เครื่องยังล็อกจนถึง '+limHm(cf.bedEnd)+' น.' : '';
+    var Q={
+      lock:['🔒','ล็อกทั้งเครื่องของ'+d.name+'?','ลูกยังโทรออกได้ · ปลดล็อกได้จากหน้านี้','ล็อกเลย'],
+      unlock:['🔓','ปลดล็อกเครื่องของ'+d.name+'?','กลับไปใช้ตามกฎเวลาเล่นปกติ','ปลดล็อก'],
+      bonus:['⏱️','เพิ่มเวลา '+arg+' นาทีให้'+d.name+'?', (d.limitMin>0 ? 'เวลาคงเหลือจาก '+clock(rem)+' เป็น '+clock(rem+arg*60000)+' ชม. · ใช้ได้เฉพาะวันนี้' : 'วันนี้ไม่ได้จำกัดเวลาอยู่แล้ว · เพิ่มไว้ก็ได้')+bedNote,'เพิ่ม '+arg+' นาที'],
+      pause:['⏸️','หยุดควบคุม 1 ชม.?','ลูกเล่นได้ไม่จำกัดถึง '+hm(3600000)+' น. แล้วกลับมาคุมเอง · กด "คุมต่อ" เพื่อยกเลิกก่อนได้','หยุด 1 ชม.'],
+      resume:['▶️','กลับมาควบคุมเลย?','ยกเลิกการพักที่เหลืออยู่ ใช้กฎเวลาเล่นตามปกติทันที','คุมต่อ']
+    }[c];
+    if(Q){ askConfirm(Q[0],Q[1],Q[2],Q[3],function(){ cmd(c,arg,true); }); return; }
+  }
   var msg = {lock:'🔒 ส่งคำสั่งล็อกแล้ว',unlock:'🔓 ส่งคำสั่งปลดล็อกแล้ว',bonus:'⏱️ เพิ่มเวลา '+arg+' นาทีแล้ว',pause:'⏸️ หยุดควบคุม 1 ชม.',resume:'▶️ กลับมาควบคุมแล้ว'}[c]||'ส่งคำสั่งแล้ว';
   call('command', {deviceId:d.deviceId, cmd:c, arg:arg||0}).then(function(){
     sfx(c==='lock'?'lock':c==='unlock'||c==='resume'?'unlock':'ok'); toast(msg+' · ถึงเครื่องภายใน ~30 วินาที'); load();
@@ -1159,7 +1174,7 @@ function burstAt(el){ if(!el) return; var r=el.getBoundingClientRect(); burst(r.
 // ===== กล่องยืนยัน (แทน confirm ของเบราว์เซอร์) =====
 var DLG_CB=null;
 function askConfirm(emoji, title, text, okLabel, cb){
-  $('dE').textContent=emoji; $('dT').textContent=title; $('dP').textContent=text; $('dOk').textContent=okLabel||'ตกลง'; $('dOk').style.background = emoji==='🔒' ? 'linear-gradient(90deg,#F43F5E,#8B5CF6)' : ''; $('dOk').style.color = emoji==='🔒' ? '#fff' : ''; DLG_CB=cb;
+  $('dE').textContent=emoji; $('dT').textContent=title; $('dP').textContent=text; $('dOk').textContent=okLabel||'ตกลง'; var G={'🔒':'linear-gradient(90deg,#F43F5E,#8B5CF6)','🔓':'linear-gradient(90deg,#3CF5A0,#22D3EE)','▶️':'linear-gradient(90deg,#3CF5A0,#22D3EE)','⏱️':'linear-gradient(90deg,#8B5CF6,#22D3EE)','⏸️':'linear-gradient(90deg,#FBBF24,#F97316)'}[emoji]; $('dOk').style.background = G||''; $('dOk').style.color = G ? (emoji==='🔓'||emoji==='▶️'?'#0B2A22':'#fff') : ''; DLG_CB=cb;
   $('dbg').classList.remove('hidden'); requestAnimationFrame(function(){ $('dbg').classList.add('show'); $('dlg').classList.add('show'); }); sfx('open');
 }
 function dlgAns(ok){ $('dlg').classList.remove('show'); $('dbg').classList.remove('show'); setTimeout(function(){ $('dbg').classList.add('hidden'); },300); var cb=DLG_CB; DLG_CB=null; if(ok&&cb) cb(); else sfx('close'); }
