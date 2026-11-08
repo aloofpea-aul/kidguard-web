@@ -328,6 +328,13 @@ textarea.mt:focus{border-color:#A78BFA}
 .morebtn{width:100%;margin-top:12px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#C4B5FD;font-size:15px;font-weight:600}
 .morebtn:empty{display:none}
 .fin .trow:first-child{border-top:0}
+.dopts{display:flex;flex-direction:column;gap:8px}
+.dopt{display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#fff;font-size:16px;font-weight:600;text-align:left}
+.dopt span{font-size:20px;filter:grayscale(1);opacity:.5}
+.dopt.on{border-color:#FBBF24;background:rgba(251,191,36,.12)}
+.dopt.on span{filter:none;opacity:1}
+.dopt.on::after{content:'✓';margin-left:auto;color:#FDE047;font-size:18px}
+.dstar{font-size:13px;margin-right:4px}
 /* ===== ตำแหน่งลูก ===== */
 .loc{padding:0;overflow:hidden;border-color:rgba(34,211,238,.45)}
 .lmap{position:relative;height:230px;background:#1A1638}
@@ -541,6 +548,14 @@ textarea.mt:focus{border-color:#A78BFA}
     </div>
     <div class="glabel rise" style="animation-delay:.2s">ตั้งค่าอื่นๆ <span>เปลี่ยนแล้วบันทึกทันที</span></div>
     <div class="foldgrp rise" style="animation-delay:.22s">
+    <div class="fold" data-k="rdef">
+      <div class="fh" onclick="fold('rdef')"><div class="ft" style="background:linear-gradient(135deg,#FDE047,#F59E0B)">⭐</div>
+        <div class="fx"><div class="fn">เปิดเว็บมาเจอเครื่องไหน</div><div class="fs" id="fsRDef">-</div></div><div class="fr"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin">
+        <div class="mut" style="margin-bottom:10px">เลือกเครื่องที่อยากเห็นทันทีเมื่อเปิดเว็บ · ตั้งในมือถือนี้เท่านั้น แม่ตั้งในมือถือแม่ได้อีกแบบ</div>
+        <div id="defDevOpts" class="dopts"></div>
+      </div></div></div>
+    </div>
     <div class="fold" data-k="rsnd">
       <div class="fh" onclick="fold('rsnd')"><div class="ft" style="background:linear-gradient(135deg,#F472B6,#8B5CF6)">🎙️</div>
         <div class="fx"><div class="fn">เสียงเรียกลูก</div><div class="fs" id="fsRSnd">-</div></div><div class="fr" id="fsRSndR"></div><div class="fc">⌄</div></div>
@@ -605,8 +620,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.17', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.4';
+var WEB_VER = '1.18', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.4';
 var CHANGES = [
+  ['1.18','8 พ.ย. 2569','⭐ เลือกเครื่องที่เปิดเว็บมาเจอได้ (ตั้งกฎ → ตั้งค่าอื่นๆ) · ตั้งแยกในมือถือพ่อ/แม่ · มีดาวที่ชื่อเครื่อง'],
   ['1.17','8 พ.ย. 2569','ถามยืนยันก่อนส่งทุกปุ่มสั่งด่วน (ล็อก/ปลดล็อก/เพิ่มเวลา/พัก/คุมต่อ) · บอกเวลาคงเหลือก่อน-หลัง · เตือนเมื่อเพิ่มเวลาในช่วงเวลานอน'],
   ['1.16','7 พ.ย. 2569','หน้าตั้งกฎสั้นลง: กฎหลักเปิดไว้ ส่วนอื่นพับเป็นแถวพร้อมสรุป · ปุ่มบันทึกอยู่ใกล้ขึ้น · รายงานแสดง 5 แอปแรก กดดูเพิ่มได้'],
   ['1.15','7 พ.ย. 2569','หน้าภาพรวมสั้นลง: ปุ่มสั่งด่วนขึ้นไปอยู่บน · ตำแหน่ง / แอปที่ใช้ / สถานะการป้องกัน พับเหลือแถวเดียว แตะเพื่อกาง (จำไว้ให้) · มีปัญหาจะกางเองเป็นสีแดง · ซ่อนหน้าจอโฮมจากรายการแอป · หน้าล็อกแบบหน้าต่างลอยสำหรับ OPPO (แอป v1.14.3)'],
@@ -677,7 +693,7 @@ function load(){
     DATA = d;
     if(!d.devices.length){ $('empty').classList.remove('hidden'); ['pOv','pRp','pRu'].forEach(function(p){$(p).classList.add('hidden');}); $('updated').textContent='ยังไม่มีเครื่องลูก'; return; }
     $('empty').classList.add('hidden');
-    if(!CUR || !dev()) CUR = d.devices[0].deviceId;
+    if(!CUR || !dev()) CUR = startDev(d.devices);
     var miss = d.devices.some(function(x){ return (x.usage||[]).some(function(u){ return u.ms>=60000 && !ICONS[u.pkg]; }); });
     if(FIRST || miss) loadIcons(FIRST);
     if(!QLOADED) loadQuick();
@@ -914,7 +930,7 @@ function render(){
   $('hello').textContent = greet();
   $('updated').textContent = ago(d.lastSeen);
   $('devChips').innerHTML = (DATA.devices.length>1 ? DATA.devices.map(function(x){
-    return '<button class="dchip'+(x.deviceId===CUR?' on':'')+'" onclick="pick(\''+x.deviceId+'\')">'+esc(x.name)+'</button>'; }).join('') : '')+
+    return '<button class="dchip'+(x.deviceId===CUR?' on':'')+'" onclick="pick(\''+x.deviceId+'\')">'+(lsGet('kgDefDev')===x.deviceId?'<span class="dstar">⭐</span>':'')+esc(x.name)+'</button>'; }).join('') : '')+
     '<button class="dchip add" data-snd onclick="openPair()">➕ เพิ่มเครื่องลูก</button>';
 
   // วงแหวนเวลา
@@ -1001,7 +1017,7 @@ function render(){
   $('chartX').innerHTML = hist.map(function(h,i){ return '<div>'+(i===hist.length-1?'<b>วันนี้</b>':esc(h.label))+'<br>'+clock(h.ms)+'</div>'; }).join('');
 
   if(!DRAFT || DRAFT._id!==d.deviceId) fillRules();
-  try{ ruleSums(); }catch(e){}
+  try{ ruleSums(); defDevUI(); }catch(e){}
   applyFold();
   if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); }
 }
@@ -1024,7 +1040,25 @@ function ruleBadge(r){
   return '';
 }
 
-function pick(id){ CUR=id; DRAFT=null; LASTDASH=null; render(); }
+function pick(id){ CUR=id; DRAFT=null; LASTDASH=null; try{ localStorage.setItem('kgLastDev',id); }catch(e){} render(); }
+// ===== เครื่องที่เปิดเว็บมาเจอ (จำแยกในมือถือแต่ละเครื่อง พ่อกับแม่ตั้งไม่เหมือนกันได้) =====
+function lsGet(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
+function startDev(ds){
+  var want=lsGet('kgDefDev')||'last', id = want==='last' ? lsGet('kgLastDev') : want;
+  return ds.some(function(x){return x.deviceId===id;}) ? id : ds[0].deviceId;
+}
+function setDefDev(v){
+  try{ localStorage.setItem('kgDefDev',v); }catch(e){}
+  sfx('pick'); var n=(DATA.devices.filter(function(x){return x.deviceId===v;})[0]||{}).name;
+  toast(v==='last' ? '⭐ เปิดมาเจอเครื่องที่ดูล่าสุด' : '⭐ เปิดเว็บมาเจอ'+n+'ทุกครั้ง'); render();
+}
+function defDevUI(){
+  var want=lsGet('kgDefDev')||'last', ds=(DATA&&DATA.devices)||[];
+  var name=want==='last' ? 'เครื่องที่ดูล่าสุด' : ((ds.filter(function(x){return x.deviceId===want;})[0]||{}).name||'เครื่องที่ดูล่าสุด');
+  $('fsRDef').textContent=name+' · ตั้งแยกในมือถือแต่ละเครื่อง';
+  $('defDevOpts').innerHTML = ds.map(function(x){ return '<button class="dopt'+(want===x.deviceId?' on':'')+'" onclick="setDefDev(\''+x.deviceId+'\')"><span>⭐</span>'+esc(x.name)+'</button>'; }).join('')+
+    '<button class="dopt'+(want==='last'?' on':'')+'" onclick="setDefDev(\'last\')"><span>🕘</span>เครื่องที่ดูล่าสุด</button>';
+}
 function tab(t){ TAB=t; showTab(); window.scrollTo({top:0,behavior:'smooth'}); }
 function showTab(){
   var has = DATA && DATA.devices && DATA.devices.length;
