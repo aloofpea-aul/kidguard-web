@@ -335,6 +335,13 @@ textarea.mt:focus{border-color:#A78BFA}
 .dopt.on span{filter:none;opacity:1}
 .dopt.on::after{content:'✓';margin-left:auto;color:#FDE047;font-size:18px}
 .dstar{font-size:13px;margin-right:4px}
+.achips{display:flex;gap:8px;justify-content:center;margin:6px 0 14px}
+.achip{flex:1;height:46px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#E9E4FF;font-size:16px;font-weight:700}
+.achip.on{background:linear-gradient(90deg,#8B5CF6,#22D3EE);border-color:transparent;color:#fff}
+.achip.neg.on{background:linear-gradient(90deg,#F97316,#F43F5E)}
+.aline{font-size:16px;color:#E9E4FF}.aline b{font-size:20px}.aline b.up{color:#7DFFC4}.aline b.dn{color:#FFB3BF}
+.anote{margin-top:8px;font-size:13.5px;color:#FFE7A1}.anote.mut{color:var(--mut)}
+.qa .ic.minus{background:linear-gradient(135deg,rgba(249,115,22,.25),rgba(244,63,94,.25))}
 /* ===== ตำแหน่งลูก ===== */
 .loc{padding:0;overflow:hidden;border-color:rgba(34,211,238,.45)}
 .lmap{position:relative;height:230px;background:#1A1638}
@@ -620,8 +627,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.18', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.4';
+var WEB_VER = '1.19', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.14.5';
 var CHANGES = [
+  ['1.19','9 พ.ย. 2569','➕ เพิ่มเวลา / ➖ ลดเวลา เลือก 15/30/60 นาทีในหน้าต่างยืนยัน · ลดเวลาต้องใช้แอปเครื่องลูก v1.14.5'],
   ['1.18','8 พ.ย. 2569','⭐ เลือกเครื่องที่เปิดเว็บมาเจอได้ (ตั้งกฎ → ตั้งค่าอื่นๆ) · ตั้งแยกในมือถือพ่อ/แม่ · มีดาวที่ชื่อเครื่อง'],
   ['1.17','8 พ.ย. 2569','ถามยืนยันก่อนส่งทุกปุ่มสั่งด่วน (ล็อก/ปลดล็อก/เพิ่มเวลา/พัก/คุมต่อ) · บอกเวลาคงเหลือก่อน-หลัง · เตือนเมื่อเพิ่มเวลาในช่วงเวลานอน'],
   ['1.16','7 พ.ย. 2569','หน้าตั้งกฎสั้นลง: กฎหลักเปิดไว้ ส่วนอื่นพับเป็นแถวพร้อมสรุป · ปุ่มบันทึกอยู่ใกล้ขึ้น · รายงานแสดง 5 แอปแรก กดดูเพิ่มได้'],
@@ -640,7 +648,7 @@ var CHANGES = [
   ['1.3','4 พ.ย. 2569','ขอเวลาเพิ่มผ่าน LINE · หน้าล็อกลูกเจี๊ยบสีม่วง'],
   ['1.0','3 พ.ย. 2569','เริ่มใช้งาน: จำกัดเวลา บล็อกแอป เวลานอน รายงาน']
 ];
-function vnum(v){ var a=String(v||'0').split('.'); return (+a[0]||0)*100+(+a[1]||0); }
+function vnum(v){ var a=String(v||'0').split('.'); return (+a[0]||0)*10000+(+a[1]||0)*100+(+a[2]||0); }
 var LASTDASH = null, PW = '', DATA = null, CUR = null, DRAFT = null, TAB = 'ov', FIRST = true;
 var API = 'https://script.google.com/macros/s/AKfycbxh2xcNY_iRgaweNHMA1XERFsy5J_1S7Be9-XcVlvHBBw60soAYcmDxvYtoKbKXjdck/exec';
 var CHICK = function(s){ return '<svg class="chick" viewBox="0 0 120 120" width="'+s+'" height="'+s+'" aria-hidden="true"><path d="M14 70 C14 40 36 20 60 20 C84 20 106 40 106 70 C96 58 80 52 60 52 C40 52 24 58 14 70 Z" fill="#7A4FD0"/><circle cx="60" cy="74" r="28" fill="#FFD25A"/><circle class="eye" cx="50" cy="70" r="4" fill="#2B2340"/><circle class="eye" cx="70" cy="70" r="4" fill="#2B2340"/><path d="M55 78 L65 78 L60 85 Z" fill="#FF8A4C"/><ellipse cx="45" cy="80" rx="4" ry="2.6" fill="#FFB4B4"/><ellipse cx="75" cy="80" rx="4" ry="2.6" fill="#FFB4B4"/><path d="M14 70 C22 92 40 104 60 104 C80 104 98 92 106 70 C98 86 82 96 60 96 C38 96 22 86 14 70 Z" fill="#B79BF0"/></svg>'; };
@@ -958,7 +966,7 @@ function render(){
   renderHealth(d);
   if(!QEDIT) drawQm();
   var bed = d.cfg && d.cfg.bedOn ? ' · นอน '+hm(d.cfg.bedStart) : '';
-  $('kInfo').innerHTML = 'ใช้ไป '+dur(used)+(unlimited?'':' จาก '+dur(total))+(d.bonusMin>0?' (รวมเพิ่ม '+d.bonusMin+' น.)':'')+(bed?'<br>'+bed.replace(' · ',''):'');
+  $('kInfo').innerHTML = 'ใช้ไป '+dur(used)+(unlimited?'':' จาก '+dur(total))+(d.bonusMin>0?' (รวมเพิ่ม '+d.bonusMin+' น.)':d.bonusMin<0?' (ลดลง '+(-d.bonusMin)+' น.)':'')+(bed?'<br>'+bed.replace(' · ',''):'');
 
   var pendLock = d.pending.filter(function(p){return p.cmd==='lock'||p.cmd==='unlock';}).pop();
   var locked = pendLock ? pendLock.cmd==='lock' : d.forceLock;
@@ -979,8 +987,8 @@ function render(){
   // ปุ่มลัด
   $('qa').innerHTML =
     (locked ? '<button onclick="cmd(\'unlock\')"><div class="ic cool">🔓</div>ปลดล็อก</button>' : '<button onclick="cmd(\'lock\')"><div class="ic hot">🔒</div>ล็อกเลย</button>')+
-    '<button onclick="cmd(\'bonus\',15)"><div class="ic">⏱️</div>+15 นาที</button>'+
-    '<button onclick="cmd(\'bonus\',30)"><div class="ic">⏰</div>+30 นาที</button>'+
+    '<button onclick="adjTime(1)"><div class="ic plus">➕</div>เพิ่มเวลา</button>'+
+    '<button onclick="adjTime(-1)"><div class="ic minus">➖</div>ลดเวลา</button>'+
     (paused ? '<button onclick="cmd(\'resume\')"><div class="ic cool">▶️</div>คุมต่อ</button>' : '<button onclick="cmd(\'pause\',60)"><div class="ic">⏸️</div>พัก 1 ชม.</button>');
   $('note').textContent = d.pending.length ? 'มีคำสั่งรอส่ง '+d.pending.length+' รายการ · ถึงเครื่องลูกภายใน ~30 วินาที' : 'คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที';
 
@@ -1089,10 +1097,35 @@ function cmd(c, arg){
     }[c];
     if(Q){ askConfirm(Q[0],Q[1],Q[2],Q[3],function(){ cmd(c,arg,true); }); return; }
   }
-  var msg = {lock:'🔒 ส่งคำสั่งล็อกแล้ว',unlock:'🔓 ส่งคำสั่งปลดล็อกแล้ว',bonus:'⏱️ เพิ่มเวลา '+arg+' นาทีแล้ว',pause:'⏸️ หยุดควบคุม 1 ชม.',resume:'▶️ กลับมาควบคุมแล้ว'}[c]||'ส่งคำสั่งแล้ว';
+  var msg = {lock:'🔒 ส่งคำสั่งล็อกแล้ว',unlock:'🔓 ส่งคำสั่งปลดล็อกแล้ว',bonus:(arg<0?'⏳ ลดเวลา '+(-arg)+' นาทีแล้ว':'⏱️ เพิ่มเวลา '+arg+' นาทีแล้ว'),pause:'⏸️ หยุดควบคุม 1 ชม.',resume:'▶️ กลับมาควบคุมแล้ว'}[c]||'ส่งคำสั่งแล้ว';
   call('command', {deviceId:d.deviceId, cmd:c, arg:arg||0}).then(function(){
     sfx(c==='lock'?'lock':c==='unlock'||c==='resume'?'unlock':'ok'); toast(msg+' · ถึงเครื่องภายใน ~30 วินาที'); load();
   }).catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); });
+}
+
+// ===== เพิ่ม/ลดเวลา: เลือกจำนวนในหน้าต่างยืนยัน =====
+var ADJ={sign:1,m:15};
+function adjTime(sign){
+  var d=dev(); ADJ={sign:sign,m:sign>0?15:15};
+  if(sign<0 && !(d.limitMin>0)){ toast('วันนี้ไม่ได้จำกัดเวลา เลยลดเวลาไม่ได้ · ตั้งเวลาเล่นต่อวันในหน้าตั้งกฎก่อน'); return; }
+  askConfirm(sign>0?'⏱️':'⏳', '', '', '', function(){
+    if(sign<0 && vnum(d.appVersion)<vnum('1.14.5')){ toast('เครื่องลูกต้องอัปเดตแอปเป็น v1.14.5 ก่อน ถึงจะลดเวลาได้'); return; }
+    cmd('bonus', ADJ.sign*ADJ.m, true);
+  });
+  adjDraw();
+}
+function adjPick(m){ ADJ.m=m; sfx('pick'); adjDraw(); }
+function adjDraw(){
+  var d=dev(), s=ADJ.sign, rem=Math.max(0,d.remainingMs||0), after=Math.max(0,rem+s*ADJ.m*60000);
+  var cf=d.cfg||{}, nm=new Date().getHours()*60+new Date().getMinutes();
+  var inBed=cf.bedOn && (cf.bedStart<=cf.bedEnd ? (nm>=cf.bedStart&&nm<cf.bedEnd) : (nm>=cf.bedStart||nm<cf.bedEnd));
+  $('dT').textContent = (s>0?'เพิ่มเวลาให้':'ลดเวลาของ')+d.name;
+  var chips=[15,30,60].map(function(m){ return '<button class="achip'+(m===ADJ.m?' on':'')+(s<0?' neg':'')+'" onclick="adjPick('+m+')">'+(s>0?'+':'−')+m+' นาที</button>'; }).join('');
+  var line = d.limitMin>0 ? 'เวลาคงเหลือ <b>'+clock(rem)+'</b> → <b class="'+(s>0?'up':'dn')+'">'+clock(after)+'</b> ชม.' : 'วันนี้ไม่ได้จำกัดเวลาอยู่แล้ว';
+  var note = s<0 && after<=0 ? '<div class="anote">⚠️ เวลาจะหมดทันที เครื่องลูกล็อกเลย</div>' : inBed ? '<div class="anote">🌙 ตอนนี้เป็นเวลานอน เครื่องยังล็อกอยู่</div>' : '<div class="anote mut">มีผลเฉพาะวันนี้</div>';
+  $('dP').innerHTML = '<div class="achips">'+chips+'</div><div class="aline">'+line+'</div>'+note;
+  $('dOk').textContent = (s>0?'เพิ่ม ':'ลด ')+ADJ.m+' นาที';
+  $('dOk').style.background = s>0 ? 'linear-gradient(90deg,#8B5CF6,#22D3EE)' : 'linear-gradient(90deg,#F97316,#F43F5E)'; $('dOk').style.color='#fff';
 }
 
 function sendAppTemp(kind, m){ var d=dev(); return call('command',{deviceId:d.deviceId, cmd: kind==='allow'?'appAllow':kind==='clear'?'appClear':'appLock', arg:m, pkg:SH.pkg}); }
