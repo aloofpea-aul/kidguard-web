@@ -352,6 +352,26 @@ textarea.mt:focus{border-color:#A78BFA}
 .qa .qlk{position:absolute;right:-4px;top:-4px;font-size:16px;font-style:normal;filter:none;width:24px;height:24px;border-radius:50%;background:#2A2350;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.2)}
 .qa button small{display:block;margin-top:-4px;font-size:11.5px;color:#FFD48A;font-weight:600}
 .qa .ic.minus{background:linear-gradient(135deg,rgba(249,115,22,.25),rgba(244,63,94,.25))}
+/* ===== 🏦 ธนาคารเวลา ===== */
+.bkc{border-radius:24px;padding:16px;background:linear-gradient(135deg,rgba(255,176,32,.24),rgba(255,122,0,.12));border:1px solid rgba(255,176,32,.45)}
+.bkc .t{font-size:14px;color:#FDE68A;font-weight:700}.bkc .v{font-size:34px;color:#FFE08A;line-height:1.15}
+.bkc .two{margin-top:12px}.bkc .two button{height:44px;border-radius:14px;border:0;font-weight:700;font-size:15px}
+.bkreq{margin-top:12px;border-radius:18px;padding:12px;background:rgba(236,72,153,.14);border:1px solid rgba(236,72,153,.4)}
+.bkh{font-size:13.5px;color:#C9C3F5;margin-top:10px}.bkh div{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid rgba(255,255,255,.07)}
+.bkh .p{color:#7DFFC4;font-weight:700}.bkh .m{color:#FFB3BF;font-weight:700}.bkh .x{opacity:.5;text-decoration:line-through}
+.bed .row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.08)}
+.bed .row:first-child{border-top:0}.bed .row .e{font-size:20px;width:28px;text-align:center}.bed .row .x{flex:1}.bed .row .x b{display:block;font-size:15px}.bed .row .x small{font-size:12.5px;color:var(--mut)}
+.bed select,.bed input{height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;font-size:15px;padding:0 10px;font-family:inherit}
+.bed select option{color:#000}
+.bed .row select{flex:0 0 auto;width:104px}
+.bed .row .x{min-width:0}
+.bed .rw{display:flex;gap:6px;align-items:center;margin-top:8px}
+.bed .rw input.em{width:48px;text-align:center;font-size:20px;padding:0}.bed .rw input.nm{flex:1;min-width:0}.bed .rw input.hr{width:64px;text-align:center}
+.bed .rw button{width:36px;height:40px;border-radius:12px;border:0;background:rgba(244,63,94,.2);color:#FFB3BF;font-size:16px}
+.bed .addb{width:100%;height:42px;margin-top:8px;border-radius:14px;border:1px dashed rgba(255,255,255,.3);background:none;color:#C4B5FD;font-size:14.5px}
+.bed .hol{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.bed .hol span{font-size:12.5px;padding:4px 8px;border-radius:10px;background:rgba(255,255,255,.08)}
+.bed .hol span b{margin-left:6px;color:#FFB3BF;cursor:pointer}
+.bed .h4{font-weight:700;margin:14px 0 4px;font-size:15px}
 /* ===== ตำแหน่งลูก ===== */
 .loc{padding:0;overflow:hidden;border-color:rgba(34,211,238,.45)}
 .lmap{position:relative;height:230px;background:#1A1638}
@@ -478,6 +498,7 @@ textarea.mt:focus{border-color:#A78BFA}
     <div style="display:flex;gap:10px"><button class="msgbtn rise" style="animation-delay:.18s;flex:1.3" id="msgBtn" onclick="openMsg()">💬 ส่งข้อความถึงลูก</button>
     <button class="msgbtn rise ringbtn" style="animation-delay:.2s;flex:1" id="ringBtn" onclick="openRing()">📢 เรียกลูก</button></div>
     <div class="note" id="note">คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
+    <div id="bankHome"></div>
     <div class="foldgrp rise" style="animation-delay:.26s">
     <div class="fold" id="fLoc" data-k="loc">
       <div class="fh" onclick="fold('loc')"><div class="ft" style="background:linear-gradient(135deg,#22D3EE,#3B82F6)">📍</div>
@@ -573,6 +594,11 @@ textarea.mt:focus{border-color:#A78BFA}
         <div id="defDevOpts" class="dopts"></div>
       </div></div></div>
     </div>
+    <div class="fold" data-k="rbank">
+      <div class="fh" onclick="fold('rbank')"><div class="ft" style="background:linear-gradient(135deg,#FFD66B,#FF9F43)">🏦</div>
+        <div class="fx"><div class="fn">ธนาคารเวลา</div><div class="fs" id="fsRBank">-</div></div><div class="fr" id="fsRBankR"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin" id="bankEd"></div></div></div>
+    </div>
     <div class="fold" data-k="rsnd">
       <div class="fh" onclick="fold('rsnd')"><div class="ft" style="background:linear-gradient(135deg,#F472B6,#8B5CF6)">🎙️</div>
         <div class="fx"><div class="fn">เสียงเรียกลูก</div><div class="fs" id="fsRSnd">-</div></div><div class="fr" id="fsRSndR"></div><div class="fc">⌄</div></div>
@@ -637,8 +663,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.20', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.15.1';
+var WEB_VER = '1.21', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.16';
 var CHANGES = [
+  ['1.21','11 พ.ย. 2569','🏦 ธนาคารเวลา: ฝากเวลาที่เหลือทุกเที่ยงคืน · ลูกถอนมาเล่นได้ไม่เกินเพดาน (จ.–ศ. 6 ชม. / วันหยุด 8 ชม.) · แลกรางวัลที่พ่อแม่ตั้ง · เติม/หักเวลาเอง · สมุดบัญชี (แอปเครื่องลูก v1.16)'],
   ['1.20','11 พ.ย. 2569','ปุ่มทำงานสัมพันธ์กัน: ปุ่มที่ติดเงื่อนไขเป็นสีเทาพร้อมบอกเหตุ · แตะแล้วเสนอแก้+ทำต่อในกดเดียว · ป้ายสถานะบอกเหตุที่ล็อกจริง (ล็อก/เวลานอน/เวลาเรียน/เวลาหมด/พัก)'],
   ['แอป 1.15','11 พ.ย. 2569','รองรับมือถือรุ่นประหยัด (Android Go เช่น HiOS) ที่เปิดสิทธิ์แสดงทับแอปอื่นไม่ได้ · ใช้การช่วยเหลือพิเศษล็อกแทน'],
   ['1.19','9 พ.ย. 2569','➕ เพิ่มเวลา / ➖ ลดเวลา เลือก 15/30/60 นาทีในหน้าต่างยืนยัน · ลดเวลาต้องใช้แอปเครื่องลูก v1.14.5'],
@@ -1043,7 +1070,7 @@ function render(){
   $('chartX').innerHTML = hist.map(function(h,i){ return '<div>'+(i===hist.length-1?'<b>วันนี้</b>':esc(h.label))+'<br>'+clock(h.ms)+'</div>'; }).join('');
 
   if(!DRAFT || DRAFT._id!==d.deviceId) fillRules();
-  try{ ruleSums(); defDevUI(); }catch(e){}
+  try{ ruleSums(); defDevUI(); bankSum(); bankHome(dev()); }catch(e){ console.error(e); }
   applyFold();
   if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); }
 }
@@ -1096,6 +1123,83 @@ function decide(id, ok, m, btn){
   if(btn){ btn.disabled=true; btn.textContent='กำลังส่ง…'; }
   call('decide', {id:id, approve:ok, minutes:m}).then(function(r){ if(ok){ sfx('ok'); burstAt(btn); } else sfx('close'); toast(ok?'✅ '+r.text:r.text); load(); })
     .catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); if(btn){btn.disabled=false;} });
+}
+
+
+// ===== 🏦 ธนาคารเวลา =====
+var BKED=null, BKHIST=false;
+function bhm(min){ min=Math.round(min||0); var s=min<0?'−':''; min=Math.abs(min); return s+Math.floor(min/60)+':'+('0'+(min%60)).slice(-2); }
+function bankHome(d){
+  var el=$('bankHome'), cf=DATA&&DATA.bankCfg, b=d.bank;
+  if(!cf||!cf.on||!b){ el.innerHTML=''; return; }
+  var pend=(b.pend||[]).map(function(p){
+    var what=p.kind==='withdraw'?'ขอถอนเวลา '+(-p.min)+' นาที':'ขอแลก "'+esc(p.note)+'"';
+    return '<div class="bkreq"><div style="font-weight:700">'+(p.kind==='withdraw'?'💸 ':'🎁 ')+esc(d.name)+' '+what+'</div>'+
+      '<div style="font-size:13px;color:#F9C9E0">ใช้ '+bhm(-p.min)+' ชม. · ธนาคารจะเหลือ '+bhm(b.bal+p.min)+' · '+tm(p.at)+'</div>'+
+      '<div class="two"><button class="bok" onclick="bankDecide(\''+p.id+'\',true,this)">อนุมัติ</button><button class="bno" onclick="bankDecide(\''+p.id+'\',false,this)">ไม่อนุมัติ</button></div></div>';
+  }).join('');
+  var hist=(b.hist||[]).slice(0,BKHIST?30:5).map(function(h){
+    var lab={deposit:'🌙 ฝากอัตโนมัติ',withdraw:'💸 ถอนมาเล่น',redeem:'🎁 แลก '+esc(h.note),adjust:(h.min>0?'➕ ':'➖ ')+esc(h.note)}[h.kind]||esc(h.note);
+    return '<div class="'+(h.status==='rejected'?'x':'')+'"><span>'+new Date(h.at).toLocaleDateString('th-TH',{day:'numeric',month:'short'})+' '+tm(h.at)+' · '+lab+(h.status==='pending'?' (รออนุมัติ)':'')+'</span><span class="'+(h.min>0?'p':'m')+'">'+(h.min>0?'+':'')+bhm(h.min)+'</span></div>';
+  }).join('');
+  el.innerHTML='<div class="bkc rise"><div class="t">🏦 ธนาคารเวลาของ'+esc(d.name)+'</div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:flex-end"><div class="num v">'+bhm(b.bal)+' <small style="font-size:15px">ชม.</small></div>'+
+    '<div style="font-size:13px;color:#E8E1FF;text-align:right">วันนี้ถอนไป '+bhm(b.wToday)+'<br>เพดานวันนี้ '+bhm(b.cap)+' ชม.'+(b.off?' (วันหยุด)':'')+'</div></div>'+
+    '<div class="two"><button style="background:rgba(60,245,160,.18);color:#A7FFD8" onclick="bankAdj(1)">➕ เติมให้</button><button style="background:rgba(244,63,94,.18);color:#FFB3BF" onclick="bankAdj(-1)">➖ หักออก</button></div>'+
+    pend+(hist?'<div class="bkh"><div style="border:0;font-weight:700;color:#fff">📒 สมุดบัญชี</div>'+hist+'</div>'+((b.hist||[]).length>5?'<a class="fmore" onclick="BKHIST=!BKHIST;render()">'+(BKHIST?'ย่อ ⌃':'ดูทั้งหมด ⌄')+'</a>':''):'')+'</div>';
+}
+function bankDecide(id, ok, btn){
+  if(btn) btn.disabled=true;
+  call('bankDecide',{id:id,approve:ok}).then(function(r){ sfx(ok?'ok':'close'); toast(r.text); load(); }).catch(function(e){ toast('ไม่สำเร็จ: '+(e.message||e)); });
+}
+var BADJ={sign:1,m:60,note:''};
+function bankAdj(sign){ BADJ={sign:sign,m:60,note:''}; bankAdjDraw(); }
+function bankAdjDraw(){
+  var d=dev(), s=BADJ.sign;
+  var chips=[15,30,60,120].map(function(m){ return '<button class="achip'+(m===BADJ.m?' on':'')+(s<0?' neg':'')+'" onclick="BADJ.m='+m+';bankAdjDraw()">'+(s>0?'+':'−')+(m>=60?(m/60)+' ชม.':m+' น.')+'</button>'; }).join('');
+  var notes=s>0?['ช่วยงานบ้าน','ทำการบ้านเสร็จ','สอบได้ดี','รางวัลพิเศษ']:['ทำผิดกติกา','ไม่ทำการบ้าน','แก้ไขยอด'];
+  var html='<div class="achips">'+chips+'</div><div class="achips" style="flex-wrap:wrap">'+notes.map(function(n){ return '<button class="achip'+(BADJ.note===n?' on':'')+'" style="flex:0 0 auto;padding:0 12px;height:38px;font-size:14px" onclick="BADJ.note=\''+n+'\';bankAdjDraw()">'+n+'</button>'; }).join('')+'</div>'+
+    '<div class="aline">ธนาคาร <b>'+bhm(d.bank.bal)+'</b> → <b class="'+(s>0?'up':'dn')+'">'+bhm(d.bank.bal+s*BADJ.m)+'</b> ชม.</div>';
+  askChoice(s>0?'🏦':'➖',(s>0?'เติมเวลาเข้าธนาคารของ':'หักเวลาจากธนาคารของ')+d.name,html,[
+    {label:(s>0?'➕ เติม ':'➖ หัก ')+BADJ.m+' นาที',main:1,bg:s>0?G_OK:'linear-gradient(90deg,#F97316,#F43F5E)',fn:function(){
+      call('bankAdjust',{deviceId:d.deviceId,min:s*BADJ.m,note:BADJ.note}).then(function(){ sfx('ok'); toast(s>0?'➕ เติมเวลาเข้าธนาคารแล้ว':'➖ หักเวลาแล้ว'); load(); }).catch(function(e){ toast('ไม่สำเร็จ: '+(e.message||e)); }); }}]);
+}
+function bankSum(){
+  var cf=DATA&&DATA.bankCfg; if(!cf) return;
+  $('fsRBank').textContent = cf.on ? 'เปิดอยู่ · จ.–ศ. '+bhm(cf.capWd)+' / วันหยุด '+bhm(cf.capWe)+' ชม. · '+(cf.rewards||[]).length+' รางวัล' : 'ปิดอยู่ · แตะเพื่อตั้งค่า';
+  $('fsRBankR').innerHTML='<span class="fpill'+(cf.on?'':' off')+'">'+(cf.on?'เปิด':'ปิด')+'</span>';
+  if(!BKED) bankEdDraw();
+}
+function bankEdDraw(){
+  var cf=BKED||JSON.parse(JSON.stringify(DATA.bankCfg)); BKED=cf;
+  var opt=function(v,list){ return list.map(function(m){ return '<option value="'+m+'"'+(m==v?' selected':'')+'>'+(m>=60?(m/60)+' ชม.':m+' นาที')+'</option>'; }).join(''); };
+  var caps=[120,180,240,300,360,420,480,540,600,720];
+  var today=new Date(), tk=today.getFullYear()*10000+(today.getMonth()+1)*100+today.getDate();
+  var hol=(cf.holidays||[]).filter(function(h){ return +h>=tk; }).slice(0,40);
+  var fmtD=function(k){ var d=new Date(+k.slice(0,4),+k.slice(4,6)-1,+k.slice(6,8)); return d.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'}); };
+  $('bankEd').innerHTML='<div class="bed">'+
+    '<div class="row"><div class="e">🏦</div><div class="x"><b>เปิดใช้ธนาคารเวลา</b><small>เวลาที่เหลือแต่ละวันฝากอัตโนมัติทุกเที่ยงคืน</small></div><label class="sw"><input type="checkbox" '+(cf.on?'checked':'')+' onchange="BKED.on=this.checked"><span></span></label></div>'+
+    '<div class="row"><div class="e">📅</div><div class="x"><b>เพดานต่อวัน จ.–ศ.</b><small>รวมโควตาปกติ + ที่ถอน</small></div><select onchange="BKED.capWd=+this.value">'+opt(cf.capWd,caps)+'</select></div>'+
+    '<div class="row"><div class="e">🎉</div><div class="x"><b>เพดาน ส.–อา. / วันหยุด</b><small>รวมโควตาปกติ + ที่ถอน</small></div><select onchange="BKED.capWe=+this.value">'+opt(cf.capWe,caps)+'</select></div>'+
+    '<div class="row"><div class="e">💸</div><div class="x"><b>ลูกถอนเองได้ทันที</b><small>ปิด = ทุกครั้งต้องรอพ่อแม่อนุมัติ</small></div><label class="sw"><input type="checkbox" '+(cf.self?'checked':'')+' onchange="BKED.self=this.checked"><span></span></label></div>'+
+    '<div class="row"><div class="e">🔁</div><div class="x"><b>ถอนได้ครั้งละไม่เกิน</b></div><select onchange="BKED.maxPer=+this.value">'+opt(cf.maxPer,[15,30,60,90,120])+'</select></div>'+
+    '<div class="h4">🎁 รางวัลที่แลกได้ <span class="mut" style="font-weight:400;font-size:12.5px">(อีโมจิ · ชื่อ · ราคาเป็นชั่วโมง)</span></div>'+
+    (cf.rewards||[]).map(function(r,i){ return '<div class="rw"><input class="em" value="'+esc(r.e)+'" onchange="BKED.rewards['+i+'].e=this.value"><input class="nm" value="'+esc(r.n)+'" placeholder="ชื่อรางวัล" onchange="BKED.rewards['+i+'].n=this.value"><input class="hr" type="number" min="0.25" step="0.25" value="'+(r.min/60)+'" onchange="BKED.rewards['+i+'].min=Math.round(this.value*60)"><button onclick="BKED.rewards.splice('+i+',1);bankEdDraw()">✕</button></div>'; }).join('')+
+    '<button class="addb" onclick="BKED.rewards.push({e:\'🎁\',n:\'\',min:120});bankEdDraw()">+ เพิ่มรางวัล</button>'+
+    '<div class="h4">🎌 วันหยุด (นับเป็นวันหยุด เพดาน '+bhm(cf.capWe)+' ชม.)</div><div class="mut" style="font-size:12.5px">ใส่วันหยุดราชการไว้ให้แล้ว · เพิ่มวันปิดเทอมหรือวันหยุดพิเศษได้</div>'+
+    '<div class="hol">'+hol.map(function(h){ return '<span>'+fmtD(h)+'<b onclick="BKED.holidays.splice(BKED.holidays.indexOf(\''+h+'\'),1);bankEdDraw()">✕</b></span>'; }).join('')+'</div>'+
+    '<div class="rw"><input type="date" id="bkHolIn" class="nm"><button style="width:auto;padding:0 12px;background:rgba(139,92,246,.3);color:#E9E4FF" onclick="bankHolAdd()">+ เพิ่มวันหยุด</button></div>'+
+    '<button class="big shine" style="width:100%;margin-top:14px" onclick="bankSave(this)">บันทึกธนาคารเวลา</button></div>';
+}
+function bankHolAdd(){
+  var v=$('bkHolIn').value; if(!v) return; var k=v.replace(/-/g,'');
+  if(BKED.holidays.indexOf(k)<0) BKED.holidays.push(k); BKED.holidays.sort(); bankEdDraw();
+}
+function bankSave(btn){
+  BKED.rewards=BKED.rewards.filter(function(r){ return String(r.n).trim(); });
+  btn.disabled=true; btn.textContent='กำลังบันทึก…';
+  call('saveBank',BKED).then(function(r){ DATA.bankCfg=r.bank; BKED=null; sfx('ok'); toast('🏦 บันทึกธนาคารเวลาแล้ว · เครื่องลูกเห็นภายในไม่กี่วินาที'); bankSum(); render(); })
+    .catch(function(e){ btn.disabled=false; btn.textContent='บันทึกธนาคารเวลา'; toast('บันทึกไม่ได้: '+(e.message||e)); });
 }
 
 // ===== สถานะจริงของเครื่องลูก (ลำดับเดียวกับแอปเครื่องลูก) =====
