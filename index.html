@@ -91,7 +91,7 @@ button:disabled{opacity:.5}
 .dot.off{background:#FF8A4C;animation:none}
 @keyframes ping{0%{box-shadow:0 0 0 0 rgba(60,245,160,.7)}80%,100%{box-shadow:0 0 0 9px rgba(60,245,160,0)}}
 .state{display:inline-flex;padding:6px 12px;border-radius:99px;font-size:14px;font-weight:600}
-.s-ok{background:rgba(60,245,160,.16);color:#A7FFD8}.s-lock{background:rgba(244,63,94,.22);color:#FFB4C1}.s-pause{background:rgba(255,210,90,.18);color:#FFE7A1}
+.s-ok{background:rgba(60,245,160,.16);color:#A7FFD8}.s-rule{background:rgba(139,92,246,.25);color:#D9CCFF}.s-lock{background:rgba(244,63,94,.22);color:#FFB4C1}.s-pause{background:rgba(255,210,90,.18);color:#FFE7A1}
 
 /* คำขอเวลา */
 .req{position:relative;overflow:hidden;padding:14px 16px;border-color:rgba(255,210,90,.5);background:linear-gradient(135deg,rgba(255,210,90,.18),rgba(255,255,255,.06));animation:rise .7s backwards,edge 2.6s ease-in-out 1s infinite}
@@ -271,6 +271,12 @@ select option{background:#1A1438}
 .dlg.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
 .dlg .e{font-size:44px}.dlg h3{margin:6px 0;font-size:20px}.dlg p{margin:0 0 16px;color:var(--mut);font-size:15px}
 .dlg .two{margin-top:0}
+.dch{display:flex;flex-direction:column;gap:8px}
+.dcb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;font-size:16px}
+.dcb b{font-weight:700}.dcb span{font-size:13px;opacity:.85}
+.dcb.main{border:0;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.dcb.cancel{background:transparent;border:0;color:var(--mut);padding:8px}
+.anote b{color:#FFF3C4}
 
 .ver{padding:16px;display:flex;flex-direction:column;gap:12px}
 .vrow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:16px}
@@ -341,6 +347,10 @@ textarea.mt:focus{border-color:#A78BFA}
 .achip.neg.on{background:linear-gradient(90deg,#F97316,#F43F5E)}
 .aline{font-size:16px;color:#E9E4FF}.aline b{font-size:20px}.aline b.up{color:#7DFFC4}.aline b.dn{color:#FFB3BF}
 .anote{margin-top:8px;font-size:13.5px;color:#FFE7A1}.anote.mut{color:var(--mut)}
+.qa button.blk{color:#9C95BF}
+.qa button.blk .ic{filter:grayscale(1) brightness(.75);opacity:.7;animation:none;position:relative}
+.qa .qlk{position:absolute;right:-4px;top:-4px;font-size:16px;font-style:normal;filter:none;width:24px;height:24px;border-radius:50%;background:#2A2350;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.2)}
+.qa button small{display:block;margin-top:-4px;font-size:11.5px;color:#FFD48A;font-weight:600}
 .qa .ic.minus{background:linear-gradient(135deg,rgba(249,115,22,.25),rgba(244,63,94,.25))}
 /* ===== ตำแหน่งลูก ===== */
 .loc{padding:0;overflow:hidden;border-color:rgba(34,211,238,.45)}
@@ -624,11 +634,12 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="sbg hidden" id="sbg" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
 <div class="sbg hidden" id="dbg" style="z-index:30" onclick="dlgAns(false)"></div>
-<div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="two"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
+<div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.19', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.15.1';
+var WEB_VER = '1.20', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.15.1';
 var CHANGES = [
+  ['1.20','11 พ.ย. 2569','ปุ่มทำงานสัมพันธ์กัน: ปุ่มที่ติดเงื่อนไขเป็นสีเทาพร้อมบอกเหตุ · แตะแล้วเสนอแก้+ทำต่อในกดเดียว · ป้ายสถานะบอกเหตุที่ล็อกจริง (ล็อก/เวลานอน/เวลาเรียน/เวลาหมด/พัก)'],
   ['แอป 1.15','11 พ.ย. 2569','รองรับมือถือรุ่นประหยัด (Android Go เช่น HiOS) ที่เปิดสิทธิ์แสดงทับแอปอื่นไม่ได้ · ใช้การช่วยเหลือพิเศษล็อกแทน'],
   ['1.19','9 พ.ย. 2569','➕ เพิ่มเวลา / ➖ ลดเวลา เลือก 15/30/60 นาทีในหน้าต่างยืนยัน · ลดเวลาต้องใช้แอปเครื่องลูก v1.14.5'],
   ['1.18','8 พ.ย. 2569','⭐ เลือกเครื่องที่เปิดเว็บมาเจอได้ (ตั้งกฎ → ตั้งค่าอื่นๆ) · ตั้งแยกในมือถือพ่อ/แม่ · มีดาวที่ชื่อเครื่อง'],
@@ -972,8 +983,9 @@ function render(){
   var pendLock = d.pending.filter(function(p){return p.cmd==='lock'||p.cmd==='unlock';}).pop();
   var locked = pendLock ? pendLock.cmd==='lock' : d.forceLock;
   var paused = d.pauseUntil>now;
-  $('kState').innerHTML = locked ? '<span class="state s-lock">🔒 ล็อกทั้งเครื่อง'+(pendLock?' (รอส่ง)':'')+'</span>'
-    : paused ? '<span class="state s-pause">⏸ หยุดควบคุมถึง '+tm(d.pauseUntil)+'</span>' : '<span class="state s-ok">✓ ควบคุมปกติ</span>';
+  var why=lockWhy(d), why2=why&&why.k==='lock'?lockWhy(d,{lock:1}):null;
+  $('kState').innerHTML = !why ? '<span class="state s-ok">✓ ใช้ได้ปกติ</span>'
+    : '<span class="state '+(why.k==='pause'?'s-pause':why.k==='lock'?'s-lock':'s-rule')+'">'+why.e+' '+why.t+'</span>'+(why2?'<span class="state s-rule" style="margin-top:6px">+ '+why2.e+' '+why2.t+'</span>':'');
 
   // คำขอ
   var rq = d.requests || [];
@@ -986,11 +998,16 @@ function render(){
   $('reqBadge').textContent = rq.length; $('reqBadge').classList.toggle('hidden', !rq.length);
 
   // ปุ่มลัด
+  // ปุ่มไหนกดแล้วยังไม่มีผล (ติดเงื่อนไขอื่น) → เป็นสีเทา + บอกว่าติดอะไร · แตะแล้วเสนอวิธีแก้ในกดเดียว
+  var after=lockWhy(d,{lock:1,pause:1}), wAdd=lockWhy(d,{daily:1});
+  var tag=function(w){ return {bed:'ติดเวลานอน',school:'ติดเวลาเรียน',daily:'เวลาหมด',lock:'ล็อกอยู่',pause:'พักอยู่'}[w.k]||''; };
+  var qb=function(on, ic, cls, label, blk){ return '<button class="'+(blk?'blk':'')+'" onclick="'+on+'"><div class="ic '+cls+'">'+ic+(blk?'<i class="qlk">🔒</i>':'')+'</div>'+label+(blk?'<small>'+blk+'</small>':'')+'</button>'; };
+  var unl = after ? tag(after) : '', addB = wAdd&&wAdd.k!=='daily' ? tag(wAdd) : '', subB = !(d.limitMin>0) ? 'ไม่จำกัด' : paused ? 'พักอยู่' : '', lockB = paused ? 'พักอยู่' : '';
   $('qa').innerHTML =
-    (locked ? '<button onclick="cmd(\'unlock\')"><div class="ic cool">🔓</div>ปลดล็อก</button>' : '<button onclick="cmd(\'lock\')"><div class="ic hot">🔒</div>ล็อกเลย</button>')+
-    '<button onclick="adjTime(1)"><div class="ic plus">➕</div>เพิ่มเวลา</button>'+
-    '<button onclick="adjTime(-1)"><div class="ic minus">➖</div>ลดเวลา</button>'+
-    (paused ? '<button onclick="cmd(\'resume\')"><div class="ic cool">▶️</div>คุมต่อ</button>' : '<button onclick="cmd(\'pause\',60)"><div class="ic">⏸️</div>พัก 1 ชม.</button>');
+    (locked ? qb("cmd('unlock')",'🔓','cool','ปลดล็อก',unl) : qb("cmd('lock')",'🔒','hot','ล็อกเลย',lockB))+
+    qb('adjTime(1)','➕','plus','เพิ่มเวลา',addB)+
+    qb('adjTime(-1)','➖','minus','ลดเวลา',subB)+
+    (paused ? qb("cmd('resume')",'▶️','cool','คุมต่อ','') : qb("cmd('pause',60)",'⏸️','','พัก 1 ชม.',''));
   $('note').textContent = d.pending.length ? 'มีคำสั่งรอส่ง '+d.pending.length+' รายการ · ถึงเครื่องลูกภายใน ~30 วินาที' : 'คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที';
 
   // แอป
@@ -1081,8 +1098,74 @@ function decide(id, ok, m, btn){
     .catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); if(btn){btn.disabled=false;} });
 }
 
+// ===== สถานะจริงของเครื่องลูก (ลำดับเดียวกับแอปเครื่องลูก) =====
+function hhmm(m){ return ('0'+Math.floor(m/60)).slice(-2)+':'+('0'+(m%60)).slice(-2); }
+function inWin(nm,a,b){ return a<=b ? (nm>=a&&nm<b) : (nm>=a||nm<b); }
+function lockWhy(d, skip){
+  skip=skip||{}; var now=Date.now(), cf=d.cfg||{}, t=new Date(), nm=t.getHours()*60+t.getMinutes(), we=t.getDay()===0||t.getDay()===6;
+  var pend=(d.pending||[]).filter(function(p){return p.cmd==='lock'||p.cmd==='unlock';}).pop();
+  var fl = pend ? pend.cmd==='lock' : d.forceLock;
+  if(!skip.pause && d.pauseUntil>now) return {k:'pause',e:'⏸',t:'หยุดควบคุมถึง '+tm(d.pauseUntil)};
+  if(!skip.lock && fl) return {k:'lock',e:'🔒',t:'ล็อกทั้งเครื่อง'+(pend?' (รอส่ง)':'')};
+  if(cf.bedOn && inWin(nm,cf.bedStart,cf.bedEnd)) return {k:'bed',e:'🌙',t:'เวลานอน · ล็อกถึง '+hhmm(cf.bedEnd),until:hhmm(cf.bedEnd)};
+  if(cf.schoolOn && !we && inWin(nm,cf.schoolStart,cf.schoolEnd)) return {k:'school',e:'🏫',t:'เวลาเรียน · ล็อกถึง '+hhmm(cf.schoolEnd),until:hhmm(cf.schoolEnd)};
+  if(!skip.daily && d.limitMin>0 && (d.remainingMs||0)<=0) return {k:'daily',e:'⏰',t:'เวลาเล่นหมดแล้ว'};
+  return null;
+}
+function askChoice(emoji, title, html, choices){
+  $('dE').textContent=emoji; $('dT').textContent=title; $('dP').innerHTML=html; DLG_CB=null;
+  $('dTwo').classList.add('hidden'); var box=$('dCh'); box.classList.remove('hidden');
+  box.innerHTML=choices.map(function(c,i){ return '<button class="dcb'+(c.main?' main':'')+'" style="'+(c.bg?'background:'+c.bg+';':'')+(c.bg===G_OK?'color:#06281F;':'')+'" data-i="'+i+'"><b>'+c.label+'</b>'+(c.sub?'<span>'+c.sub+'</span>':'')+'</button>'; }).join('')+
+    '<button class="dcb cancel" data-i="-1"><b>ยกเลิก</b></button>';
+  box.querySelectorAll('.dcb').forEach(function(b){ b.onclick=function(){ var i=+b.getAttribute('data-i'); dlgAns(false); if(i>=0) choices[i].fn(); }; });
+  $('dbg').classList.remove('hidden'); requestAnimationFrame(function(){ $('dbg').classList.add('show'); $('dlg').classList.add('show'); }); sfx('open');
+}
+/** ส่งหลายคำสั่งต่อกัน (เช่น ปลดล็อก + พัก) */
+function sendCmds(list, msg, snd){
+  var d=dev(), i=0;
+  (function next(){
+    if(i>=list.length){ sfx(snd||'ok'); toast(msg+' · ถึงเครื่องภายในไม่กี่วินาที'); load(); return; }
+    var c=list[i++]; call('command',{deviceId:d.deviceId,cmd:c[0],arg:c[1]||0}).then(next).catch(function(e){ toast('ส่งไม่ได้: '+(e.message||e)); });
+  })();
+}
+var G_LOCK='linear-gradient(90deg,#F43F5E,#8B5CF6)', G_OK='linear-gradient(90deg,#3CF5A0,#22D3EE)', G_PAUSE='linear-gradient(90deg,#FBBF24,#F97316)', G_ADD='linear-gradient(90deg,#8B5CF6,#22D3EE)';
+function smartCmd(c, arg){
+  var d=dev(), hm=function(ms){ var t=new Date(Date.now()+ms); return ('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2); };
+  var n=d.name;
+  if(c==='lock'){
+    if(d.pauseUntil>Date.now()) return askChoice('🔒','ล็อกเครื่องของ'+n+'?','⚠️ ตอนนี้<b>หยุดควบคุมอยู่ถึง '+tm(d.pauseUntil)+'</b><br>ถ้าล็อกอย่างเดียว จะยังไม่มีผลจนกว่าจะหมดเวลาพัก',[
+      {label:'🔒 ล็อกเลย + ยกเลิกการพัก',sub:'ล็อกทันที (แนะนำ)',main:1,bg:G_LOCK,fn:function(){ sendCmds([['resume'],['lock']],'🔒 ล็อกแล้ว','lock'); }},
+      {label:'ล็อกอย่างเดียว',sub:'มีผลหลัง '+tm(d.pauseUntil),fn:function(){ sendCmds([['lock']],'🔒 ส่งคำสั่งล็อกแล้ว','lock'); }}]);
+    return askChoice('🔒','ล็อกทั้งเครื่องของ'+n+'?','ลูกยังโทรออกได้ · ปลดล็อกได้จากหน้านี้',[
+      {label:'🔒 ล็อกเลย',main:1,bg:G_LOCK,fn:function(){ sendCmds([['lock']],'🔒 ส่งคำสั่งล็อกแล้ว','lock'); }}]);
+  }
+  if(c==='unlock'){
+    var w=lockWhy(d,{lock:1,pause:1});
+    if(w&&(w.k==='bed'||w.k==='school')) return askChoice('🔓','ปลดล็อกเครื่องของ'+n+'?','⚠️ ตอนนี้เป็น<b>'+(w.k==='bed'?'เวลานอน':'เวลาเรียน')+'</b> ถ้าปลดล็อกอย่างเดียว เครื่องยังล็อกต่อถึง '+w.until+' น.',[
+      {label:'🔓 ปลดล็อก + ⏸️ พัก 1 ชม.',sub:'ใช้ได้ทันทีถึง '+hm(3600000)+' น. (แนะนำ)',main:1,bg:G_OK,fn:function(){ sendCmds([['unlock'],['pause',60]],'🔓 ปลดล็อก + พัก 1 ชม. แล้ว','unlock'); }},
+      {label:'ปลดล็อกอย่างเดียว',sub:'ยังล็อกตาม'+(w.k==='bed'?'เวลานอน':'เวลาเรียน')+'ถึง '+w.until,fn:function(){ sendCmds([['unlock']],'🔓 ส่งคำสั่งปลดล็อกแล้ว','unlock'); }}]);
+    if(w&&w.k==='daily') return askChoice('🔓','ปลดล็อกเครื่องของ'+n+'?','⚠️ <b>เวลาเล่นวันนี้หมดแล้ว</b> ถ้าปลดล็อกอย่างเดียว เครื่องยังล็อกเพราะหมดเวลา',[
+      {label:'🔓 ปลดล็อก + ➕ 30 นาที',sub:'เล่นได้อีก 30 นาที (แนะนำ)',main:1,bg:G_OK,fn:function(){ sendCmds([['unlock'],['bonus',30]],'🔓 ปลดล็อก + เพิ่ม 30 นาทีแล้ว','unlock'); }},
+      {label:'ปลดล็อกอย่างเดียว',sub:'ยังล็อกเพราะหมดเวลา',fn:function(){ sendCmds([['unlock']],'🔓 ส่งคำสั่งปลดล็อกแล้ว','unlock'); }}]);
+    return askChoice('🔓','ปลดล็อกเครื่องของ'+n+'?','กลับไปใช้ตามกฎเวลาเล่นปกติ',[
+      {label:'🔓 ปลดล็อก',main:1,bg:G_OK,fn:function(){ sendCmds([['unlock']],'🔓 ส่งคำสั่งปลดล็อกแล้ว','unlock'); }}]);
+  }
+  if(c==='pause'){
+    var w2=lockWhy(d,{pause:1});
+    var note = w2&&w2.k==='lock' ? '<br>🔒 ตอนนี้ล็อกทั้งเครื่องอยู่ · พักแล้วใช้ได้ 1 ชม. ครบแล้ว<b>กลับมาล็อกต่อ</b>' : '';
+    return askChoice('⏸️','หยุดควบคุม 1 ชม.?','ลูกเล่นได้ไม่จำกัดถึง <b>'+hm(3600000)+' น.</b> แล้วกลับมาคุมเอง'+note,[
+      {label:'⏸️ หยุด 1 ชม.',main:1,bg:G_PAUSE,fn:function(){ sendCmds([['pause',60]],'⏸️ หยุดควบคุม 1 ชม.'); }}]);
+  }
+  if(c==='resume'){
+    var w3=lockWhy(d,{pause:1});
+    return askChoice('▶️','กลับมาควบคุมเลย?','ยกเลิกการพักที่เหลือ'+(w3?'<br>เครื่องจะ<b>ล็อกทันที</b> เพราะ'+w3.t:' ใช้กฎตามปกติทันที'),[
+      {label:'▶️ คุมต่อ',main:1,bg:G_OK,fn:function(){ sendCmds([['resume']],'▶️ กลับมาควบคุมแล้ว','unlock'); }}]);
+  }
+}
+
 function cmd(c, arg){
   var d = dev();
+  if(!arguments[2] && c!=='bonus'){ smartCmd(c,arg); return; }
   if(!arguments[2]){
     var limHm=function(m){ return ('0'+Math.floor(m/60)).slice(-2)+':'+('0'+(m%60)).slice(-2); };
     var hm=function(ms){ var t=new Date(Date.now()+ms); return ('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2); };
@@ -1109,10 +1192,7 @@ var ADJ={sign:1,m:15};
 function adjTime(sign){
   var d=dev(); ADJ={sign:sign,m:sign>0?15:15};
   if(sign<0 && !(d.limitMin>0)){ toast('วันนี้ไม่ได้จำกัดเวลา เลยลดเวลาไม่ได้ · ตั้งเวลาเล่นต่อวันในหน้าตั้งกฎก่อน'); return; }
-  askConfirm(sign>0?'⏱️':'⏳', '', '', '', function(){
-    if(sign<0 && vnum(d.appVersion)<vnum('1.14.5')){ toast('เครื่องลูกต้องอัปเดตแอปเป็น v1.14.5 ก่อน ถึงจะลดเวลาได้'); return; }
-    cmd('bonus', ADJ.sign*ADJ.m, true);
-  });
+  if(sign<0 && vnum(d.appVersion)<vnum('1.14.5')){ toast('เครื่องลูกต้องอัปเดตแอปเป็น v1.14.5 ก่อน ถึงจะลดเวลาได้'); return; }
   adjDraw();
 }
 function adjPick(m){ ADJ.m=m; sfx('pick'); adjDraw(); }
@@ -1123,10 +1203,26 @@ function adjDraw(){
   $('dT').textContent = (s>0?'เพิ่มเวลาให้':'ลดเวลาของ')+d.name;
   var chips=[15,30,60].map(function(m){ return '<button class="achip'+(m===ADJ.m?' on':'')+(s<0?' neg':'')+'" onclick="adjPick('+m+')">'+(s>0?'+':'−')+m+' นาที</button>'; }).join('');
   var line = d.limitMin>0 ? 'เวลาคงเหลือ <b>'+clock(rem)+'</b> → <b class="'+(s>0?'up':'dn')+'">'+clock(after)+'</b> ชม.' : 'วันนี้ไม่ได้จำกัดเวลาอยู่แล้ว';
-  var note = s<0 && after<=0 ? '<div class="anote">⚠️ เวลาจะหมดทันที เครื่องลูกล็อกเลย</div>' : inBed ? '<div class="anote">🌙 ตอนนี้เป็นเวลานอน เครื่องยังล็อกอยู่</div>' : '<div class="anote mut">มีผลเฉพาะวันนี้</div>';
-  $('dP').innerHTML = '<div class="achips">'+chips+'</div><div class="aline">'+line+'</div>'+note;
-  $('dOk').textContent = (s>0?'เพิ่ม ':'ลด ')+ADJ.m+' นาที';
-  $('dOk').style.background = s>0 ? 'linear-gradient(90deg,#8B5CF6,#22D3EE)' : 'linear-gradient(90deg,#F97316,#F43F5E)'; $('dOk').style.color='#fff';
+  var m=ADJ.m, w=s>0 ? lockWhy(d,{daily:1}) : null, hm1=(function(){ var t=new Date(Date.now()+3600000); return ('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2); })();
+  var note = s<0 && d.pauseUntil>Date.now() ? '<div class="anote">⚠️ ตอนนี้<b>หยุดควบคุมอยู่ถึง '+tm(d.pauseUntil)+'</b> ลดเวลาแล้วมีผลหลังหมดพัก</div>'
+    : s<0 && after<=0 ? '<div class="anote">⚠️ เวลาจะหมดทันที เครื่องลูกล็อกเลย</div>'
+    : w&&w.k==='lock' ? '<div class="anote">⚠️ ตอนนี้<b>ล็อกทั้งเครื่อง</b>อยู่ เพิ่มเวลาอย่างเดียวลูกยังใช้ไม่ได้</div>'
+    : w&&(w.k==='bed'||w.k==='school') ? '<div class="anote">⚠️ ตอนนี้เป็น<b>'+(w.k==='bed'?'เวลานอน':'เวลาเรียน')+'</b> เวลาที่เพิ่มใช้ได้หลัง '+w.until+' น.</div>'
+    : w&&w.k==='pause' ? '<div class="anote mut">ตอนนี้หยุดควบคุมอยู่ · เวลาที่เพิ่มใช้หลังหมดพัก</div>'
+    : '<div class="anote mut">มีผลเฉพาะวันนี้</div>';
+  var html='<div class="achips">'+chips+'</div><div class="aline">'+line+'</div>'+note;
+  var ch;
+  if(s<0 && d.pauseUntil>Date.now()) ch=[{label:'▶️ คุมต่อ + ⏳ ลด '+m+' นาที',sub:'มีผลทันที (แนะนำ)',main:1,bg:'linear-gradient(90deg,#F97316,#F43F5E)',fn:function(){ sendCmds([['resume'],['bonus',-m]],'▶️ คุมต่อ + ลดเวลา '+m+' นาทีแล้ว'); }},
+    {label:'ลดเวลาอย่างเดียว',sub:'มีผลหลัง '+tm(d.pauseUntil),fn:function(){ sendCmds([['bonus',-m]],'⏳ ลดเวลา '+m+' นาทีแล้ว'); }}];
+  else if(s<0) ch=[{label:'⏳ ลด '+m+' นาที',main:1,bg:'linear-gradient(90deg,#F97316,#F43F5E)',fn:function(){ sendCmds([['bonus',-m]],'⏳ ลดเวลา '+m+' นาทีแล้ว'); }}];
+  else if(w&&w.k==='lock') ch=[{label:'➕ เพิ่ม '+m+' นาที + 🔓 ปลดล็อก',sub:'ลูกใช้ได้ทันที (แนะนำ)',main:1,bg:G_OK,fn:function(){ sendCmds([['bonus',m],['unlock']],'➕ เพิ่ม '+m+' นาที + ปลดล็อกแล้ว','unlock'); }},
+    {label:'เพิ่มเวลาอย่างเดียว',sub:'ยังล็อกทั้งเครื่องอยู่',fn:function(){ sendCmds([['bonus',m]],'⏱️ เพิ่มเวลา '+m+' นาทีแล้ว'); }}];
+  else if(w&&(w.k==='bed'||w.k==='school')) ch=[{label:'⏸️ พัก 1 ชม. แทน',sub:'ใช้ได้ทันทีถึง '+hm1+' น. (แนะนำ)',main:1,bg:G_PAUSE,fn:function(){ sendCmds([['pause',60]],'⏸️ หยุดควบคุม 1 ชม.'); }},
+    {label:'เพิ่ม '+m+' นาทีไว้ก่อน',sub:'ใช้ได้หลัง '+w.until+' น.',fn:function(){ sendCmds([['bonus',m]],'⏱️ เพิ่มเวลา '+m+' นาทีแล้ว'); }}];
+  else ch=[{label:'➕ เพิ่ม '+m+' นาที',main:1,bg:G_ADD,fn:function(){ sendCmds([['bonus',m]],'⏱️ เพิ่มเวลา '+m+' นาทีแล้ว'); }}];
+  var open=$('dlg').classList.contains('show');
+  askChoice(s>0?'⏱️':'⏳', (s>0?'เพิ่มเวลาให้':'ลดเวลาของ')+d.name, html, ch);
+  if(open) sfx('pick');
 }
 
 function sendAppTemp(kind, m){ var d=dev(); return call('command',{deviceId:d.deviceId, cmd: kind==='allow'?'appAllow':kind==='clear'?'appClear':'appLock', arg:m, pkg:SH.pkg}); }
@@ -1242,6 +1338,7 @@ function burstAt(el){ if(!el) return; var r=el.getBoundingClientRect(); burst(r.
 // ===== กล่องยืนยัน (แทน confirm ของเบราว์เซอร์) =====
 var DLG_CB=null;
 function askConfirm(emoji, title, text, okLabel, cb){
+  $('dCh').classList.add('hidden'); $('dTwo').classList.remove('hidden');
   $('dE').textContent=emoji; $('dT').textContent=title; $('dP').textContent=text; $('dOk').textContent=okLabel||'ตกลง'; var G={'🔒':'linear-gradient(90deg,#F43F5E,#8B5CF6)','🔓':'linear-gradient(90deg,#3CF5A0,#22D3EE)','▶️':'linear-gradient(90deg,#3CF5A0,#22D3EE)','⏱️':'linear-gradient(90deg,#8B5CF6,#22D3EE)','⏸️':'linear-gradient(90deg,#FBBF24,#F97316)'}[emoji]; $('dOk').style.background = G||''; $('dOk').style.color = G ? (emoji==='🔓'||emoji==='▶️'?'#0B2A22':'#fff') : ''; DLG_CB=cb;
   $('dbg').classList.remove('hidden'); requestAnimationFrame(function(){ $('dbg').classList.add('show'); $('dlg').classList.add('show'); }); sfx('open');
 }
