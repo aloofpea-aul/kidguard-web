@@ -499,6 +499,7 @@ textarea.mt:focus{border-color:#A78BFA}
     <button class="msgbtn rise ringbtn" style="animation-delay:.2s;flex:1" id="ringBtn" onclick="openRing()">📢 เรียกลูก</button></div>
     <div class="note" id="note">คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
     <div id="bankHome"></div>
+    <div id="callHome"></div>
     <div class="foldgrp rise" style="animation-delay:.26s">
     <div class="fold" id="fLoc" data-k="loc">
       <div class="fh" onclick="fold('loc')"><div class="ft" style="background:linear-gradient(135deg,#22D3EE,#3B82F6)">📍</div>
@@ -599,6 +600,11 @@ textarea.mt:focus{border-color:#A78BFA}
         <div class="fx"><div class="fn">ธนาคารเวลา</div><div class="fs" id="fsRBank">-</div></div><div class="fr" id="fsRBankR"></div><div class="fc">⌄</div></div>
       <div class="fb"><div><div class="fin" id="bankEd"></div></div></div>
     </div>
+    <div class="fold" data-k="rcall">
+      <div class="fh" onclick="fold('rcall')"><div class="ft" style="background:linear-gradient(135deg,#A5B4FC,#6366F1)">📞</div>
+        <div class="fx"><div class="fn">คุมการโทรตอนกลางคืน</div><div class="fs" id="fsRCall">-</div></div><div class="fr" id="fsRCallR"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin" id="callEd"></div></div></div>
+    </div>
     <div class="fold" data-k="rsnd">
       <div class="fh" onclick="fold('rsnd')"><div class="ft" style="background:linear-gradient(135deg,#F472B6,#8B5CF6)">🎙️</div>
         <div class="fx"><div class="fn">เสียงเรียกลูก</div><div class="fs" id="fsRSnd">-</div></div><div class="fr" id="fsRSndR"></div><div class="fc">⌄</div></div>
@@ -663,8 +669,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.22', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.16.1';
+var WEB_VER = '1.23', WEB_DATE = '11 พ.ย. 2569', LATEST_APP = '1.17';
 var CHANGES = [
+  ['1.23','11 พ.ย. 2569','📞 คุมการโทรตอนกลางคืน: เบอร์ไว้ใจ/ฉุกเฉินไม่จำกัด · เบอร์อื่น+LINE/Messenger ใช้โควตาต่อคืนและจำกัดต่อครั้ง · บันทึกการโทร · 🏦 ตั้งกติกาธนาคารได้เอง (ช่วงเวลาถอน, ตัดทิ้งเมื่อถอน, เวลาที่พ่อแม่เพิ่ม) (แอป v1.17)'],
   ['1.22','11 พ.ย. 2569','🏦 กติกาใหม่: ถอน/ขอเล่นเพิ่มได้เมื่อเหลือไม่เกิน 30 นาที · วันที่ถอนไม่ฝาก · เวลาที่พ่อแม่เพิ่มไม่ฝาก · คู่มือธนาคารเวลาในแอปลูก (แอป v1.16.1)'],
   ['1.21','11 พ.ย. 2569','🏦 ธนาคารเวลา: ฝากเวลาที่เหลือทุกเที่ยงคืน · ลูกถอนมาเล่นได้ไม่เกินเพดาน (จ.–ศ. 6 ชม. / วันหยุด 8 ชม.) · แลกรางวัลที่พ่อแม่ตั้ง · เติม/หักเวลาเอง · สมุดบัญชี (แอปเครื่องลูก v1.16)'],
   ['1.20','11 พ.ย. 2569','ปุ่มทำงานสัมพันธ์กัน: ปุ่มที่ติดเงื่อนไขเป็นสีเทาพร้อมบอกเหตุ · แตะแล้วเสนอแก้+ทำต่อในกดเดียว · ป้ายสถานะบอกเหตุที่ล็อกจริง (ล็อก/เวลานอน/เวลาเรียน/เวลาหมด/พัก)'],
@@ -1071,7 +1078,7 @@ function render(){
   $('chartX').innerHTML = hist.map(function(h,i){ return '<div>'+(i===hist.length-1?'<b>วันนี้</b>':esc(h.label))+'<br>'+clock(h.ms)+'</div>'; }).join('');
 
   if(!DRAFT || DRAFT._id!==d.deviceId) fillRules();
-  try{ ruleSums(); defDevUI(); bankSum(); bankHome(dev()); }catch(e){ console.error(e); }
+  try{ ruleSums(); defDevUI(); bankSum(); bankHome(dev()); callSum(); callHome(dev()); }catch(e){ console.error(e); }
   applyFold();
   if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); }
 }
@@ -1146,7 +1153,7 @@ function bankHome(d){
   el.innerHTML='<div class="bkc rise"><div class="t">🏦 ธนาคารเวลาของ'+esc(d.name)+'</div>'+
     '<div style="display:flex;justify-content:space-between;align-items:flex-end"><div class="num v">'+bhm(b.bal)+' <small style="font-size:15px">ชม.</small></div>'+
     '<div style="font-size:13px;color:#E8E1FF;text-align:right">วันนี้ถอนไป '+bhm(b.wToday)+'<br>เพดานวันนี้ '+bhm(b.cap)+' ชม.'+(b.off?' (วันหยุด)':'')+'</div></div>'+
-    (b.tonight===undefined?'':'<div style="margin-top:8px;font-size:13.5px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.18)">'+(b.wToday>0?'🌙 วันนี้ถอนแล้ว · คืนนี้<b style="color:#FFB3BF">ไม่ฝาก</b> (เวลาที่เหลือตัดทิ้ง)':'🌙 คืนนี้จะฝาก <b style="color:#7DFFC4">+'+bhm(b.tonight||0)+'</b> ชม.')+'</div>')+
+    (b.tonight===undefined?'':'<div style="margin-top:8px;font-size:13.5px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.18)">'+(b.wToday>0&&cf.cutW!==false?'🌙 วันนี้ถอนแล้ว · คืนนี้<b style="color:#FFB3BF">ไม่ฝาก</b> (เวลาที่เหลือตัดทิ้ง)':'🌙 คืนนี้จะฝาก <b style="color:#7DFFC4">+'+bhm(b.tonight||0)+'</b> ชม.')+'</div>')+
     '<div class="two"><button style="background:rgba(60,245,160,.18);color:#A7FFD8" onclick="bankAdj(1)">➕ เติมให้</button><button style="background:rgba(244,63,94,.18);color:#FFB3BF" onclick="bankAdj(-1)">➖ หักออก</button></div>'+
     pend+(hist?'<div class="bkh"><div style="border:0;font-weight:700;color:#fff">📒 สมุดบัญชี</div>'+hist+'</div>'+((b.hist||[]).length>5?'<a class="fmore" onclick="BKHIST=!BKHIST;render()">'+(BKHIST?'ย่อ ⌃':'ดูทั้งหมด ⌄')+'</a>':''):'')+'</div>';
 }
@@ -1185,7 +1192,10 @@ function bankEdDraw(){
     '<div class="row"><div class="e">🎉</div><div class="x"><b>เพดาน ส.–อา. / วันหยุด</b><small>รวมโควตาปกติ + ที่ถอน</small></div><select onchange="BKED.capWe=+this.value">'+opt(cf.capWe,caps)+'</select></div>'+
     '<div class="row"><div class="e">💸</div><div class="x"><b>ลูกถอนเองได้ทันที</b><small>ปิด = ทุกครั้งต้องรอพ่อแม่อนุมัติ</small></div><label class="sw"><input type="checkbox" '+(cf.self?'checked':'')+' onchange="BKED.self=this.checked"><span></span></label></div>'+
     '<div class="row"><div class="e">🔁</div><div class="x"><b>ถอนได้ครั้งละไม่เกิน</b></div><select onchange="BKED.maxPer=+this.value">'+opt(cf.maxPer,[15,30,60,90,120])+'</select></div>'+
-    '<div class="h4">📜 กติกา</div><div class="mut" style="font-size:13px;line-height:1.6">• ฝากเฉพาะโควตาปกติที่เหลือ ทุกเที่ยงคืน<br>• ถอน และ "ขอเล่นเพิ่ม" ได้เมื่อเวลาเหลือไม่เกิน 30 นาที<br>• วันที่ถอน เวลาที่เหลือทั้งหมดตัดทิ้ง ไม่ฝาก<br>• เวลาที่พ่อแม่เพิ่มให้ ใช้ไม่หมดตัดทิ้ง ไม่ฝาก<br>• ลูกอ่านคู่มือได้ที่ปุ่ม 📖 กติกา ในแอป</div>'+
+    '<div class="h4">📜 กติกา <span class="mut" style="font-weight:400;font-size:12.5px">(คู่มือในแอปลูกเปลี่ยนตามนี้)</span></div>'+
+    '<div class="row"><div class="e">⏳</div><div class="x"><b>ถอน / ขอเล่นเพิ่ม ได้เมื่อเหลือไม่เกิน</b><small>"ได้ตลอด" = กดได้ทุกเมื่อ</small></div><select onchange="BKED.askMin=+this.value">'+[0,10,15,30,45,60,90,120].map(function(m){ return '<option value="'+m+'"'+(m==(cf.askMin===undefined?30:cf.askMin)?' selected':'')+'>'+(m?(m>=60?(m/60)+' ชม.':m+' นาที'):'ได้ตลอด')+'</option>'; }).join('')+'</select></div>'+
+    '<div class="row"><div class="e">⚠️</div><div class="x"><b>วันที่ถอน ไม่ฝากเวลาที่เหลือ</b><small>เปิด = ถอนแล้วที่เหลือคืนนั้นตัดทิ้งทั้งหมด</small></div><label class="sw"><input type="checkbox" '+(cf.cutW!==false?'checked':'')+' onchange="BKED.cutW=this.checked"><span></span></label></div>'+
+    '<div class="row"><div class="e">🎁</div><div class="x"><b>เวลาที่พ่อแม่เพิ่มให้ ไม่นำไปฝาก</b><small>เปิด = ใช้ไม่หมดตัดทิ้งตอนเที่ยงคืน</small></div><label class="sw"><input type="checkbox" '+(cf.cutBonus!==false?'checked':'')+' onchange="BKED.cutBonus=this.checked"><span></span></label></div>'+
     '<div class="h4">🎁 รางวัลที่แลกได้ <span class="mut" style="font-weight:400;font-size:12.5px">(อีโมจิ · ชื่อ · ราคาเป็นชั่วโมง)</span></div>'+
     (cf.rewards||[]).map(function(r,i){ return '<div class="rw"><input class="em" value="'+esc(r.e)+'" onchange="BKED.rewards['+i+'].e=this.value"><input class="nm" value="'+esc(r.n)+'" placeholder="ชื่อรางวัล" onchange="BKED.rewards['+i+'].n=this.value"><input class="hr" type="number" min="0.25" step="0.25" value="'+(r.min/60)+'" onchange="BKED.rewards['+i+'].min=Math.round(this.value*60)"><button onclick="BKED.rewards.splice('+i+',1);bankEdDraw()">✕</button></div>'; }).join('')+
     '<button class="addb" onclick="BKED.rewards.push({e:\'🎁\',n:\'\',min:120});bankEdDraw()">+ เพิ่มรางวัล</button>'+
@@ -1193,6 +1203,67 @@ function bankEdDraw(){
     '<div class="hol">'+hol.map(function(h){ return '<span>'+fmtD(h)+'<b onclick="BKED.holidays.splice(BKED.holidays.indexOf(\''+h+'\'),1);bankEdDraw()">✕</b></span>'; }).join('')+'</div>'+
     '<div class="rw"><input type="date" id="bkHolIn" class="nm"><button style="width:auto;padding:0 12px;background:rgba(139,92,246,.3);color:#E9E4FF" onclick="bankHolAdd()">+ เพิ่มวันหยุด</button></div>'+
     '<button class="big shine" style="width:100%;margin-top:14px" onclick="bankSave(this)">บันทึกธนาคารเวลา</button></div>';
+}
+// ===== 📞 คุมการโทรตอนกลางคืน =====
+var CED=null, CLOGALL=false;
+var CALL_APPS={'jp.naver.line.android':'LINE','com.facebook.orca':'Messenger','com.whatsapp':'WhatsApp','com.discord':'Discord','com.zhiliaoapp.musically':'TikTok','com.ss.android.ugc.trill':'TikTok (Lite)','org.telegram.messenger':'Telegram','com.facebook.katana':'Facebook','com.instagram.android':'Instagram','com.google.android.apps.tachyon':'Google Meet','us.zoom.videomeetings':'Zoom','com.skype.raider':'Skype'};
+function callSum(){
+  var cf=DATA&&DATA.callCfg; if(!cf) return;
+  $('fsRCall').textContent = cf.on ? (cf.win==='bed'?'ตามเวลานอน':hhmm(cf.start)+'–'+hhmm(cf.end))+' · คืนละ '+cf.quota+' น. · ครั้งละ '+(cf.per?cf.per+' น.':'ไม่จำกัด')+' · ไว้ใจ '+cf.trusted.length+' เบอร์' : 'ปิดอยู่ · แตะเพื่อตั้งค่า';
+  $('fsRCallR').innerHTML='<span class="fpill'+(cf.on?'':' off')+'">'+(cf.on?'เปิด':'ปิด')+'</span>';
+  if(!CED) callEdDraw();
+}
+function callEdDraw(){
+  var cf=CED||JSON.parse(JSON.stringify(DATA.callCfg)); CED=cf;
+  var sel=function(v,list,fmt,key){ return '<select onchange="CED.'+key+'=+this.value;callEdDraw()">'+list.map(function(m){ return '<option value="'+m+'"'+(m==v?' selected':'')+'>'+fmt(m)+'</option>'; }).join('')+'</select>'; };
+  var mn=function(m){ return m===0?'ไม่จำกัด':m>=60&&m%60===0?(m/60)+' ชม.':m+' นาที'; };
+  var sw=function(k,on){ return '<label class="sw"><input type="checkbox" '+(on?'checked':'')+' onchange="CED.'+k+'=this.checked;callEdDraw()"><span></span></label>'; };
+  var tin=function(id,v){ return '<input type="time" value="'+hhmm(v)+'" onchange="var p=this.value.split(\':\');CED.'+id+'=(+p[0])*60+(+p[1])" style="background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:6px 8px;font:inherit">'; };
+  var h='<div class="bed">'+
+    '<div class="row"><div class="e">📞</div><div class="x"><b>เปิดคุมการโทรตอนกลางคืน</b><small>ใช้กับทุกเครื่อง · เครื่องลูกต้องกดอนุญาตการโทรครั้งเดียว</small></div>'+sw('on',cf.on)+'</div>'+
+    '<div class="h4">🌙 ช่วงเวลา</div>'+
+    '<div class="segs" style="margin-bottom:8px"><button class="'+(cf.win==='bed'?'on':'')+'" onclick="CED.win=\'bed\';callEdDraw()">😴 ตามเวลานอนแต่ละเครื่อง</button><button class="'+(cf.win==='custom'?'on':'')+'" onclick="CED.win=\'custom\';callEdDraw()">⏰ กำหนดเอง</button></div>'+
+    (cf.win==='custom'?'<div class="row"><div class="e">⏰</div><div class="x"><b>ตั้งแต่ – ถึง</b></div>'+tin('start',cf.start)+' – '+tin('end',cf.end)+'</div>':'')+
+    '<div class="h4">⏱️ เบอร์อื่น + โทรผ่านแอป</div>'+
+    '<div class="row"><div class="e">🌙</div><div class="x"><b>โควตารวมต่อคืน</b><small>โทรออก + รับสาย + LINE ฯลฯ</small></div>'+sel(cf.quota,[0,10,15,20,30,45,60,90,120],function(m){return m===0?'ห้ามโทรเลย':mn(m);},'quota')+'</div>'+
+    '<div class="row"><div class="e">✂️</div><div class="x"><b>คุยได้ครั้งละไม่เกิน</b><small>ครบแล้วตัดสายอัตโนมัติ</small></div>'+sel(cf.per,[0,3,5,10,15,20,30],mn,'per')+'</div>'+
+    '<div class="row"><div class="e">📳</div><div class="x"><b>สั่นเตือนก่อนตัดสาย</b></div>'+sel(cf.warn,[0,30,60,120],function(s){return s===0?'ไม่เตือน':s<60?s+' วินาที':(s/60)+' นาที';},'warn')+'</div>'+
+    '<div class="row"><div class="e">🛑</div><div class="x"><b>โควตาหมด → ปฏิเสธสายเข้าเบอร์อื่น</b><small>ปิด = ยังรับได้ แต่ตัดตามเวลาต่อครั้ง</small></div>'+sw('rejectIn',cf.rejectIn)+'</div>'+
+    '<div class="h4">👨‍👩‍👧 เบอร์ไว้ใจ (โทรได้ไม่จำกัด) <span class="mut" style="font-weight:400;font-size:12.5px">แก้ได้จากเว็บพ่อแม่เท่านั้น</span></div>'+
+    cf.trusted.map(function(t,i){ return '<div class="rw"><input class="nm" style="flex:1" value="'+esc(t.n)+'" placeholder="ชื่อ" onchange="CED.trusted['+i+'].n=this.value"><input class="nm" style="flex:1.3" inputmode="tel" value="'+esc(t.p)+'" placeholder="เบอร์โทร" onchange="CED.trusted['+i+'].p=this.value"><button onclick="CED.trusted.splice('+i+',1);callEdDraw()">✕</button></div>'; }).join('')+
+    '<button class="addb" onclick="CED.trusted.push({n:\'\',p:\'\'});callEdDraw()">+ เพิ่มเบอร์ไว้ใจ</button>'+
+    '<div class="h4">🚑 เบอร์ฉุกเฉิน (ไม่จำกัด · แจ้งพ่อแม่ทันที)</div>'+
+    '<div class="hol">'+cf.emer.map(function(n,i){ return '<span>'+esc(n)+'<b onclick="CED.emer.splice('+i+',1);callEdDraw()">✕</b></span>'; }).join('')+'</div>'+
+    '<div class="rw"><input id="ceEm" class="nm" inputmode="tel" placeholder="เช่น 1669"><button style="width:auto;padding:0 12px;background:rgba(139,92,246,.3);color:#E9E4FF" onclick="var v=$(\'ceEm\').value.replace(/[^\\d]/g,\'\');if(v.length>=3&&CED.emer.indexOf(v)<0){CED.emer.push(v);callEdDraw();}">+ เพิ่ม</button></div>'+
+    '<div class="h4">💬 แอปที่นับเป็นการโทร</div><div class="mut" style="font-size:12.5px;margin-bottom:6px">ตอนกลางคืน คุยผ่านแอปเหล่านี้ได้ในโควตาเดียวกัน</div>'+
+    '<div class="hol">'+Object.keys(CALL_APPS).map(function(p){ var on=cf.apps.indexOf(p)>=0; return '<span style="cursor:pointer;'+(on?'background:rgba(99,102,241,.45)':'opacity:.55')+'" onclick="var i=CED.apps.indexOf(\''+p+'\');if(i<0)CED.apps.push(\''+p+'\');else CED.apps.splice(i,1);callEdDraw()">'+(on?'✓ ':'+ ')+CALL_APPS[p]+'</span>'; }).join('')+'</div>'+
+    '<div class="h4">🔔 แจ้งเตือน LINE</div>'+
+    '<div class="row"><div class="e">📞</div><div class="x"><b>ทุกสายช่วงกลางคืน</b><small>ใคร · นานเท่าไร · เหลือโควตาเท่าไร</small></div>'+sw('ntCall',cf.ntCall)+'</div>'+
+    '<div class="row"><div class="e">✂️</div><div class="x"><b>ตัดสาย / บล็อกสาย</b></div>'+sw('ntCut',cf.ntCut)+'</div>'+
+    '<div class="row"><div class="e">🚨</div><div class="x"><b>โทรเบอร์ฉุกเฉิน (แจ้งทันที)</b></div>'+sw('ntEmer',cf.ntEmer)+'</div>'+
+    '<button class="big shine" style="width:100%;margin-top:14px" onclick="callSave(this)">บันทึกการคุมการโทร</button></div>';
+  $('callEd').innerHTML=h;
+}
+function callSave(btn){
+  CED.trusted=CED.trusted.filter(function(t){ return String(t.p).replace(/\D/g,'').length>=3; });
+  btn.disabled=true; btn.textContent='กำลังบันทึก…';
+  call('saveCall',CED).then(function(r){ DATA.callCfg=r.call||CED; CED=null; sfx('ok'); toast('📞 บันทึกแล้ว · เครื่องลูกเห็นภายในไม่กี่วินาที'); callSum(); render(); })
+    .catch(function(e){ btn.disabled=false; btn.textContent='บันทึกการคุมการโทร'; toast('บันทึกไม่ได้: '+(e.message||e)); });
+}
+function callHome(d){
+  var el=$('callHome'), cf=DATA&&DATA.callCfg; if(!el) return;
+  if(!cf||!cf.on){ el.innerHTML=''; return; }
+  var cn=d.callNight||{}, used=cn.used||0, left=Math.max(0,cf.quota-used);
+  var perm=(d.health||{}).call, pw=perm==='perm'?'⚠️ เครื่องลูกยังไม่อนุญาตการโทร (เปิดแอปลูก → แตะการ์ดโทร)':perm==='screen'?'⚠️ ยังไม่ได้ตั้งเป็นแอปกรองสาย (สายเข้าจะยังไม่ถูกบล็อก)':'';
+  var ic={in:'📲',out:'📞',app:'💬'}, cl={trusted:'👨‍👩‍👧',emer:'🚑',other:''};
+  var log=(d.calls||[]).slice(0,CLOGALL?20:4).map(function(c){
+    var lab=c.kind==='callBlock'?'🚫 บล็อก':(ic[c.dir]||'📞');
+    return '<div><span>'+new Date(c.t).toLocaleDateString('th-TH',{day:'numeric',month:'short'})+' '+tm(c.t)+' · '+lab+' '+(cl[c.cls]||'')+' '+esc(c.who||c.num||(c.dir==='app'?'โทรผ่านแอป':'ไม่ทราบเบอร์'))+'</span><span>'+(c.sec?Math.floor(c.sec/60)+':'+('0'+c.sec%60).slice(-2):'')+'</span></div>';
+  }).join('');
+  el.innerHTML='<div class="bkc rise" style="background:linear-gradient(135deg,#4338CA,#6366F1)"><div class="t">📞 โทรตอนกลางคืน</div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:flex-end"><div class="num v">'+left+' <small style="font-size:15px">นาที เหลือคืนนี้</small></div><div style="font-size:13px;color:#E0E7FF;text-align:right">ใช้ไป '+used+' / '+cf.quota+' นาที<br>ครั้งละ '+(cf.per?cf.per+' นาที':'ไม่จำกัด')+'</div></div>'+
+    (pw?'<div style="margin-top:8px;font-size:13px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.2)">'+pw+'</div>':'')+
+    (log?'<div class="bkh"><div style="border:0;font-weight:700;color:#fff">📒 บันทึกการโทร</div>'+log+'</div>'+((d.calls||[]).length>4?'<a class="fmore" onclick="CLOGALL=!CLOGALL;render()">'+(CLOGALL?'ย่อ ⌃':'ดูทั้งหมด ⌄')+'</a>':''):'<div class="mut" style="margin-top:8px;color:#E0E7FF">ยังไม่มีสายช่วงกลางคืน</div>')+'</div>';
 }
 function bankHolAdd(){
   var v=$('bkHolIn').value; if(!v) return; var k=v.replace(/-/g,'');
