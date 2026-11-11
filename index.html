@@ -756,8 +756,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.24', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.17';
+var WEB_VER = '1.24.1', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.17';
 var CHANGES = [
+  ['1.24.1','12 พ.ย. 2569','แก้เวลาไม่ตรงกฎ: ไม่บวกเวลาที่เพิ่มซ้ำ · หลังเที่ยงคืนถ้าเครื่องยังไม่ซิงค์ ใช้โควตาของวันนี้ (วันเรียน/วันหยุด) แทนของเมื่อวาน'],
   ['1.24','12 พ.ย. 2569','👨‍👩‍👧 หน้าทั้งบ้าน: ดูทุกเครื่องในหน้าเดียว · อนุมัติคำขอของทุกคน · สั่งหลายเครื่องพร้อมกัน (ล็อกมีเวลา/ถึงเช้า, ปลดล็อก, ให้นอน, พัก, เพิ่ม/ลดเวลา, เรียก, ส่งข้อความ) · เทียบเวลาเล่น · แผนที่รวม · เหตุการณ์รวม · ตั้งเป็นหน้าแรกได้'],
   ['1.23','11 พ.ย. 2569','📞 คุมการโทรตอนกลางคืน: เบอร์ไว้ใจ/ฉุกเฉินไม่จำกัด · เบอร์อื่น+LINE/Messenger ใช้โควตาต่อคืนและจำกัดต่อครั้ง · บันทึกการโทร · 🏦 ตั้งกติกาธนาคารได้เอง (ช่วงเวลาถอน, ตัดทิ้งเมื่อถอน, เวลาที่พ่อแม่เพิ่ม) (แอป v1.17)'],
   ['1.22','11 พ.ย. 2569','🏦 กติกาใหม่: ถอน/ขอเล่นเพิ่มได้เมื่อเหลือไม่เกิน 30 นาที · วันที่ถอนไม่ฝาก · เวลาที่พ่อแม่เพิ่มไม่ฝาก · คู่มือธนาคารเวลาในแอปลูก (แอป v1.16.1)'],
@@ -1054,6 +1055,13 @@ function loadDay(k, quiet){
 }
 function dev(){ var ds=(DATA && DATA.devices)||[], id=CUR==='ALL'?FAMDEV:CUR; return ds.filter(function(x){return x.deviceId===id;})[0] || (CUR==='ALL'?ds[0]:undefined); }
 
+/** เวลาเล่นของวันนี้ (limitMin จากเครื่องรวมเวลาที่เพิ่ม/ลดแล้ว) · ถ้าเครื่องยังไม่ได้ซิงค์วันนี้ ใช้โควตาวันนี้จากกฎ */
+function dl(d){
+  if(d.isToday){ var un=d.limitMin<=0||d.remainingMs<0; return {un:un, lim:d.limitMin, bonus:d.bonusMin||0, used:d.countedMs||0, rem:un?0:Math.max(0,d.remainingMs), stale:false}; }
+  var cf=d.cfg||{}, wd=new Date().getDay(), we=wd===0||wd===6;
+  var base = cf.weekdayLimit!==undefined ? (we?cf.weekendLimit:cf.weekdayLimit) : d.limitMin-(d.bonusMin||0);
+  return {un:!(base>0), lim:base, bonus:0, used:0, rem:base>0?base*60000:0, stale:true};
+}
 function ringHtml(size, stroke, pct, inner){
   var r=(size-stroke)/2, c=2*Math.PI*r;
   return '<svg width="'+size+'" height="'+size+'"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#22D3EE"/></linearGradient></defs>'+
@@ -1079,9 +1087,9 @@ function render(){
   if(CUR==='ALL'){ try{ renderFam(); renderFamRp(); defDevUI(); }catch(e){ console.error(e); } if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); } return; }
 
   // วงแหวนเวลา
-  var used = d.isToday ? d.countedMs : 0, unlimited = d.limitMin<=0 || d.remainingMs<0;
-  var total = d.limitMin*60000 + (d.bonusMin||0)*60000;
-  var rem = unlimited ? 0 : (d.isToday ? d.remainingMs : total);
+  var T = dl(d), used = T.used, unlimited = T.un;
+  var total = T.lim*60000;
+  var rem = T.rem;
   var pct = unlimited ? 1 : Math.max(0, Math.min(1, rem/Math.max(total,1)));
   var ring = $('ring');
   var prevV = ring.querySelector('.num') ? ring.querySelector('.num')._v : 0;
@@ -1103,7 +1111,7 @@ function render(){
   renderHealth(d);
   if(!QEDIT) drawQm();
   var bed = d.cfg && d.cfg.bedOn ? ' · นอน '+hm(d.cfg.bedStart) : '';
-  $('kInfo').innerHTML = 'ใช้ไป '+dur(used)+(unlimited?'':' จาก '+dur(total))+(d.bonusMin>0?' (รวมเพิ่ม '+d.bonusMin+' น.)':d.bonusMin<0?' (ลดลง '+(-d.bonusMin)+' น.)':'')+(bed?'<br>'+bed.replace(' · ',''):'');
+  $('kInfo').innerHTML = 'ใช้ไป '+dur(used)+(unlimited?'':' จาก '+dur(total))+(T.bonus>0?' (รวมเพิ่ม '+T.bonus+' น.)':T.bonus<0?' (ลดลง '+(-T.bonus)+' น.)':'')+(T.stale?'<br>⏳ เครื่องยังไม่ได้ซิงค์ของวันนี้':'')+(bed?'<br>'+bed.replace(' · ',''):'');
 
   var pendLock = d.pending.filter(function(p){return p.cmd==='lock'||p.cmd==='unlock';}).pop();
   var locked = pendLock ? pendLock.cmd==='lock' : d.forceLock;
@@ -1155,7 +1163,7 @@ function render(){
   var mb=$('moreBtn'); mb.setAttribute('data-t', rest.length ? 'ดูอีก '+rest.length+' แอป ⌄' : ''); mb.textContent = rest.length ? mb.getAttribute('data-t') : '';
 
   // รายงาน
-  var hist = d.history || [], lim = d.limitMin*60000, max = Math.max(lim,1);
+  var hist = d.history || [], lim = Math.max(0,d.limitMin-(d.isToday?d.bonusMin||0:0))*60000, max = Math.max(lim,1);
   hist.forEach(function(h){ if(h.ms>max) max=h.ms; }); max*=1.12;
   var sum = hist.reduce(function(a,h){return a+h.ms;},0), avg = hist.length? sum/hist.length : 0;
   var over = hist.filter(function(h){return lim>0 && h.ms>lim;}).length;
@@ -1219,7 +1227,7 @@ function fstate(d){
   return {c:'fp-lock',t:'⏰ เวลาหมด',k:'daily'};
 }
 function fring(d){
-  var unl=d.limitMin<=0||d.remainingMs<0, total=(d.limitMin+(d.bonusMin||0))*60000, rem=unl?0:(d.isToday?Math.max(0,d.remainingMs):total);
+  var T=dl(d), unl=T.un, total=T.lim*60000, rem=T.rem;
   var p=unl?1:Math.max(0,Math.min(1,rem/Math.max(total,1))), r=28, L2=2*Math.PI*r, c=!d.online?'#6B6790':p<.15?'#F43F5E':fcol(d.deviceId);
   return '<div class="fring"><svg width="68" height="68"><circle cx="34" cy="34" r="'+r+'" stroke="rgba(255,255,255,.1)" stroke-width="7" fill="none"/>'+
     '<circle cx="34" cy="34" r="'+r+'" stroke="'+c+'" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="'+(L2*p).toFixed(1)+' '+L2.toFixed(1)+'"/></svg>'+
@@ -1237,7 +1245,7 @@ function famAct(id, what){
 function renderFam(){
   var ds=fdevs(), now=Date.now();
   $('updated').textContent = ago(Math.max.apply(null, ds.map(function(d){return d.lastSeen||0;})));
-  var used=ds.reduce(function(a,d){ return a+(d.isToday?d.countedMs:0); },0);
+  var used=ds.reduce(function(a,d){ return a+dl(d).used; },0);
   var st=ds.map(fstate), onl=ds.filter(function(d){return d.online;}).length;
   var lk=st.filter(function(s){ return s.k!=='ok'&&s.k!=='off'; }).length, off=ds.length-onl;
   var rq=[]; ds.forEach(function(d){ (d.requests||[]).forEach(function(r){ rq.push({d:d,r:r}); }); });
@@ -1281,9 +1289,9 @@ function renderFam(){
   famAllDraw();
   // เทียบเวลาเล่นวันนี้
   $('famBars').innerHTML = ds.map(function(d){
-    var u=d.isToday?d.countedMs:0, lim=Math.max(0,(d.limitMin+(d.bonusMin||0)))*60000, mx=Math.max(u,lim,1)*1.08;
-    return '<div class="fbar"><div class="l"><b>'+esc(d.name)+'</b><span class="num" style="font-weight:600">'+clock(u)+(d.limitMin>0?' / '+clock(lim):' · ไม่จำกัด')+'</span></div>'+
-      '<div class="fbt"><i style="width:'+(u/mx*100).toFixed(1)+'%;background:'+(lim>0&&u>=lim?'#F43F5E':fcol(d.deviceId))+'"></i>'+(d.limitMin>0?'<b style="left:'+(lim/mx*100).toFixed(1)+'%"></b>':'')+'</div></div>';
+    var T=dl(d), u=T.used, lim=T.un?0:T.lim*60000, mx=Math.max(u,lim,1)*1.08;
+    return '<div class="fbar"><div class="l"><b>'+esc(d.name)+'</b><span class="num" style="font-weight:600">'+clock(u)+(lim>0?' / '+clock(lim):' · ไม่จำกัด')+'</span></div>'+
+      '<div class="fbt"><i style="width:'+(u/mx*100).toFixed(1)+'%;background:'+(lim>0&&u>=lim?'#F43F5E':fcol(d.deviceId))+'"></i>'+(lim>0?'<b style="left:'+(lim/mx*100).toFixed(1)+'%"></b>':'')+'</div></div>';
   }).join('');
   // แอปฮิตของบ้าน
   var A={};
@@ -1388,12 +1396,12 @@ function famPlan(d){
     L.push(['pause',o]); note='เล่นได้ไม่จำกัดถึง '+fhm(o*60000)+' น.';
   } else if(k==='add'){
     var w2=lockWhy(d,{daily:1});
-    L.push(['bonus',o]); note=d.limitMin>0?'เหลือ '+clock(Math.max(0,d.remainingMs))+' → '+clock(Math.max(0,d.remainingMs)+o*60000)+' ชม.':'ไม่จำกัดเวลาอยู่แล้ว';
+    L.push(['bonus',o]); note=d.limitMin>0?'เหลือ '+clock(dl(d).rem)+' → '+clock(dl(d).rem+o*60000)+' ชม.':'ไม่จำกัดเวลาอยู่แล้ว';
     if(w2&&w2.k!=='daily'){ note+=' · <span class="wn">ยังติด'+w2.t+'</span>'; }
   } else if(k==='sub'){
     if(!(d.limitMin>0)){ bad=true; note='ไม่ได้จำกัดเวลา ลดไม่ได้'; }
     else if(vnum(d.appVersion)<vnum('1.14.5')){ bad=true; note='ต้องอัปเดตแอปก่อน'; }
-    else { L.push(['bonus',-o]); note='เหลือ '+clock(Math.max(0,d.remainingMs))+' → '+clock(Math.max(0,d.remainingMs-o*60000))+' ชม.'+(paused?' · <span class="wn">มีผลหลังหมดพัก</span>':''); }
+    else { L.push(['bonus',-o]); note='เหลือ '+clock(dl(d).rem)+' → '+clock(Math.max(0,dl(d).rem-o*60000))+' ชม.'+(paused?' · <span class="wn">มีผลหลังหมดพัก</span>':''); }
   }
   return {L:L, note:note+off, bad:bad};
 }
@@ -1609,7 +1617,7 @@ function lockWhy(d, skip){
   if(!skip.lock && fl) return {k:'lock',e:'🔒',t:'ล็อกทั้งเครื่อง'+(pend?' (รอส่ง)':'')};
   if(cf.bedOn && inWin(nm,cf.bedStart,cf.bedEnd)) return {k:'bed',e:'🌙',t:'เวลานอน · ล็อกถึง '+hhmm(cf.bedEnd),until:hhmm(cf.bedEnd)};
   if(cf.schoolOn && !we && inWin(nm,cf.schoolStart,cf.schoolEnd)) return {k:'school',e:'🏫',t:'เวลาเรียน · ล็อกถึง '+hhmm(cf.schoolEnd),until:hhmm(cf.schoolEnd)};
-  if(!skip.daily && d.limitMin>0 && (d.remainingMs||0)<=0) return {k:'daily',e:'⏰',t:'เวลาเล่นหมดแล้ว'};
+  if(!skip.daily && d.isToday && d.limitMin>0 && (d.remainingMs||0)<=0) return {k:'daily',e:'⏰',t:'เวลาเล่นหมดแล้ว'};
   return null;
 }
 function askChoice(emoji, title, html, choices){
@@ -1669,7 +1677,7 @@ function cmd(c, arg){
   if(!arguments[2]){
     var limHm=function(m){ return ('0'+Math.floor(m/60)).slice(-2)+':'+('0'+(m%60)).slice(-2); };
     var hm=function(ms){ var t=new Date(Date.now()+ms); return ('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2); };
-    var rem=Math.max(0,d.remainingMs||0), cf=d.cfg||{}, nm=new Date().getHours()*60+new Date().getMinutes();
+    var rem=dl(d).rem, cf=d.cfg||{}, nm=new Date().getHours()*60+new Date().getMinutes();
     var inBed=cf.bedOn && (cf.bedStart<=cf.bedEnd ? (nm>=cf.bedStart&&nm<cf.bedEnd) : (nm>=cf.bedStart||nm<cf.bedEnd));
     var bedNote=inBed ? '\n🌙 ตอนนี้เป็นเวลานอน เครื่องยังล็อกจนถึง '+limHm(cf.bedEnd)+' น.' : '';
     var Q={
@@ -1697,7 +1705,7 @@ function adjTime(sign){
 }
 function adjPick(m){ ADJ.m=m; sfx('pick'); adjDraw(); }
 function adjDraw(){
-  var d=dev(), s=ADJ.sign, rem=Math.max(0,d.remainingMs||0), after=Math.max(0,rem+s*ADJ.m*60000);
+  var d=dev(), s=ADJ.sign, rem=dl(d).rem, after=Math.max(0,rem+s*ADJ.m*60000);
   var cf=d.cfg||{}, nm=new Date().getHours()*60+new Date().getMinutes();
   var inBed=cf.bedOn && (cf.bedStart<=cf.bedEnd ? (nm>=cf.bedStart&&nm<cf.bedEnd) : (nm>=cf.bedStart||nm<cf.bedEnd));
   $('dT').textContent = (s>0?'เพิ่มเวลาให้':'ลดเวลาของ')+d.name;
