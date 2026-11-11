@@ -663,8 +663,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.21', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.16';
+var WEB_VER = '1.22', WEB_DATE = '7 พ.ย. 2569', LATEST_APP = '1.16.1';
 var CHANGES = [
+  ['1.22','11 พ.ย. 2569','🏦 กติกาใหม่: ถอน/ขอเล่นเพิ่มได้เมื่อเหลือไม่เกิน 30 นาที · วันที่ถอนไม่ฝาก · เวลาที่พ่อแม่เพิ่มไม่ฝาก · คู่มือธนาคารเวลาในแอปลูก (แอป v1.16.1)'],
   ['1.21','11 พ.ย. 2569','🏦 ธนาคารเวลา: ฝากเวลาที่เหลือทุกเที่ยงคืน · ลูกถอนมาเล่นได้ไม่เกินเพดาน (จ.–ศ. 6 ชม. / วันหยุด 8 ชม.) · แลกรางวัลที่พ่อแม่ตั้ง · เติม/หักเวลาเอง · สมุดบัญชี (แอปเครื่องลูก v1.16)'],
   ['1.20','11 พ.ย. 2569','ปุ่มทำงานสัมพันธ์กัน: ปุ่มที่ติดเงื่อนไขเป็นสีเทาพร้อมบอกเหตุ · แตะแล้วเสนอแก้+ทำต่อในกดเดียว · ป้ายสถานะบอกเหตุที่ล็อกจริง (ล็อก/เวลานอน/เวลาเรียน/เวลาหมด/พัก)'],
   ['แอป 1.15','11 พ.ย. 2569','รองรับมือถือรุ่นประหยัด (Android Go เช่น HiOS) ที่เปิดสิทธิ์แสดงทับแอปอื่นไม่ได้ · ใช้การช่วยเหลือพิเศษล็อกแทน'],
@@ -1145,6 +1146,7 @@ function bankHome(d){
   el.innerHTML='<div class="bkc rise"><div class="t">🏦 ธนาคารเวลาของ'+esc(d.name)+'</div>'+
     '<div style="display:flex;justify-content:space-between;align-items:flex-end"><div class="num v">'+bhm(b.bal)+' <small style="font-size:15px">ชม.</small></div>'+
     '<div style="font-size:13px;color:#E8E1FF;text-align:right">วันนี้ถอนไป '+bhm(b.wToday)+'<br>เพดานวันนี้ '+bhm(b.cap)+' ชม.'+(b.off?' (วันหยุด)':'')+'</div></div>'+
+    (b.tonight===undefined?'':'<div style="margin-top:8px;font-size:13.5px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.18)">'+(b.wToday>0?'🌙 วันนี้ถอนแล้ว · คืนนี้<b style="color:#FFB3BF">ไม่ฝาก</b> (เวลาที่เหลือตัดทิ้ง)':'🌙 คืนนี้จะฝาก <b style="color:#7DFFC4">+'+bhm(b.tonight||0)+'</b> ชม.')+'</div>')+
     '<div class="two"><button style="background:rgba(60,245,160,.18);color:#A7FFD8" onclick="bankAdj(1)">➕ เติมให้</button><button style="background:rgba(244,63,94,.18);color:#FFB3BF" onclick="bankAdj(-1)">➖ หักออก</button></div>'+
     pend+(hist?'<div class="bkh"><div style="border:0;font-weight:700;color:#fff">📒 สมุดบัญชี</div>'+hist+'</div>'+((b.hist||[]).length>5?'<a class="fmore" onclick="BKHIST=!BKHIST;render()">'+(BKHIST?'ย่อ ⌃':'ดูทั้งหมด ⌄')+'</a>':''):'')+'</div>';
 }
@@ -1183,6 +1185,7 @@ function bankEdDraw(){
     '<div class="row"><div class="e">🎉</div><div class="x"><b>เพดาน ส.–อา. / วันหยุด</b><small>รวมโควตาปกติ + ที่ถอน</small></div><select onchange="BKED.capWe=+this.value">'+opt(cf.capWe,caps)+'</select></div>'+
     '<div class="row"><div class="e">💸</div><div class="x"><b>ลูกถอนเองได้ทันที</b><small>ปิด = ทุกครั้งต้องรอพ่อแม่อนุมัติ</small></div><label class="sw"><input type="checkbox" '+(cf.self?'checked':'')+' onchange="BKED.self=this.checked"><span></span></label></div>'+
     '<div class="row"><div class="e">🔁</div><div class="x"><b>ถอนได้ครั้งละไม่เกิน</b></div><select onchange="BKED.maxPer=+this.value">'+opt(cf.maxPer,[15,30,60,90,120])+'</select></div>'+
+    '<div class="h4">📜 กติกา</div><div class="mut" style="font-size:13px;line-height:1.6">• ฝากเฉพาะโควตาปกติที่เหลือ ทุกเที่ยงคืน<br>• ถอน และ "ขอเล่นเพิ่ม" ได้เมื่อเวลาเหลือไม่เกิน 30 นาที<br>• วันที่ถอน เวลาที่เหลือทั้งหมดตัดทิ้ง ไม่ฝาก<br>• เวลาที่พ่อแม่เพิ่มให้ ใช้ไม่หมดตัดทิ้ง ไม่ฝาก<br>• ลูกอ่านคู่มือได้ที่ปุ่ม 📖 กติกา ในแอป</div>'+
     '<div class="h4">🎁 รางวัลที่แลกได้ <span class="mut" style="font-weight:400;font-size:12.5px">(อีโมจิ · ชื่อ · ราคาเป็นชั่วโมง)</span></div>'+
     (cf.rewards||[]).map(function(r,i){ return '<div class="rw"><input class="em" value="'+esc(r.e)+'" onchange="BKED.rewards['+i+'].e=this.value"><input class="nm" value="'+esc(r.n)+'" placeholder="ชื่อรางวัล" onchange="BKED.rewards['+i+'].n=this.value"><input class="hr" type="number" min="0.25" step="0.25" value="'+(r.min/60)+'" onchange="BKED.rewards['+i+'].min=Math.round(this.value*60)"><button onclick="BKED.rewards.splice('+i+',1);bankEdDraw()">✕</button></div>'; }).join('')+
     '<button class="addb" onclick="BKED.rewards.push({e:\'🎁\',n:\'\',min:120});bankEdDraw()">+ เพิ่มรางวัล</button>'+
