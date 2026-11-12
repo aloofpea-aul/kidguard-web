@@ -337,7 +337,6 @@ textarea.mt:focus{border-color:#A78BFA}
 .fbt b{position:absolute;top:0;bottom:0;width:2px;background:#fff;opacity:.75}
 .fapp{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid rgba(255,255,255,.07);font-size:14.5px}.fapp:first-child{border:0}
 .fwho{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}.fwho span{font-size:11.5px;border-radius:99px;padding:1px 8px}
-#famMapBox{height:170px;border-radius:18px;overflow:hidden}
 .fpin{transform:translate(-50%,-100%);text-align:center;font-size:11.5px;font-weight:700;color:#fff;white-space:nowrap}
 .fpin div{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff;margin:0 auto;box-shadow:0 3px 10px rgba(0,0,0,.4)}
 .fpin div span{transform:rotate(45deg);font-size:13px}
@@ -360,6 +359,41 @@ textarea.mt:focus{border-color:#A78BFA}
 .frow .v{display:flex;gap:14px;text-align:right}.frow .v div{font-size:11.5px;color:var(--mut)}.frow .v b{display:block;font-size:16px;color:#fff;font-family:Inter,sans-serif}
 .fdev{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;font-size:16px;margin-top:8px;text-align:left}
 .fdev b{flex:1}.fdev span{color:var(--mut);font-size:13px}
+/* แผนที่ทั้งบ้าน (Longdo) + โหมดเต็มจอ */
+.fmw{position:relative;height:200px;border-radius:18px;overflow:hidden;background:#dfe7ee}
+.fmw #famMapBox{position:absolute;inset:0;height:auto;border-radius:0}
+.fmw .fmtop,.fmw .fmside,.fmw .fmbot{display:none}
+.fmexp{position:absolute;right:10px;top:10px;z-index:1001;height:38px;padding:0 13px;border-radius:12px;border:0;background:rgba(15,10,40,.82);color:#fff;font-size:14px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.fmw.full{position:fixed;inset:0;height:auto;border-radius:0;z-index:99990}
+.fmw.full .fmexp,.fmw.full .fmcover{display:none}
+.fmcover{position:absolute;inset:0;z-index:1000}
+.fmw.full .fmtop{display:flex;position:absolute;left:10px;right:10px;top:calc(env(safe-area-inset-top) + 10px);z-index:1001;gap:10px;align-items:center;padding:8px 10px;border-radius:18px;background:rgba(15,10,40,.86);color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.fmtop b{display:block;font-size:16px}.fmtop small{color:#C9C3F0;font-size:12.5px}
+.fmtop .x{width:40px;height:40px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:18px;flex:0 0 40px}
+.fmw.full .fmside{display:flex;flex-direction:column;gap:8px;position:absolute;right:10px;top:calc(env(safe-area-inset-top) + 78px);z-index:1001}
+.fmside button{width:46px;height:46px;border-radius:14px;border:0;background:rgba(255,255,255,.95);color:#1d1640;font-size:20px;font-weight:800;box-shadow:0 3px 12px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;line-height:1}
+.fmside button.on{background:linear-gradient(135deg,#8B5CF6,#22D3EE);color:#fff}
+.fmside button small{font-size:9.5px;display:block;font-weight:700}
+.fmside .sep{height:4px}
+.fmw.full .fmbot{display:flex;gap:10px;overflow-x:auto;position:absolute;left:0;right:0;bottom:0;z-index:1001;padding:10px 10px calc(env(safe-area-inset-bottom) + 12px);scroll-snap-type:x mandatory}
+.fmbot::-webkit-scrollbar{display:none}
+.fmk{flex:0 0 84%;scroll-snap-align:center;border-radius:20px;padding:12px 13px;background:rgba(15,10,40,.9);color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12)}
+.fmk.one{flex-basis:100%}
+.fmk .h{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
+.fmk .h i{width:12px;height:12px;border-radius:50%;flex:0 0 12px}
+.fmk .h span{margin-left:auto;font-weight:400;font-size:12.5px;color:#C9C3F0}
+.fmk .p{font-size:13px;color:#C9C3F0;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fmk .eta{margin-top:8px;padding:8px 10px;border-radius:12px;background:rgba(34,211,238,.14);font-size:14px}
+.fmk .eta b{font-size:18px;font-family:Inter,sans-serif}
+.fmk .bb{display:flex;gap:6px;margin-top:9px}
+.fmk .bb button{flex:1;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;font-size:13.5px;font-weight:700}
+.fmk .bb .m{flex:1.7;background:linear-gradient(90deg,#8B5CF6,#22D3EE);border:0;white-space:nowrap}
+.ldpin{transform:translate(-50%,-100%);text-align:center;font:700 12px 'IBM Plex Sans Thai',sans-serif;color:#fff;white-space:nowrap;cursor:pointer}
+.ldpin .b{width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:3px solid #fff;margin:0 auto;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+.ldpin .b span{transform:rotate(45deg);font-size:15px}
+.ldpin em{font-style:normal;display:inline-block;margin-top:3px;background:rgba(20,14,50,.85);border-radius:8px;padding:1px 7px}
+.ldme{width:18px;height:18px;border-radius:50%;background:#2563EB;border:3px solid #fff;box-shadow:0 0 0 7px rgba(37,99,235,.25),0 2px 6px rgba(0,0,0,.3);transform:translate(-50%,-50%)}
+body.fmlock{overflow:hidden}
 </style>
 <style>
 /* ===== กลุ่มพับได้ ===== */
@@ -553,7 +587,19 @@ textarea.mt:focus{border-color:#A78BFA}
     <div class="fcard" id="famBars"></div>
     <div class="fsec">🔥 แอปฮิตของบ้านวันนี้</div>
     <div class="fcard" id="famApps"></div>
-    <div id="famLocW"><div class="fsec" style="margin-bottom:10px">📍 ทุกคนอยู่ไหน <span id="famLocS"></span></div><div id="famMapBox"></div></div>
+    <div id="famLocW"><div class="fsec" style="margin-bottom:10px">📍 ทุกคนอยู่ไหน <span id="famLocS"></span></div>
+      <div class="fmw" id="fmWrap"><div id="famMapBox"></div>
+        <div class="fmcover" onclick="fmFull(true)"></div><button class="fmexp" data-snd onclick="fmFull(true)">⛶ ขยายเต็มจอ</button>
+        <div class="fmtop"><button class="x" onclick="fmFull(false)">✕</button><div style="flex:1;min-width:0"><b>📍 ทุกคนอยู่ไหน</b><small id="fmSub"></small></div></div>
+        <div class="fmside">
+          <button onclick="fmZoom(1)">＋</button><button onclick="fmZoom(-1)">－</button><div class="sep"></div>
+          <button id="fmMeB" onclick="fmMe()" title="ตำแหน่งฉัน">🎯</button>
+          <button onclick="fmFit()" title="ดูทุกคน">👨‍👩‍👧</button>
+          <button id="fmLyB" onclick="fmLayer()" title="ชั้นแผนที่">🛰️</button>
+          <button id="fmTfB" onclick="fmTraffic()" title="การจราจร">🚦</button>
+        </div>
+        <div class="fmbot" id="fmList"></div>
+      </div></div>
     <div class="fsec">🔔 เหตุการณ์ล่าสุดทั้งบ้าน</div>
     <div class="fcard" id="famEv"></div>
   </div>
@@ -756,8 +802,9 @@ textarea.mt:focus{border-color:#A78BFA}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.24.1', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.17';
+var WEB_VER = '1.25', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.17';
 var CHANGES = [
+  ['1.25','12 พ.ย. 2569','📍 แผนที่ทั้งบ้าน: ใช้แผนที่ Longdo (สว่าง ละเอียดแบบงานพาโทรล) · ขยายเต็มจอ · ปุ่มซูม/ตำแหน่งฉัน/ดูทุกคน/ดาวเทียม/จราจร · กด 🚗 ดูเวลาเดินทางไปหาแต่ละคน · 🧭 นำทาง'],
   ['1.24.1','12 พ.ย. 2569','แก้เวลาไม่ตรงกฎ: ไม่บวกเวลาที่เพิ่มซ้ำ · หลังเที่ยงคืนถ้าเครื่องยังไม่ซิงค์ ใช้โควตาของวันนี้ (วันเรียน/วันหยุด) แทนของเมื่อวาน'],
   ['1.24','12 พ.ย. 2569','👨‍👩‍👧 หน้าทั้งบ้าน: ดูทุกเครื่องในหน้าเดียว · อนุมัติคำขอของทุกคน · สั่งหลายเครื่องพร้อมกัน (ล็อกมีเวลา/ถึงเช้า, ปลดล็อก, ให้นอน, พัก, เพิ่ม/ลดเวลา, เรียก, ส่งข้อความ) · เทียบเวลาเล่น · แผนที่รวม · เหตุการณ์รวม · ตั้งเป็นหน้าแรกได้'],
   ['1.23','11 พ.ย. 2569','📞 คุมการโทรตอนกลางคืน: เบอร์ไว้ใจ/ฉุกเฉินไม่จำกัด · เบอร์อื่น+LINE/Messenger ใช้โควตาต่อคืนและจำกัดต่อครั้ง · บันทึกการโทร · 🏦 ตั้งกติกาธนาคารได้เอง (ช่วงเวลาถอน, ตัดทิ้งเมื่อถอน, เวลาที่พ่อแม่เพิ่ม) (แอป v1.17)'],
@@ -1201,7 +1248,7 @@ function ruleBadge(r){
 
 function pick(id){ if(id!=='ALL'){ FAMT=null; } CUR=id; DRAFT=null; LASTDASH=null; window.scrollTo({top:0,behavior:'smooth'}); try{ if(id!=='ALL') localStorage.setItem('kgLastDev',id); }catch(e){} render(); showTab(); }
 // ===== 👨‍👩‍👧 ทั้งบ้าน: ดู/สั่งทุกเครื่องในหน้าเดียว =====
-var FAMDEV=null, FAMT=null, FSEL=null, FB=null, FMAP=null, FMK={};
+var FAMDEV=null, FAMT=null, FSEL=null, FB=null;
 var FCOL=['#22D3EE','#F472B6','#A78BFA','#FBBF24','#34D399','#FB7185'];
 function famOn(){ return CUR==='ALL'; }
 function fdevs(){ return (DATA&&DATA.devices)||[]; }
@@ -1311,23 +1358,140 @@ function famAllDraw(){
     '<div class="fgrid">'+b('lock','🔒','ล็อกทั้งหมด',1)+b('unlock','🔓','ปลดล็อก')+b('bed','😴','ให้นอนเลย')+b('pause','⏸️','พักควบคุม')+
     b('add','➕','เพิ่มเวลา')+b('sub','➖','ลดเวลา')+b('ring','📢','เรียกทุกคน')+b('msg','💬','ส่งข้อความ')+'</div>';
 }
+// ===== 📍 แผนที่ทั้งบ้าน: Longdo (เหมือนงานพาโทรล) · เต็มจอ · ตำแหน่งฉัน · เวลาเดินทาง =====
+var LONGDO_KEY='f61a87ff70c39e610385809783d5a1b3', LDQ=null, LDFAIL=false;
+var FM={map:null, kind:'', mk:{}, meMk:null, me:null, eta:{}, lay:0, tf:false, fitted:false, busy:''};
+var FM_LAYERS=[['NORMAL','🗺️ แผนที่'],['GOOGLE_HYBRID','🛰️ ดาวเทียม']];
+function longdoLoad(cb){
+  if(window.longdo && longdo.Map) return cb(true);
+  if(LDQ){ LDQ.push(cb); return; }
+  LDQ=[cb];
+  var fin=function(ok){ var q=LDQ||[]; LDQ=null; q.forEach(function(f){ try{ f(ok); }catch(e){ console.error(e); } }); };
+  var s=document.createElement('script'), t=setTimeout(function(){ fin(false); }, 10000);
+  s.src='https://api.longdo.com/map/?key='+LONGDO_KEY;
+  s.onload=function(){ clearTimeout(t); fin(!!(window.longdo&&longdo.Map)); };
+  s.onerror=function(){ clearTimeout(t); fin(false); };
+  document.head.appendChild(s);
+}
+function fmDist(a,b){ var R=6371000, r=Math.PI/180, dl=(b.lat-a.lat)*r, dg=(b.lng-a.lng)*r, x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dg/2)*Math.sin(dg/2); return 2*R*Math.asin(Math.sqrt(x)); }
+function fmKm(m){ return m<1000 ? Math.round(m)+' ม.' : (m/1000).toFixed(m<10000?1:0)+' กม.'; }
+function fmMin(s){ var m=Math.max(1,Math.round(s/60)); return m<60 ? m+' นาที' : Math.floor(m/60)+' ชม. '+(m%60?m%60+' นาที':''); }
+function fmPinHtml(d){
+  var l=d.loc, c=Date.now()-l.t>3600000?'#6B6790':fcol(d.deviceId);
+  return '<div class="ldpin"><div class="b" style="background:'+c+'"><span>'+esc(placeE(l.place))+'</span></div><em>'+esc(d.name)+' · '+lago(l.t)+'</em></div>';
+}
+function fmInit(){
+  var box=$('famMapBox');
+  if(!LDFAIL && window.longdo && longdo.Map){
+    FM.kind='longdo';
+    FM.map=new longdo.Map({placeholder:box, zoom:14, lastView:false, language:'th', location:{lon:98.75,lat:8.37}});
+    ['DPad','Zoombar','Toolbar','LayerSelector','Geolocation','Fullscreen','Crosshair'].forEach(function(k){ try{ FM.map.Ui[k].visible(false); }catch(e){} });
+    try{ FM.map.Event.bind('overlayClick',function(o){ if(o && o.__kg) fmFocus(o.__kg); }); }catch(e){}
+    try{ FM.map.Route.enableContextMenu(false); FM.map.Route.auto(false); }catch(e){}
+  } else if(window.L){
+    FM.kind='leaflet';
+    FM.map=L.map(box,{zoomControl:false,attributionControl:true,tap:false});
+    FM.base=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(FM.map);
+  }
+}
 function famMapDraw(){
   var ds=fdevs().filter(function(d){ return d.loc; });
-  $('famLocW').classList.toggle('hidden', !window.L || !ds.length);
-  if(!window.L || !ds.length) return;
+  $('famLocW').classList.toggle('hidden', !ds.length);
+  if(!ds.length) return;
   $('famLocS').textContent = ds.length+' จาก '+fdevs().length+' เครื่อง';
-  if(!FMAP){
-    FMAP=L.map('famMapBox',{zoomControl:false,attributionControl:true,dragging:true,scrollWheelZoom:false,doubleClickZoom:true,touchZoom:true,tap:false});
-    L.tileLayer(TILE,{maxZoom:19,attribution:TATTR,className:'dk'}).addTo(FMAP);
+  $('fmSub').textContent = 'อัปเดต '+tm(Date.now())+' · แตะหมุดหรือการ์ดเพื่อดูคนนั้น';
+  if(!FM.map){
+    if(FM.busy) return; FM.busy='load';
+    longdoLoad(function(ok){ if(!ok) LDFAIL=true; FM.busy=''; fmInit(); if(FM.map) famMapDraw(); });
+    return;
   }
-  var pts=[];
+  fmMarks(ds);
+  fmListDraw();
+  if(!FM.fitted){ FM.fitted=true; setTimeout(fmFit, 150); }
+}
+function fmMarks(ds){
+  var m=FM.map, seen={};
   ds.forEach(function(d){
-    var l=d.loc, ll=[l.lat,l.lng], c=Date.now()-l.t>3600000?'#6B6790':fcol(d.deviceId);
-    var ic=L.divIcon({className:'',iconSize:[0,0],html:'<div class="fpin"><div style="background:'+c+'"><span>'+esc(placeE(l.place))+'</span></div><em>'+esc(d.name)+' · '+lago(l.t)+'</em></div>'});
-    if(FMK[d.deviceId]){ FMK[d.deviceId].setLatLng(ll); FMK[d.deviceId].setIcon(ic); } else FMK[d.deviceId]=L.marker(ll,{icon:ic}).addTo(FMAP).on('click',function(){ pick(d.deviceId); });
-    pts.push(ll);
+    var l=d.loc, id=d.deviceId; seen[id]=1;
+    if(FM.kind==='longdo'){
+      if(FM.mk[id]) try{ m.Overlays.remove(FM.mk[id]); }catch(e){}
+      var mk=new longdo.Marker({lon:l.lng,lat:l.lat},{icon:{html:fmPinHtml(d),offset:{x:0,y:0}},clickable:true,weight:longdo.OverlayWeight?longdo.OverlayWeight.Top:undefined});
+      mk.__kg=id; m.Overlays.add(mk); FM.mk[id]=mk;
+    } else {
+      var ic=L.divIcon({className:'',iconSize:[0,0],html:fmPinHtml(d)});
+      if(FM.mk[id]){ FM.mk[id].setLatLng([l.lat,l.lng]); FM.mk[id].setIcon(ic); }
+      else FM.mk[id]=L.marker([l.lat,l.lng],{icon:ic}).addTo(m).on('click',function(){ fmFocus(id); });
+    }
   });
-  setTimeout(function(){ FMAP.invalidateSize(); if(pts.length===1) FMAP.setView(pts[0],15,{animate:false}); else FMAP.fitBounds(pts,{padding:[40,40],maxZoom:16,animate:false}); },80);
+  Object.keys(FM.mk).forEach(function(id){ if(!seen[id]){ try{ FM.kind==='longdo'?m.Overlays.remove(FM.mk[id]):m.removeLayer(FM.mk[id]); }catch(e){} delete FM.mk[id]; } });
+}
+function fmPts(withMe){ var p=fdevs().filter(function(d){return d.loc;}).map(function(d){ return {lat:d.loc.lat,lng:d.loc.lng}; }); if(withMe&&FM.me) p.push(FM.me); return p; }
+function fmBound(p){
+  if(!FM.map||!p.length) return;
+  if(p.length===1){ fmGo(p[0],16); return; }
+  var a=p.map(function(x){return x.lat;}), b=p.map(function(x){return x.lng;});
+  var la0=Math.min.apply(null,a), la1=Math.max.apply(null,a), lo0=Math.min.apply(null,b), lo1=Math.max.apply(null,b), pa=Math.max((la1-la0)*.25,.002), po=Math.max((lo1-lo0)*.2,.002);
+  if(FM.kind==='longdo') FM.map.bound({minLat:la0-pa*(FM.full?2.2:1),maxLat:la1+pa,minLon:lo0-po,maxLon:lo1+po});
+  else FM.map.fitBounds([[la0,lo0],[la1,lo1]],{padding:[50,50],maxZoom:16});
+}
+function fmGo(p,z){ if(FM.kind==='longdo'){ FM.map.location({lon:p.lng,lat:p.lat},true); if(z) FM.map.zoom(z,true); } else FM.map.setView([p.lat,p.lng],z||FM.map.getZoom()); }
+function fmFit(){ fmResize(); fmBound(fmPts(true)); }
+function fmZoom(d){ if(!FM.map) return; sfx('pick'); if(FM.kind==='longdo') FM.map.zoom(FM.map.zoom()+d,true); else FM.map.setZoom(FM.map.getZoom()+d); }
+function fmResize(){ try{ FM.kind==='longdo' ? FM.map.resize() : FM.map.invalidateSize(); }catch(e){ try{ FM.map.Ui.resize(); }catch(x){} } }
+function fmFull(on){
+  FM.full=on; var w=$('fmWrap'); if(on) document.body.appendChild(w); else $('famLocW').appendChild(w); w.classList.toggle('full',on); document.body.classList.toggle('fmlock',on); sfx(on?'open':'pick');
+  setTimeout(function(){ fmResize(); fmListDraw(); fmBound(fmPts(true)); },120);
+}
+function fmFocus(id){ var d=fby(id); if(!d||!d.loc) return; sfx('pick'); if(!FM.full) fmFull(true); setTimeout(function(){ fmGo({lat:d.loc.lat,lng:d.loc.lng},17); },FM.full?0:200);
+  var el=document.getElementById('fmk_'+id); if(el) el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}); }
+function fmLayer(){
+  if(FM.kind!=='longdo'){ toast('โหมดดาวเทียมใช้ได้กับแผนที่ Longdo'); return; }
+  FM.lay=(FM.lay+1)%FM_LAYERS.length; var L2=FM_LAYERS[FM.lay];
+  try{ FM.map.Layers.setBase(longdo.Layers[L2[0]]); toast(L2[1]); }catch(e){ FM.lay=0; toast('เปลี่ยนชั้นแผนที่ไม่ได้'); }
+  $('fmLyB').classList.toggle('on',FM.lay>0); sfx('pick');
+}
+function fmTraffic(){
+  if(FM.kind!=='longdo'){ toast('ข้อมูลจราจรใช้ได้กับแผนที่ Longdo'); return; }
+  FM.tf=!FM.tf; try{ FM.tf ? FM.map.Layers.add(longdo.Layers.TRAFFIC) : FM.map.Layers.remove(longdo.Layers.TRAFFIC); }catch(e){}
+  $('fmTfB').classList.toggle('on',FM.tf); sfx('pick'); toast(FM.tf?'🚦 แสดงการจราจร (เขียว=คล่อง แดง=ติด)':'ปิดการจราจร');
+}
+function fmGetMe(cb){
+  if(!navigator.geolocation){ toast('เครื่องนี้หาตำแหน่งไม่ได้'); return; }
+  $('fmMeB').classList.add('on'); toast('📍 กำลังหาตำแหน่งของคุณ…');
+  navigator.geolocation.getCurrentPosition(function(p){
+    FM.me={lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy,t:Date.now()};
+    if(FM.kind==='longdo'){ if(FM.meMk) try{ FM.map.Overlays.remove(FM.meMk); }catch(e){} FM.meMk=new longdo.Marker({lon:FM.me.lng,lat:FM.me.lat},{icon:{html:'<div class="ldme"></div>',offset:{x:0,y:0}},title:'ตำแหน่งของคุณ'}); FM.map.Overlays.add(FM.meMk); }
+    else { if(FM.meMk) FM.map.removeLayer(FM.meMk); FM.meMk=L.marker([FM.me.lat,FM.me.lng],{icon:L.divIcon({className:'',iconSize:[0,0],html:'<div class="ldme"></div>'})}).addTo(FM.map); }
+    fmListDraw(); cb && cb();
+  }, function(e){ $('fmMeB').classList.remove('on'); toast(e.code===1?'⚠️ ยังไม่ได้อนุญาตตำแหน่ง · ตั้งค่า iPhone → ความเป็นส่วนตัว → บริการหาตำแหน่ง → Safari → "ขณะใช้งาน"':'หาตำแหน่งไม่ได้ ลองใหม่อีกครั้ง'); },
+  {enableHighAccuracy:true,timeout:15000,maximumAge:30000});
+}
+function fmMe(){ sfx('pick'); fmGetMe(function(){ fmGo(FM.me,16); }); }
+function fmEta(id){
+  var d=fby(id); if(!d||!d.loc) return;
+  if(!FM.me || Date.now()-FM.me.t>5*60000){ fmGetMe(function(){ fmEta(id); }); return; }
+  var to={lat:d.loc.lat,lng:d.loc.lng}, line=fmDist(FM.me,to);
+  FM.eta[id]={wait:1}; fmListDraw(); sfx('pick');
+  var done=function(dist,sec,est){ FM.eta[id]={d:dist,s:sec,est:est,t:Date.now()}; fmListDraw(); fmBound([FM.me,to]); };
+  if(FM.kind!=='longdo'){ done(line*1.3, line*1.3/(40/3.6), true); return; }
+  var r=FM.map.Route, ok=false;
+  try{ FM.map.Event.unbind('guideComplete'); }catch(e){}
+  FM.map.Event.bind('guideComplete',function(g){ if(ok) return; ok=true; var x=g&&g[0]; if(x&&x.distance) done(x.distance,x.interval,false); else done(line*1.3,line*1.3/(40/3.6),true); });
+  try{ r.clear(); r.add({lon:FM.me.lng,lat:FM.me.lat}); r.add({lon:to.lng,lat:to.lat}); r.search(); }catch(e){ ok=true; done(line*1.3,line*1.3/(40/3.6),true); }
+  setTimeout(function(){ if(!ok){ ok=true; done(line*1.3,line*1.3/(40/3.6),true); } },12000);
+}
+function fmNav(id){ var d=fby(id); if(!d||!d.loc) return; window.open('https://www.google.com/maps/dir/?api=1&destination='+d.loc.lat+','+d.loc.lng+'&travelmode=driving','_blank'); }
+function fmListDraw(){
+  var ds=fdevs().filter(function(d){ return d.loc; }), one=ds.length===1;
+  $('fmList').innerHTML = ds.map(function(d){
+    var l=d.loc, e=FM.eta[d.deviceId], far=FM.me?fmDist(FM.me,{lat:l.lat,lng:l.lng}):null;
+    var bat=(d.battery!==''&&Number(d.battery)>=0)?' · 🔋 '+d.battery+'%':'';
+    var eta = !e ? '' : e.wait ? '<div class="eta">⏳ กำลังคำนวณเส้นทาง…</div>' :
+      '<div class="eta">🚗 <b>'+fmMin(e.s)+'</b> · '+fmKm(e.d)+(e.est?' <span style="font-size:12px;color:#C9C3F0">(ประมาณจากระยะตรง)</span>':'')+'<div style="font-size:12px;color:#C9C3F0">จากตำแหน่งของคุณ · คิดเมื่อ '+tm(e.t)+'</div></div>';
+    return '<div class="fmk'+(one?' one':'')+'" id="fmk_'+d.deviceId+'"><div class="h" onclick="fmFocus(\''+d.deviceId+'\')"><i style="background:'+fcol(d.deviceId)+'"></i>'+esc(d.name)+'<span>'+lago(l.t)+bat+'</span></div>'+
+      '<div class="p" onclick="fmFocus(\''+d.deviceId+'\')">'+esc(placeE(l.place))+' '+esc(l.place||'ไม่ทราบชื่อสถานที่')+(l.acc?' · ±'+Math.round(l.acc)+' ม.':'')+(far!=null&&!e?' · ห่าง '+fmKm(far):'')+'</div>'+eta+
+      '<div class="bb"><button class="m" onclick="fmEta(\''+d.deviceId+'\')">🚗 '+(e&&!e.wait?'คิดใหม่':'ใช้เวลาเท่าไร')+'</button><button onclick="fmNav(\''+d.deviceId+'\')">🧭 นำทาง</button><button onclick="fmFocus(\''+d.deviceId+'\')">📍 ดู</button></div></div>';
+  }).join('');
 }
 function famEvDraw(){
   var ev=[], day=Date.now()-36*3600000;
@@ -1453,7 +1617,7 @@ function showTab(){
   var fam=CUR==='ALL';
   $('pOv').classList.toggle('hidden', !has || fam || TAB!=='ov'); $('pRp').classList.toggle('hidden', !has || fam || TAB!=='rp'); $('pRu').classList.toggle('hidden', !has || fam || TAB!=='ru');
   $('pFam').classList.toggle('hidden', !has || !fam || TAB!=='ov'); $('pFamRp').classList.toggle('hidden', !has || !fam || TAB!=='rp'); $('pFamRu').classList.toggle('hidden', !has || !fam || TAB!=='ru');
-  if(fam && TAB==='ov' && FMAP) setTimeout(function(){ FMAP.invalidateSize(); },60);
+  if(fam && TAB==='ov' && FM.map) setTimeout(fmResize,60);
   $('tOv').classList.toggle('on', TAB==='ov'); $('tRp').classList.toggle('on', TAB==='rp'); $('tRu').classList.toggle('on', TAB==='ru');
 }
 
