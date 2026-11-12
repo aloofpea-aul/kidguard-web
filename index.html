@@ -802,8 +802,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.25', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.17';
+var WEB_VER = '1.26', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.18';
 var CHANGES = [
+  ['1.26','12 พ.ย. 2569','🏦 ตัดรอบฝากเวลาตั้งได้ (ค่าเริ่มต้น 21:00 · ถ้าเวลานอนเริ่มก่อนใช้เวลานอน) แล้วหมดเวลาเล่นของวันนั้น · 🐷 ลูกกดฝากเวลาเองได้ + ดอกเบี้ยวินัย + 🔥 ฝากต่อเนื่อง (แอป v1.18)'],
   ['1.25','12 พ.ย. 2569','📍 แผนที่ทั้งบ้าน: ใช้แผนที่ Longdo (สว่าง ละเอียดแบบงานพาโทรล) · ขยายเต็มจอ · ปุ่มซูม/ตำแหน่งฉัน/ดูทุกคน/ดาวเทียม/จราจร · กด 🚗 ดูเวลาเดินทางไปหาแต่ละคน · 🧭 นำทาง'],
   ['1.24.1','12 พ.ย. 2569','แก้เวลาไม่ตรงกฎ: ไม่บวกเวลาที่เพิ่มซ้ำ · หลังเที่ยงคืนถ้าเครื่องยังไม่ซิงค์ ใช้โควตาของวันนี้ (วันเรียน/วันหยุด) แทนของเมื่อวาน'],
   ['1.24','12 พ.ย. 2569','👨‍👩‍👧 หน้าทั้งบ้าน: ดูทุกเครื่องในหน้าเดียว · อนุมัติคำขอของทุกคน · สั่งหลายเครื่องพร้อมกัน (ล็อกมีเวลา/ถึงเช้า, ปลดล็อก, ให้นอน, พัก, เพิ่ม/ลดเวลา, เรียก, ส่งข้อความ) · เทียบเวลาเล่น · แผนที่รวม · เหตุการณ์รวม · ตั้งเป็นหน้าแรกได้'],
@@ -1501,7 +1502,7 @@ function famEvDraw(){
     (d.msgs||[]).forEach(function(m){ ev.push([m.createdAt,'💬','ส่งข้อความถึง'+n+': '+esc(String(m.text).slice(0,30))]); if(m.replyAt) ev.push([m.replyAt,'↩️',n+' ตอบ: '+esc(String(m.reply).slice(0,30))]); });
     (d.calls||[]).forEach(function(c){ var who=esc(c.who||c.num||(c.dir==='app'?'โทรผ่านแอป':'ไม่ทราบเบอร์'));
       ev.push([c.t,c.kind==='callBlock'?'🚫':c.cls==='emer'?'🚑':'📞', n+(c.kind==='callBlock'?' ถูกบล็อกสาย '+who:(c.dir==='in'?' รับสาย ':' โทรหา ')+who+(c.sec?' '+Math.max(1,Math.round(c.sec/60))+' นาที':''))]); });
-    ((d.bank&&d.bank.hist)||[]).forEach(function(h){ if(h.kind==='deposit') return; ev.push([h.at,h.kind==='withdraw'?'💸':h.kind==='redeem'?'🎁':'🏦', n+' '+({withdraw:'ถอนเวลา '+(-h.min)+' นาที',redeem:'แลก '+esc(h.note),adjust:(h.min>0?'ได้เวลาเพิ่ม ':'ถูกหักเวลา ')+Math.abs(h.min)+' นาที'}[h.kind]||esc(h.note))+(h.status==='pending'?' (รออนุมัติ)':h.status==='rejected'?' (ไม่อนุมัติ)':'')]); });
+    ((d.bank&&d.bank.hist)||[]).forEach(function(h){ if(h.kind==='deposit') return; ev.push([h.at,h.kind==='withdraw'?'💸':h.kind==='redeem'?'🎁':h.kind==='self'?'🐷':'🏦', n+' '+({self:esc(h.note),withdraw:'ถอนเวลา '+(-h.min)+' นาที',redeem:'แลก '+esc(h.note),adjust:(h.min>0?'ได้เวลาเพิ่ม ':'ถูกหักเวลา ')+Math.abs(h.min)+' นาที'}[h.kind]||esc(h.note))+(h.status==='pending'?' (รออนุมัติ)':h.status==='rejected'?' (ไม่อนุมัติ)':'')]); });
     if(d.bootAt) ev.push([d.bootAt,'🔁',n+' รีสตาร์ทเครื่อง']);
     if(!d.online && d.lastSeen) ev.push([d.lastSeen,'📴',n+' เงียบไป'+((d.battery!==''&&Number(d.battery)>=0)?' · แบต '+d.battery+'%':'')]);
   });
@@ -1630,6 +1631,7 @@ function decide(id, ok, m, btn){
 
 // ===== 🏦 ธนาคารเวลา =====
 var BKED=null, BKHIST=false;
+function bcut(m){ m=Number(m)||1440; return m>=1440?'เที่ยงคืน':('0'+Math.floor(m/60)).slice(-2)+':'+('0'+m%60).slice(-2); }
 function bhm(min){ min=Math.round(min||0); var s=min<0?'−':''; min=Math.abs(min); return s+Math.floor(min/60)+':'+('0'+(min%60)).slice(-2); }
 function bankHome(d){
   var el=$('bankHome'), cf=DATA&&DATA.bankCfg, b=d.bank;
@@ -1641,13 +1643,13 @@ function bankHome(d){
       '<div class="two"><button class="bok" onclick="bankDecide(\''+p.id+'\',true,this)">อนุมัติ</button><button class="bno" onclick="bankDecide(\''+p.id+'\',false,this)">ไม่อนุมัติ</button></div></div>';
   }).join('');
   var hist=(b.hist||[]).slice(0,BKHIST?30:5).map(function(h){
-    var lab={deposit:'🌙 ฝากอัตโนมัติ',withdraw:'💸 ถอนมาเล่น',redeem:'🎁 แลก '+esc(h.note),adjust:(h.min>0?'➕ ':'➖ ')+esc(h.note)}[h.kind]||esc(h.note);
+    var lab={deposit:'🌙 '+(String(h.note).indexOf('ตัดรอบ')===0?esc(h.note):'ฝากอัตโนมัติ'),self:'🐷 '+esc(h.note),withdraw:'💸 ถอนมาเล่น',redeem:'🎁 แลก '+esc(h.note),adjust:(h.min>0?'➕ ':'➖ ')+esc(h.note)}[h.kind]||esc(h.note);
     return '<div class="'+(h.status==='rejected'?'x':'')+'"><span>'+new Date(h.at).toLocaleDateString('th-TH',{day:'numeric',month:'short'})+' '+tm(h.at)+' · '+lab+(h.status==='pending'?' (รออนุมัติ)':'')+'</span><span class="'+(h.min>0?'p':'m')+'">'+(h.min>0?'+':'')+bhm(h.min)+'</span></div>';
   }).join('');
   el.innerHTML='<div class="bkc rise"><div class="t">🏦 ธนาคารเวลาของ'+esc(d.name)+'</div>'+
     '<div style="display:flex;justify-content:space-between;align-items:flex-end"><div class="num v">'+bhm(b.bal)+' <small style="font-size:15px">ชม.</small></div>'+
     '<div style="font-size:13px;color:#E8E1FF;text-align:right">วันนี้ถอนไป '+bhm(b.wToday)+'<br>เพดานวันนี้ '+bhm(b.cap)+' ชม.'+(b.off?' (วันหยุด)':'')+'</div></div>'+
-    (b.tonight===undefined?'':'<div style="margin-top:8px;font-size:13.5px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.18)">'+(b.wToday>0&&cf.cutW!==false?'🌙 วันนี้ถอนแล้ว · คืนนี้<b style="color:#FFB3BF">ไม่ฝาก</b> (เวลาที่เหลือตัดทิ้ง)':'🌙 คืนนี้จะฝาก <b style="color:#7DFFC4">+'+bhm(b.tonight||0)+'</b> ชม.')+'</div>')+
+    (b.tonight===undefined?'':'<div style="margin-top:8px;font-size:13.5px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.18)">'+(b.cutDone?'✓ ตัดรอบวันนี้แล้ว':b.wToday>0&&cf.cutW!==false?'🌙 วันนี้ถอนแล้ว · ตัดรอบ<b style="color:#FFB3BF">ไม่ฝาก</b> (เวลาที่เหลือตัดทิ้ง)':'⏰ ตัดรอบ '+bcut(b.cutAt)+' จะฝาก <b style="color:#7DFFC4">+'+bhm(b.tonight||0)+'</b> ชม.')+(b.dToday>0?' · 🐷 วันนี้ฝากเองแล้ว +'+bhm(b.dToday)+(b.streak>1?' 🔥'+b.streak+' วันติด':''):'')+'</div>')+
     '<div class="two"><button style="background:rgba(60,245,160,.18);color:#A7FFD8" onclick="bankAdj(1)">➕ เติมให้</button><button style="background:rgba(244,63,94,.18);color:#FFB3BF" onclick="bankAdj(-1)">➖ หักออก</button></div>'+
     pend+(hist?'<div class="bkh"><div style="border:0;font-weight:700;color:#fff">📒 สมุดบัญชี</div>'+hist+'</div>'+((b.hist||[]).length>5?'<a class="fmore" onclick="BKHIST=!BKHIST;render()">'+(BKHIST?'ย่อ ⌃':'ดูทั้งหมด ⌄')+'</a>':''):'')+'</div>';
 }
@@ -1681,15 +1683,20 @@ function bankEdDraw(){
   var hol=(cf.holidays||[]).filter(function(h){ return +h>=tk; }).slice(0,40);
   var fmtD=function(k){ var d=new Date(+k.slice(0,4),+k.slice(4,6)-1,+k.slice(6,8)); return d.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'}); };
   $('bankEd').innerHTML='<div class="bed">'+
-    '<div class="row"><div class="e">🏦</div><div class="x"><b>เปิดใช้ธนาคารเวลา</b><small>เวลาที่เหลือแต่ละวันฝากอัตโนมัติทุกเที่ยงคืน</small></div><label class="sw"><input type="checkbox" '+(cf.on?'checked':'')+' onchange="BKED.on=this.checked"><span></span></label></div>'+
+    '<div class="row"><div class="e">🏦</div><div class="x"><b>เปิดใช้ธนาคารเวลา</b><small>เวลาที่เหลือแต่ละวันฝากอัตโนมัติทุกวันตอนตัดรอบ</small></div><label class="sw"><input type="checkbox" '+(cf.on?'checked':'')+' onchange="BKED.on=this.checked"><span></span></label></div>'+
     '<div class="row"><div class="e">📅</div><div class="x"><b>เพดานต่อวัน จ.–ศ.</b><small>รวมโควตาปกติ + ที่ถอน</small></div><select onchange="BKED.capWd=+this.value">'+opt(cf.capWd,caps)+'</select></div>'+
     '<div class="row"><div class="e">🎉</div><div class="x"><b>เพดาน ส.–อา. / วันหยุด</b><small>รวมโควตาปกติ + ที่ถอน</small></div><select onchange="BKED.capWe=+this.value">'+opt(cf.capWe,caps)+'</select></div>'+
     '<div class="row"><div class="e">💸</div><div class="x"><b>ลูกถอนเองได้ทันที</b><small>ปิด = ทุกครั้งต้องรอพ่อแม่อนุมัติ</small></div><label class="sw"><input type="checkbox" '+(cf.self?'checked':'')+' onchange="BKED.self=this.checked"><span></span></label></div>'+
     '<div class="row"><div class="e">🔁</div><div class="x"><b>ถอนได้ครั้งละไม่เกิน</b></div><select onchange="BKED.maxPer=+this.value">'+opt(cf.maxPer,[15,30,60,90,120])+'</select></div>'+
+    '<div class="h4">⏰ ตัดรอบ & ฝากเอง</div>'+
+    '<div class="row"><div class="e">⏰</div><div class="x"><b>ตัดรอบฝากเวลาทุกวัน</b><small>เวลาที่เหลือฝากอัตโนมัติ แล้วหมดเวลาเล่นของวันนั้น · ถ้าเวลานอนเริ่มก่อน จะตัดรอบตอนเริ่มนอน</small></div><select onchange="BKED.cutAt=+this.value">'+[1080,1140,1200,1230,1260,1290,1320,1380,1440].map(function(m){ return '<option value="'+m+'"'+(m==(cf.cutAt||1440)?' selected':'')+'>'+bcut(m)+'</option>'; }).join('')+'</select></div>'+
+    '<div class="row"><div class="e">🐷</div><div class="x"><b>ให้ลูกกด "ฝากเลย" เองได้</b><small>เลิกเล่นก่อนตัดรอบ ฝากเวลาที่เหลือเข้าธนาคารทันที (ถอนคืนวันนั้นไม่ได้)</small></div><label class="sw"><input type="checkbox" '+(cf.selfDep!==false?'checked':'')+' onchange="BKED.selfDep=this.checked"><span></span></label></div>'+
+    '<div class="row"><div class="e">✨</div><div class="x"><b>ดอกเบี้ยเมื่อฝากเอง</b><small>รางวัลการมีวินัย คิดจากจำนวนที่ฝาก</small></div><select onchange="BKED.selfRate=+this.value">'+[0,5,10,20,30,50].map(function(r){ return '<option value="'+r+'"'+(r==(cf.selfRate===undefined?10:cf.selfRate)?' selected':'')+'>'+(r?'+'+r+'%':'ไม่มี')+'</option>'; }).join('')+'</select></div>'+
+    '<div class="row"><div class="e">🔔</div><div class="x"><b>แจ้ง LINE เมื่อลูกฝากเอง</b></div><label class="sw"><input type="checkbox" '+(cf.ntSelf!==false?'checked':'')+' onchange="BKED.ntSelf=this.checked"><span></span></label></div>'+
     '<div class="h4">📜 กติกา <span class="mut" style="font-weight:400;font-size:12.5px">(คู่มือในแอปลูกเปลี่ยนตามนี้)</span></div>'+
     '<div class="row"><div class="e">⏳</div><div class="x"><b>ถอน / ขอเล่นเพิ่ม ได้เมื่อเหลือไม่เกิน</b><small>"ได้ตลอด" = กดได้ทุกเมื่อ</small></div><select onchange="BKED.askMin=+this.value">'+[0,10,15,30,45,60,90,120].map(function(m){ return '<option value="'+m+'"'+(m==(cf.askMin===undefined?30:cf.askMin)?' selected':'')+'>'+(m?(m>=60?(m/60)+' ชม.':m+' นาที'):'ได้ตลอด')+'</option>'; }).join('')+'</select></div>'+
     '<div class="row"><div class="e">⚠️</div><div class="x"><b>วันที่ถอน ไม่ฝากเวลาที่เหลือ</b><small>เปิด = ถอนแล้วที่เหลือคืนนั้นตัดทิ้งทั้งหมด</small></div><label class="sw"><input type="checkbox" '+(cf.cutW!==false?'checked':'')+' onchange="BKED.cutW=this.checked"><span></span></label></div>'+
-    '<div class="row"><div class="e">🎁</div><div class="x"><b>เวลาที่พ่อแม่เพิ่มให้ ไม่นำไปฝาก</b><small>เปิด = ใช้ไม่หมดตัดทิ้งตอนเที่ยงคืน</small></div><label class="sw"><input type="checkbox" '+(cf.cutBonus!==false?'checked':'')+' onchange="BKED.cutBonus=this.checked"><span></span></label></div>'+
+    '<div class="row"><div class="e">🎁</div><div class="x"><b>เวลาที่พ่อแม่เพิ่มให้ ไม่นำไปฝาก</b><small>เปิด = ใช้ไม่หมดตัดทิ้งตอนตัดรอบ</small></div><label class="sw"><input type="checkbox" '+(cf.cutBonus!==false?'checked':'')+' onchange="BKED.cutBonus=this.checked"><span></span></label></div>'+
     '<div class="h4">🎁 รางวัลที่แลกได้ <span class="mut" style="font-weight:400;font-size:12.5px">(อีโมจิ · ชื่อ · ราคาเป็นชั่วโมง)</span></div>'+
     (cf.rewards||[]).map(function(r,i){ return '<div class="rw"><input class="em" value="'+esc(r.e)+'" onchange="BKED.rewards['+i+'].e=this.value"><input class="nm" value="'+esc(r.n)+'" placeholder="ชื่อรางวัล" onchange="BKED.rewards['+i+'].n=this.value"><input class="hr" type="number" min="0.25" step="0.25" value="'+(r.min/60)+'" onchange="BKED.rewards['+i+'].min=Math.round(this.value*60)"><button onclick="BKED.rewards.splice('+i+',1);bankEdDraw()">✕</button></div>'; }).join('')+
     '<button class="addb" onclick="BKED.rewards.push({e:\'🎁\',n:\'\',min:120});bankEdDraw()">+ เพิ่มรางวัล</button>'+
