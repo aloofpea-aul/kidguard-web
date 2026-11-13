@@ -802,8 +802,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.26', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.18';
+var WEB_VER = '1.26.1', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.18.1';
 var CHANGES = [
+  ['1.26.1','13 พ.ย. 2569','🔒 เตือนเมื่อเครื่องลูกล็อกจอไม่ได้ (การช่วยเหลือพิเศษหยุดทำงาน) พร้อมวิธีแก้ (แอป v1.18.1 แจ้งที่เครื่องลูกด้วย)'],
   ['1.26','12 พ.ย. 2569','🏦 ตัดรอบฝากเวลาตั้งได้ (ค่าเริ่มต้น 21:00 · ถ้าเวลานอนเริ่มก่อนใช้เวลานอน) แล้วหมดเวลาเล่นของวันนั้น · 🐷 ลูกกดฝากเวลาเองได้ + ดอกเบี้ยวินัย + 🔥 ฝากต่อเนื่อง (แอป v1.18)'],
   ['1.25','12 พ.ย. 2569','📍 แผนที่ทั้งบ้าน: ใช้แผนที่ Longdo (สว่าง ละเอียดแบบงานพาโทรล) · ขยายเต็มจอ · ปุ่มซูม/ตำแหน่งฉัน/ดูทุกคน/ดาวเทียม/จราจร · กด 🚗 ดูเวลาเดินทางไปหาแต่ละคน · 🧭 นำทาง'],
   ['1.24.1','12 พ.ย. 2569','แก้เวลาไม่ตรงกฎ: ไม่บวกเวลาที่เพิ่มซ้ำ · หลังเที่ยงคืนถ้าเครื่องยังไม่ซิงค์ ใช้โควตาของวันนี้ (วันเรียน/วันหยุด) แทนของเมื่อวาน'],
@@ -905,15 +906,19 @@ function lago(t){ var m=Math.floor((Date.now()-t)/60000); if(m<1) return 'เม
 function pinIcon(old){ return L.divIcon({className:'',html:'<div class="kpin'+(old?' old':'')+'"><div class="r"></div><div class="r b"></div><div class="h"><i>🐥</i></div></div>',iconSize:[52,52],iconAnchor:[26,52]}); }
 function placeE(p){ p=String(p||''); return /โรงเรียน|วิทยาลัย|school/i.test(p)?'🏫':/วัด/.test(p)?'🛕':/ตลาด|ห้าง|ร้าน|เซเว่น|7-Eleven|มาร์ท|โลตัส|บิ๊กซี/i.test(p)?'🛍️':/โรงพยาบาล|คลินิก/.test(p)?'🏥':/สวน|สนาม/.test(p)?'🌳':'📍'; }
 // ===== สถานะการป้องกัน =====
+/** เปิดสวิตช์การช่วยเหลือพิเศษไว้ แต่บริการไม่ทำงาน และไม่มีสิทธิ์แสดงทับ → ล็อกจอไม่ได้ */
+function lockStuck(d){ var g=d&&d.health&&d.health.dbg; return !!(g && g.ovPerm===false && g.acc===false); }
 function renderHealth(d){
   var h=d.health, ban=$('hBan'), card=$('hCard');
   if(!h){ ban.innerHTML=''; $('fHp').classList.add('hidden'); return; }
   $('fHp').classList.remove('hidden');
-  var rows=[['usage','📊','ดูการใช้งานแอป'],['overlay','🪟','แสดงทับแอปอื่น'],['admin','🛡️','กันลบแอป'],['protect','⚙️','กันเข้าการตั้งค่าเครื่อง'],['battery','🔋','ไม่ประหยัดแบต']];
+  var acc=h.dbg&&h.dbg.low&&h.dbg.ovPerm===false, stuck=lockStuck(d);
+  if(stuck) h=Object.assign({},h,{overlay:false});
+  var rows=[['usage','📊','ดูการใช้งานแอป'],['overlay',acc?'♿':'🪟',acc?'การช่วยเหลือพิเศษ (ใช้ล็อกจอ)':'แสดงทับแอปอื่น'],['admin','🛡️','กันลบแอป'],['protect','⚙️','กันเข้าการตั้งค่าเครื่อง'],['battery','🔋','ไม่ประหยัดแบต']];
   var bad=rows.filter(function(r){ return h[r[0]]===false && r[0]!=='protect'; });
   var critical=h.usage===false||h.overlay===false;
   ban.innerHTML = bad.length ? '<div class="glass hban rise"><div class="hb"><div style="font-size:30px">🚨</div><div style="flex:1"><div style="font-size:16px;font-weight:700">'+(critical?'ระบบควบคุมเวลาไม่ทำงาน':'การป้องกันบางส่วนถูกปิด')+'</div><div style="font-size:13px;color:#FFC9CB">'+bad.map(function(r){return r[2];}).join(' · ')+' ถูกปิด</div></div></div>'+
-    '<div class="how">วิธีแก้: ที่เครื่องลูก เปิด KidGuard → หน้าผู้ปกครอง → 🧭 ตัวช่วยตั้งค่า → กดปุ่มม่วง</div></div>' : '';
+    '<div class="how">'+(stuck?'🔒 <b>ตอนนี้ล็อกจอไม่ได้</b> · สวิตช์การช่วยเหลือพิเศษเปิดอยู่ แต่เครื่องหยุดบริการไว้ (มักเกิดหลังอัปเดตแอป)<br>วิธีแก้ที่เครื่องลูก: ตั้งค่า → การช่วยเหลือพิเศษ → KidGuard → <b>ปิดสวิตช์ แล้วเปิดใหม่</b> → อนุญาต':'วิธีแก้: ที่เครื่องลูก เปิด KidGuard → หน้าผู้ปกครอง → 🧭 ตัวช่วยตั้งค่า → กดปุ่มม่วง')+'</div></div>' : '';
   var pill=function(ok,warn){ return ok?'<span class="hpill">ปกติ</span>':'<span class="hpill '+(warn?'warn':'bad')+'">'+(warn||'ถูกปิด')+'</span>'; };
   var html='';
   rows.forEach(function(r,i){ var v=h[r[0]]; html+='<div class="hlr"'+(i===0?' style="border-top:0"':'')+'><div class="e">'+r[1]+'</div><div class="t">'+r[2]+'</div>'+(r[0]==='protect'&&v===false?pill(false,'ปิดอยู่'):pill(v!==false))+'</div>'; });
@@ -1323,7 +1328,7 @@ function renderFam(){
     if(d.pending&&d.pending.length) tags.push('⏳ รอส่ง '+d.pending.length+' คำสั่ง');
     var warn=[];
     if(bat&&Number(d.battery)<20) warn.push('⚠️ แบตใกล้หมด');
-    var h=d.health||{}; if(d.health&&(h.usage===false||h.overlay===false)) warn.push('⚠️ สิทธิ์ถูกปิด');
+    var h=d.health||{}; if(lockStuck(d)) warn.push('🔒 ล็อกจอไม่ได้ (♿ ปิด-เปิดใหม่)'); else if(d.health&&(h.usage===false||h.overlay===false)) warn.push('⚠️ สิทธิ์ถูกปิด');
     if(d.appVersion&&vnum(d.appVersion)<vnum(LATEST_APP)) warn.push('⬆️ มีแอป v'+LATEST_APP);
     var locked=s.k==='lock';
     return '<div class="fdc rise" style="animation-delay:'+(.08+i*.05)+'s"><div class="r1">'+fring(d)+
