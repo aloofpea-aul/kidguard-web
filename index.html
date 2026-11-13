@@ -394,6 +394,9 @@ textarea.mt:focus{border-color:#A78BFA}
 .ldpin em{font-style:normal;display:inline-block;margin-top:3px;background:rgba(20,14,50,.85);border-radius:8px;padding:1px 7px}
 .ldme{width:18px;height:18px;border-radius:50%;background:#2563EB;border:3px solid #fff;box-shadow:0 0 0 7px rgba(37,99,235,.25),0 2px 6px rgba(0,0,0,.3);transform:translate(-50%,-50%)}
 body.fmlock{overflow:hidden}
+.uprow{margin-top:10px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(251,191,36,.14);border:1px solid rgba(251,191,36,.35);font-size:13.5px;color:#FDE68A}
+.uprow button{margin-left:auto;height:36px;padding:0 12px;border:0;border-radius:11px;background:linear-gradient(90deg,#8B5CF6,#22D3EE);color:#fff;font-weight:700;font-size:13.5px;white-space:nowrap}
+.upst{margin-top:10px;font-size:13px;color:#C9C3F0;display:flex;flex-direction:column;gap:4px}.upst .d{color:#7DFFC4}.upst .w{color:#FDE68A}.upst .x{opacity:.45}.upst .e{color:#FFB3BF}
 </style>
 <style>
 /* ===== กลุ่มพับได้ ===== */
@@ -802,8 +805,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.27', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.18.1';
+var WEB_VER = '1.28', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.19';
 var CHANGES = [
+  ['1.28','13 พ.ย. 2569','⬆️ ส่งอัปเดตแอปไปที่เครื่องลูกจากเว็บได้ + ดูสถานะทีละขั้น (เครื่องลูกต้องเป็นแอป v1.19 ขึ้นไป)'],
   ['1.27','13 พ.ย. 2569','🏦 เปิด/ปิดธนาคารเวลาแยกรายเครื่องได้ (สวิตช์หลักยังปิดทั้งบ้าน) · ยอดเดิมเก็บไว้เมื่อปิด'],
   ['1.26.1','13 พ.ย. 2569','🔒 เตือนเมื่อเครื่องลูกล็อกจอไม่ได้ (การช่วยเหลือพิเศษหยุดทำงาน) พร้อมวิธีแก้ (แอป v1.18.1 แจ้งที่เครื่องลูกด้วย)'],
   ['1.26','12 พ.ย. 2569','🏦 ตัดรอบฝากเวลาตั้งได้ (ค่าเริ่มต้น 21:00 · ถ้าเวลานอนเริ่มก่อนใช้เวลานอน) แล้วหมดเวลาเล่นของวันนั้น · 🐷 ลูกกดฝากเวลาเองได้ + ดอกเบี้ยวินัย + 🔥 ฝากต่อเนื่อง (แอป v1.18)'],
@@ -1330,16 +1334,19 @@ function renderFam(){
     var warn=[];
     if(bat&&Number(d.battery)<20) warn.push('⚠️ แบตใกล้หมด');
     var h=d.health||{}; if(lockStuck(d)) warn.push('🔒 ล็อกจอไม่ได้ (♿ ปิด-เปิดใหม่)'); else if(d.health&&(h.usage===false||h.overlay===false)) warn.push('⚠️ สิทธิ์ถูกปิด');
-    if(d.appVersion&&vnum(d.appVersion)<vnum(LATEST_APP)) warn.push('⬆️ มีแอป v'+LATEST_APP);
+
     var locked=s.k==='lock';
     return '<div class="fdc rise" style="animation-delay:'+(.08+i*.05)+'s"><div class="r1">'+fring(d)+
       '<div style="flex:1;min-width:0"><div class="fnm"><span style="width:10px;height:10px;border-radius:50%;background:'+fcol(d.deviceId)+'"></span>'+esc(d.name)+' <span class="fpl '+s.c+'">'+s.t+'</span></div>'+
       '<div style="font-size:14px;margin-top:2px">'+line+'</div><div class="fmeta">'+[esc(d.model||''),bat,d.online?ago(d.lastSeen):''].filter(Boolean).join(' · ')+'</div>'+
       (tags.length||warn.length?'<div class="ftags">'+tags.map(function(x){return '<span>'+x+'</span>';}).join('')+warn.map(function(x){return '<span class="w">'+x+'</span>';}).join('')+'</div>':'')+'</div></div>'+
+      updRow(d)+
       '<div class="facts"><button data-snd onclick="famAct(\''+d.deviceId+'\',\''+(locked?'unlock':'lock')+'\')">'+(locked?'🔓':'🔒')+'</button><button data-snd onclick="famAct(\''+d.deviceId+'\',\'add\')">➕</button>'+
       '<button data-snd onclick="famAct(\''+d.deviceId+'\',\'sub\')">➖</button><button data-snd onclick="famAct(\''+d.deviceId+'\',\'ring\')">📢</button>'+
       '<button class="go" data-snd onclick="pick(\''+d.deviceId+'\')">เปิดดู ›</button></div></div>';
   }).join('');
+  var ups=ds.filter(function(d){ return updCan(d) && !updBusy(d); });
+  if(ups.length>1) $('famDevs').innerHTML+='<div class="fdc" style="display:flex;align-items:center;gap:10px"><div style="font-size:26px">⬆️</div><div style="flex:1;font-size:14px"><b>ส่งอัปเดตทุกเครื่องที่ยังเก่า</b><div class="mut" style="font-size:12.5px">'+ups.length+' เครื่อง ('+ups.map(function(d){return esc(d.name);}).join(', ')+')</div></div><button class="ghost" style="flex:0 0 auto;height:40px;padding:0 14px" onclick="updSend(null)">ส่งเลย</button></div>';
   famAllDraw();
   // เทียบเวลาเล่นวันนี้
   $('famBars').innerHTML = ds.map(function(d){
@@ -1531,6 +1538,32 @@ function renderFamRp(){
   }).join('');
   $('famRuDevs').innerHTML = ds.map(function(d){ return '<button class="fdev" data-snd onclick="pick(\''+d.deviceId+'\');tab(\'ru\')"><span style="width:12px;height:12px;border-radius:50%;background:'+fcol(d.deviceId)+'"></span><b>'+esc(d.name)+'</b><span>'+(d.limitMin>0?'วันละ '+clock(d.limitMin*60000)+' ชม.':'ไม่จำกัด')+' ›</span></button>'; }).join('');
 }
+// ----- ⬆️ อัปเดตแอปเครื่องลูก -----
+var APK_LINK='https://aloofpea-aul.github.io/kidguard-web/KidGuard.apk';
+function updOld(d){ return d.appVersion && vnum(d.appVersion)<vnum(LATEST_APP); }
+function updCan(d){ return updOld(d) && vnum(d.appVersion)>=vnum('1.19'); }   // มีระบบอัปเดตในแอปแล้ว
+function updBusy(d){ var u=(d.health||{}).upd||{}; return (d.pending||[]).some(function(p){return p.cmd==='update';}) || ['dl','ready','install'].indexOf(u.st)>=0; }
+function updRow(d){
+  var u=(d.health||{}).upd||{}, pend=(d.pending||[]).some(function(p){return p.cmd==='update';});
+  if(!updOld(d)){
+    return u.st==='done'&&u.at&&Date.now()-u.at<36*3600000 ? '<div class="upst"><div class="d">✓ อัปเดตเป็น v'+esc(d.appVersion)+' แล้ว · '+tm(u.at)+'</div></div>' : '';
+  }
+  if(!updCan(d)) return '<div class="uprow">⬆️ มีแอป v'+LATEST_APP+' · ครั้งนี้ต้องลงผ่านลิงก์ (ครั้งสุดท้าย)<button onclick="updCopy()">📋 คัดลอกลิงก์</button></div>';
+  if(!pend && ['dl','ready','install','err'].indexOf(u.st)<0) return '<div class="uprow">⬆️ มีแอป v'+LATEST_APP+' (ตอนนี้ v'+esc(d.appVersion)+')<button data-snd onclick="updSend(\''+d.deviceId+'\')">ส่งอัปเดต</button></div>';
+  var st=[['ส่งคำสั่งแล้ว',1],['เครื่องโหลดไฟล์'+(u.st==='dl'?' '+(u.p||0)+'%':''),u.st==='dl'?2:['ready','install'].indexOf(u.st)>=0?1:0],['รอกด "อัปเดต" ที่เครื่องลูก',['ready','install'].indexOf(u.st)>=0?2:0],['ติดตั้งเสร็จ',0]];
+  if(pend && !u.st) st[1][1]=2, st[1][0]='รอเครื่องลูกรับคำสั่ง';
+  return '<div class="upst">'+st.map(function(x){ return '<div class="'+(x[1]===1?'d':x[1]===2?'w':'x')+'">'+(x[1]===1?'✓ ':x[1]===2?'⏳ ':'○ ')+x[0]+'</div>'; }).join('')+
+    (u.st==='err'?'<div class="e">⚠️ ไม่สำเร็จ: '+esc(u.err||'')+' · <a style="text-decoration:underline" onclick="updSend(\''+d.deviceId+'\')">ลองใหม่</a></div>':'')+
+    (u.canInstall===false?'<div class="w">🔓 ครั้งแรก: ที่เครื่องลูกต้องอนุญาต "ติดตั้งแอปจากแหล่งนี้" ให้ KidGuard</div>':'')+'</div>';
+}
+function updSend(id){
+  var ds=id?[fby(id)]:fdevs().filter(function(d){ return updCan(d)&&!updBusy(d); });
+  askChoice('⬆️','ส่งอัปเดตแอป v'+LATEST_APP+'?','<div class="mut" style="text-align:left;line-height:1.6">ส่งถึง: <b>'+ds.map(function(d){return esc(d.name);}).join(', ')+'</b><br>• เครื่องลูกโหลดไฟล์เอง แล้วขึ้นแจ้งเตือน "แตะเพื่อติดตั้ง"<br>• ต้องมีคนกด <b>"อัปเดต"</b> ที่เครื่องลูก 1 ครั้ง (Android บังคับ)<br>• ติดตั้งเสร็จ แอปตรวจความพร้อมให้เอง</div>',
+    [{label:'⬆️ ส่งอัปเดต '+ds.length+' เครื่อง',main:1,bg:G_ADD,fn:function(){
+      Promise.all(ds.map(function(d){ return call('command',{deviceId:d.deviceId,cmd:'update'}); })).then(function(){ sfx('ok'); toast('📲 ส่งอัปเดตแล้ว · ดูสถานะที่การ์ดเครื่อง'); load(); }).catch(function(e){ toast('ส่งไม่สำเร็จ: '+(e.message||e)); });
+    }}]);
+}
+function updCopy(){ var t=APK_LINK+'?v='+LATEST_APP.replace(/\./g,''); try{ navigator.clipboard.writeText(t).then(function(){ toast('📋 คัดลอกลิงก์แล้ว · เปิดใน Chrome ของเครื่องลูก'); }); }catch(e){ prompt('ลิงก์ดาวน์โหลด',t); } }
 // ----- สั่งหลายเครื่องพร้อมกัน -----
 var FBK={
   lock:{e:'🔒',t:'ล็อกทุกเครื่องเลยไหม?',opts:[[30,'30 นาที'],[60,'1 ชม.'],['m','ถึงเช้า'],[0,'ไม่กำหนด']],def:0},
