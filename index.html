@@ -805,8 +805,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.28', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.19';
+var WEB_VER = '1.28.1', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.19.1';
 var CHANGES = [
+  ['1.28.1','13 พ.ย. 2569','📞 สิทธิ์การโทรย้ายไปหน้าผู้ปกครองในแอปลูก (ไม่ขึ้นที่หน้าลูกแล้ว) · เว็บเตือนเมื่อยังไม่อนุญาต · แอปที่นับเป็นการโทรเพิ่ม Instagram/Facebook'],
   ['1.28','13 พ.ย. 2569','⬆️ ส่งอัปเดตแอปไปที่เครื่องลูกจากเว็บได้ + ดูสถานะทีละขั้น (เครื่องลูกต้องเป็นแอป v1.19 ขึ้นไป)'],
   ['1.27','13 พ.ย. 2569','🏦 เปิด/ปิดธนาคารเวลาแยกรายเครื่องได้ (สวิตช์หลักยังปิดทั้งบ้าน) · ยอดเดิมเก็บไว้เมื่อปิด'],
   ['1.26.1','13 พ.ย. 2569','🔒 เตือนเมื่อเครื่องลูกล็อกจอไม่ได้ (การช่วยเหลือพิเศษหยุดทำงาน) พร้อมวิธีแก้ (แอป v1.18.1 แจ้งที่เครื่องลูกด้วย)'],
@@ -1334,6 +1335,7 @@ function renderFam(){
     var warn=[];
     if(bat&&Number(d.battery)<20) warn.push('⚠️ แบตใกล้หมด');
     var h=d.health||{}; if(lockStuck(d)) warn.push('🔒 ล็อกจอไม่ได้ (♿ ปิด-เปิดใหม่)'); else if(d.health&&(h.usage===false||h.overlay===false)) warn.push('⚠️ สิทธิ์ถูกปิด');
+    if(cc.on && h.call==='perm') warn.push('📞 ยังไม่อนุญาตสิทธิ์โทร');
 
     var locked=s.k==='lock';
     return '<div class="fdc rise" style="animation-delay:'+(.08+i*.05)+'s"><div class="r1">'+fring(d)+
@@ -1806,7 +1808,7 @@ function callHome(d){
   var el=$('callHome'), cf=DATA&&DATA.callCfg; if(!el) return;
   if(!cf||!cf.on){ el.innerHTML=''; return; }
   var cn=d.callNight||{}, used=cn.used||0, left=Math.max(0,cf.quota-used);
-  var perm=(d.health||{}).call, pw=perm==='perm'?'⚠️ เครื่องลูกยังไม่อนุญาตการโทร (เปิดแอปลูก → แตะการ์ดโทร)':perm==='screen'?'⚠️ ยังไม่ได้ตั้งเป็นแอปกรองสาย (สายเข้าจะยังไม่ถูกบล็อก)':'';
+  var perm=(d.health||{}).call, pw=perm==='perm'?'⚠️ เครื่องลูกยังไม่อนุญาตสิทธิ์การโทร · การโทรด้วยเบอร์มือถือยังคุมไม่ได้ (คุมได้แค่โทรผ่านแอป)<br>วิธีแก้: เครื่องลูก → KidGuard → หน้าผู้ปกครอง (ใส่ PIN) → 📞 คุมการโทรกลางคืน → อนุญาต':perm==='screen'?'⚠️ ยังไม่ได้ตั้งเป็นแอปกรองสาย (สายเข้าจะยังไม่ถูกบล็อก) · แก้ที่หน้าผู้ปกครองในเครื่องลูก':'';
   var ic={in:'📲',out:'📞',app:'💬'}, cl={trusted:'👨‍👩‍👧',emer:'🚑',other:''};
   var log=(d.calls||[]).slice(0,CLOGALL?20:4).map(function(c){
     var lab=c.kind==='callBlock'?'🚫 บล็อก':(ic[c.dir]||'📞');
