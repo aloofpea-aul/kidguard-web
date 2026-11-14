@@ -155,6 +155,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .trow+.trow,.trow+.times,.times+.trow{border-top:1px solid rgba(255,255,255,.1)}
 .trow .e{font-size:26px}.trow .t{flex:1}.trow .t b{display:block;font-size:17px;font-weight:600}
 .sw{position:relative;width:50px;height:30px;flex:0 0 auto}
+#pRu.ro [data-sub] input,#pRu.ro [data-sub] select,#pRu.ro [data-sub] textarea,#pRu.ro [data-sub] button:not(.fh),#pRu.ro [data-sub] .sw,#pRu.ro [data-sub] .dopts,#pRu.ro button[data-sub]{pointer-events:none;opacity:.5}
+.rolock{margin:0 0 12px;padding:11px 14px;border-radius:14px;background:rgba(251,191,36,.14);color:#FDE68A;font-size:14px;line-height:1.6}
+.aurow{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid rgba(255,255,255,.07)}.aurow:first-child{border:0}.aurow .t{flex:1;min-width:0}.aurow small{display:block;color:var(--mut);font-size:12.5px}
+.aubadge{font-size:12px;padding:4px 10px;border-radius:10px;background:rgba(139,92,246,.25);color:#DDD6FE;white-space:nowrap}
+.auseg{display:flex;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.14)}.auseg button{background:none;color:var(--mut);border:0;padding:7px 10px;font:inherit;font-size:13px}.auseg button.on{background:rgba(139,92,246,.35);color:#fff}
 .sw input{opacity:0;width:0;height:0;position:absolute}
 .sw span{position:absolute;inset:0;border-radius:15px;background:rgba(255,255,255,.15);transition:.3s}
 .sw span::before{content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.3s cubic-bezier(.2,.8,.2,1.3)}
@@ -420,6 +425,7 @@ body.fmlock{overflow:hidden}
 .hhide{display:none!important}
 .hedit{display:block;width:100%;padding:12px;border-radius:16px;border:1px dashed rgba(255,255,255,.25);background:none;color:#C9C3F0;font-size:14.5px;font-weight:600}
 .hrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.07)}.hrow:first-of-type{border:0}
+.hscw{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}.hsc{border:1.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);border-radius:16px;padding:12px 8px;color:#fff;text-align:center;font:inherit}.hsc b{display:block;font-size:15px;margin-top:2px}.hsc small{display:block;font-size:12px;color:var(--mut);margin-top:2px}.hsc.on{border-color:#8B5CF6;background:rgba(139,92,246,.22)}.hsc.on small{color:#DDD6FE}
 .hrow .mv{display:flex;flex-direction:column;gap:2px}.hrow .mv button{width:30px;height:22px;border-radius:7px;border:0;background:rgba(255,255,255,.1);color:#C9C3F0;font-size:11px;line-height:1}
 .hrow .mv button:disabled{opacity:.25}
 .hrow .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 34px;background:rgba(255,255,255,.08)}
@@ -718,6 +724,7 @@ body.fmlock{overflow:hidden}
     <div id="ruMenuD" class="rumenu"></div>
     <div id="ruMenuS" class="rumenu"></div>
     <div id="ruSubH" class="rusubh hidden"><button onclick="ruBack()" aria-label="กลับ">‹</button><div style="min-width:0"><b id="ruSubT"></b><small id="ruSubS"></small></div></div>
+    <div class="rolock hidden" id="ruLock">🔒 เฉพาะแอดมิน · ดูค่าได้ แต่แก้ไม่ได้ ถ้าอยากเปลี่ยน ให้ขอแอดมิน</div>
     <div class="glass sec" data-sub="home" id="homeEd"></div>
     <div id="ruEmpty" class="glass sec mut hidden">ยังไม่มีข้อมูลกฎจากเครื่องนี้ รอเครื่องลูกซิงค์ครั้งแรก</div>
     <div id="ruForm" style="display:flex;flex-direction:column;gap:14px">
@@ -761,6 +768,7 @@ body.fmlock{overflow:hidden}
       <button class="big shine rise" data-sub="lim bed sch prot apps loc" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
       <div class="note" data-sub="lim bed sch prot apps loc">กฎใหม่ถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
     </div>
+    <div class="glass sec rise" data-sub="auth" id="authEd"><div class="mut">กำลังโหลด…</div></div>
     <div class="foldgrp rise" id="ruSysGrp">
     <div class="fold" data-k="rdef" data-sub="def">
       <div class="fh" onclick="fold('rdef')"><div class="ft" style="background:linear-gradient(135deg,#FDE047,#F59E0B)">⭐</div>
@@ -844,8 +852,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.29.3', WEB_DATE = '14 พ.ย. 2569', LATEST_APP = '1.19.1';
+var WEB_VER = '1.30', WEB_DATE = '14 พ.ย. 2569', LATEST_APP = '1.19.1';
 var CHANGES = [
+  ['1.30','14 พ.ย. 2569','👑 สิทธิ์ผู้ใช้: แอดมินคนเดียวตั้งได้ว่าผู้ปกครองอีกคนทำอะไรได้บ้าง (รหัสแยก) · ผูกบัญชี LINE เป็นแอดมิน/ผู้ปกครอง · 🏠 ปรับหน้าจอหลักเลือกได้ว่าใช้เฉพาะมือถือนี้ หรือมือถือพ่อแม่ทุกเครื่อง'],
   ['1.29.3','14 พ.ย. 2569','🏦 ธนาคารเวลา: กดหัก/เติมแล้วยอดเปลี่ยนให้เห็นทันที + มีปุ่ม "ยกเลิก" ถ้ากดพลาด · ⚠️ กดหักซ้ำภายใน 1 นาที จะขึ้นเตือนยอดที่เพิ่งหักและยอดคงเหลือก่อน'],
   ['1.29.1','14 พ.ย. 2569','📶 เน็ตสะดุดตอนสลับกลับมาเปิดแอป จะลองโหลดใหม่เองก่อน ไม่ขึ้น "Load failed" ทันที'],
   ['1.29','14 พ.ย. 2569','⚙️ หน้าตั้งกฎใหม่: แยก "กฎของลูก" กับ "ตั้งค่าระบบ" เป็นเมนู แตะเข้าไปแก้ทีละเรื่อง · 🏠 ปรับหน้าจอหลักเองได้ (ซ่อน/เรียงการ์ด เช่น ซ่อนธนาคาร) ตั้งแยกในมือถือพ่อ/แม่'],
@@ -923,10 +932,50 @@ function doLogin(){
   PW = $('pw').value.trim();
   if(!PW){ $('loginErr').textContent='ใส่รหัสผ่านก่อน'; shake(); return; }
   $('loginBtn').disabled = true; $('loginBtn').textContent = 'กำลังเข้าสู่ระบบ…'; $('loginErr').textContent='';
-  call('login').then(function(){
+  call('login').then(function(r){
     try{ if($('rem').checked) localStorage.setItem('kgpw', PW); }catch(e){}
-    showApp(); load();
+    setMe(r); showApp(); load();
   }).catch(function(e){ $('loginErr').textContent = e.message || 'เข้าสู่ระบบไม่ได้'; shake(); $('loginBtn').disabled=false; $('loginBtn').textContent='เข้าสู่ระบบ'; });
+}
+// ===== 👑 สิทธิ์ผู้ใช้ =====
+var ME={role:'admin',perms:null,name:''};
+function setMe(r){ if(!r||!r.role) return; ME={role:r.role,perms:r.perms||{},name:r.name||''}; try{ ruMenusDraw(); if(TAB==='ru') ruApply(); }catch(e){} }
+function can(p){ return !p || ME.role==='admin' || !ME.perms || !!ME.perms[p]; }
+var RU_PERM={lim:'rules',bed:'rules',sch:'rules',prot:'rules',apps:'rules',loc:'rules',bank:'sys',call:'sys',alert:'sys',qm:'msg',snd:'msg',pair:'devs',auth:'admin'};
+var PERM_T=[['cmd','🔒','ล็อก · เพิ่ม/ลดเวลา · พัก'],['msg','💬','ส่งข้อความ · เรียกลูก · ดูตำแหน่ง'],['req','✅','อนุมัติคำขอของลูก'],['bank','🏦','เติม/หักธนาคารเวลา'],
+  ['rules','📋','แก้กฎของลูก (เวลาเล่น เวลานอน แอป)'],['sys','⚙️','ตั้งค่าระบบ (ธนาคาร การโทร แจ้งเตือน LINE)'],['devs','📱','เพิ่มเครื่องลูก · ส่งอัปเดตแอป']];
+var AU=null;
+function authLoad(){ $('authEd').innerHTML='<div class="mut">กำลังโหลด…</div>'; call('authCfg').then(function(r){ AU=r; authDraw(); }).catch(function(e){ $('authEd').innerHTML='<div class="mut">'+esc(e.message||e)+'</div>'; }); }
+function authSave(d,msg){ call('saveAuth',d).then(function(r){ AU=r; authDraw(); sfx('ok'); if(msg) toast(msg); }).catch(function(e){ toast('ไม่สำเร็จ: '+(e.message||e)); authDraw(); }); }
+function authDraw(){
+  var a=AU; if(!a) return;
+  var sw=function(k,on){ return '<label class="sw"><input type="checkbox" '+(on?'checked':'')+' onchange="authPerm(\''+k+'\',this.checked)"><span></span></label>'; };
+  $('authEd').innerHTML=
+    '<div class="h4" style="margin-top:0">ผู้ใช้</div>'+
+    '<div class="aurow"><div style="font-size:24px">👑</div><div class="t"><b>'+esc(a.adminName)+'</b> · แอดมิน<small>ใช้รหัสหลัก (รหัสเดิม)</small></div><span class="aubadge">ทำได้ทุกอย่าง</span></div>'+
+    '<div class="aurow"><div style="font-size:24px">👩</div><div class="t"><b>'+esc(a.parentName)+'</b> · ผู้ปกครอง<small>'+(a.hasParentPw?'ตั้งรหัสแล้ว ••••':'ยังไม่ได้ตั้งรหัส (ยังเข้าไม่ได้)')+'</small></div>'+
+      '<button class="ghost" style="flex:0 0 auto;height:38px;padding:0 12px" onclick="authPw()">'+(a.hasParentPw?'เปลี่ยนรหัส':'ตั้งรหัส')+'</button></div>'+
+    '<div class="h4">'+esc(a.parentName)+'ทำอะไรได้บ้าง</div>'+
+    PERM_T.map(function(x){ return '<div class="aurow"><div style="font-size:20px">'+x[1]+'</div><div class="t">'+x[2]+'</div>'+sw(x[0],a.perms[x[0]])+'</div>'; }).join('')+
+    '<div class="h4">บัญชี LINE ที่รับแจ้งเตือน</div>'+
+    (a.line.length?a.line.map(function(l){ return '<div class="aurow"><div style="font-size:20px">💚</div><div class="t"><b>'+esc(l.name)+'</b><small>'+(l.role==='admin'?'กดได้ทุกปุ่ม':'กดได้ตามสิทธิ์ของ'+esc(a.parentName))+'</small></div>'+
+      '<div class="auseg"><button class="'+(l.role==='admin'?'on':'')+'" onclick="authLine(\''+l.uid+'\',\'admin\')">แอดมิน</button><button class="'+(l.role!=='admin'?'on':'')+'" onclick="authLine(\''+l.uid+'\',\'parent\')">ผู้ปกครอง</button></div></div>'; }).join('')
+      :'<div class="mut">ยังไม่มีบัญชี LINE เชื่อมต่อ</div>')+
+    '<div class="note" style="margin-top:10px">เปลี่ยนแล้วมีผลทันที · '+esc(a.parentName)+'เข้าเว็บด้วยรหัสผู้ปกครอง · เมนูที่ไม่มีสิทธิ์ ดูได้แต่แก้ไม่ได้</div>';
+}
+function authPerm(k,on){ var p={}; p[k]=on; authSave({perms:p}, on?'✓ เปิดสิทธิ์แล้ว':'ปิดสิทธิ์แล้ว'); }
+function authLine(uid,role){ authSave({lineRole:{uid:uid,role:role}}, role==='admin'?'👑 ตั้งเป็นแอดมินแล้ว':'ตั้งเป็นผู้ปกครองแล้ว'); }
+function authPw(){
+  var a=AU;
+  askChoice('🔑',(a.hasParentPw?'เปลี่ยนรหัส':'ตั้งรหัส')+'ของ'+a.parentName,
+    '<div style="text-align:left"><div class="mut" style="margin-bottom:6px">ชื่อที่แสดง</div><input id="auName" value="'+esc(a.parentName)+'" maxlength="20" style="width:100%;margin-bottom:10px">'+
+    '<div class="mut" style="margin-bottom:6px">รหัสผู้ปกครอง (อย่างน้อย 4 ตัว ไม่ซ้ำรหัสแอดมิน)</div><input id="auPw" inputmode="numeric" autocomplete="off" style="width:100%" placeholder="เช่น 2468"></div>',[
+    {label:'บันทึก',main:1,bg:G_ADD,fn:function(){}}]);
+  var b=document.querySelector('#dCh .dcb.main'); b.onclick=function(){
+    var n=$('auName').value.trim(), pw=$('auPw').value.trim(), d={};
+    if(n) d.parentName=n; if(pw) d.parentPw=pw;
+    if(pw && pw.length<4){ toast('รหัสต้องยาวอย่างน้อย 4 ตัว'); return; }
+    dlgAns(false); authSave(d, pw?'🔑 ตั้งรหัสแล้ว · บอกรหัสนี้ให้'+(n||a.parentName)+'ใช้เข้าเว็บ':'บันทึกแล้ว'); };
 }
 function shake(){ var c=$('lgCard'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
 function showApp(){ $('login').classList.add('hidden'); $('app').classList.remove('hidden'); $('tabbar').classList.remove('hidden'); }
@@ -1696,12 +1745,12 @@ function famBulkGo(){
 // ===== ⚙️ หน้าตั้งกฎแบบเมนู + 🏠 ปรับหน้าจอหลัก =====
 var RU={tab:'dev', sub:null};
 var RU_DEV=['lim','bed','sch','prot','apps','loc'];
-var RU_T={lim:['⏰','เวลาเล่นต่อวัน'],bed:['🌙','เวลานอน'],sch:['🏫','เวลาเรียน'],prot:['🛡️','กันเข้าการตั้งค่าเครื่อง'],apps:['📱','กฎรายแอป'],loc:['📍','บังคับเปิดตำแหน่ง'],
+var RU_T={auth:['👑','สิทธิ์ผู้ใช้'],lim:['⏰','เวลาเล่นต่อวัน'],bed:['🌙','เวลานอน'],sch:['🏫','เวลาเรียน'],prot:['🛡️','กันเข้าการตั้งค่าเครื่อง'],apps:['📱','กฎรายแอป'],loc:['📍','บังคับเปิดตำแหน่ง'],
   home:['🏠','ปรับหน้าจอหลัก'],def:['⭐','เปิดเว็บมาเจอ'],bank:['🏦','ธนาคารเวลา'],call:['📞','คุมการโทรกลางคืน'],alert:['🔔','แจ้งเตือน LINE'],qm:['💬','ข้อความด่วน'],snd:['🎙️','เสียงเรียกลูก'],ver:['ℹ️','เวอร์ชันและอัปเดต']};
 function ruTab(t){ RU.tab=t; RU.sub=null; if(t==='dev'&&CUR==='ALL'){} sfx('pick'); ruApply(); }
 function ruShow(k){
   RU.sub=k; RU.tab=RU_DEV.indexOf(k)>=0?'dev':'sys';
-  try{ if(k==='home') homeEdDraw(); if(k==='alert') fillAlerts(); if(k==='bank') bankSum(); if(k==='call') callSum(); if(k==='def') defDevUI();
+  try{ if(k==='auth') authLoad(); if(k==='home') homeEdDraw(); if(k==='alert') fillAlerts(); if(k==='bank') bankSum(); if(k==='call') callSum(); if(k==='def') defDevUI();
     if(k==='ver'){ var d=dev(), av=d&&d.appVersion?String(d.appVersion):''; renderVer(d, av, av&&vnum(av)<vnum(LATEST_APP)); } }catch(e){ console.error(e); }
   ruApply(); window.scrollTo(0,0); sfx('pick');
 }
@@ -1714,15 +1763,17 @@ function ruApply(){
   $('ruMenuD').style.display = (!sub&&RU.tab==='dev')?'':'none';
   $('ruMenuS').style.display = (!sub&&RU.tab==='sys')?'':'none';
   $('ruSubH').classList.toggle('hidden',!sub);
-  if(sub){ $('ruSubT').textContent=RU_T[sub][0]+' '+RU_T[sub][1]; $('ruSubS').textContent = isDev ? 'ของ'+(d?d.name:'')+' · แก้แล้วกดบันทึกด้านล่าง' : sub==='home'||sub==='def' ? 'ตั้งเฉพาะมือถือเครื่องนี้' : 'ใช้กับทุกเครื่องในบ้าน'; }
+  if(sub){ $('ruSubT').textContent=RU_T[sub][0]+' '+RU_T[sub][1]; $('ruSubS').textContent = isDev ? 'ของ'+(d?d.name:'')+' · แก้แล้วกดบันทึกด้านล่าง' : sub==='home' ? (homeMode()==='shared'?'ใช้ร่วมกันทุกเครื่อง':'ตั้งเฉพาะมือถือเครื่องนี้') : sub==='def' ? 'ตั้งเฉพาะมือถือเครื่องนี้' : 'ใช้กับทุกเครื่องในบ้าน'; }
   document.querySelectorAll('#pRu [data-sub]').forEach(function(el){ el.style.display = sub && el.getAttribute('data-sub').split(' ').indexOf(sub)>=0 ? '' : 'none'; });
   $('ruForm').style.display = isDev?'':'none'; $('ruEmpty').style.display = isDev?'':'none';
-  $('ruSysGrp').style.display = sub&&!isDev&&sub!=='home'?'':'none';
+  $('ruSysGrp').style.display = sub&&!isDev&&sub!=='home'&&sub!=='auth'?'':'none';
+  var locked=!!sub && !can(RU_PERM[sub]); $('pRu').classList.toggle('ro',locked); $('ruLock').classList.toggle('hidden',!locked);
   ruMenusDraw();
 }
 function ruRow(k,sum,pill,fn){
   var bg={lim:'#2563EB',bed:'#6366F1',sch:'#F59E0B',prot:'#F43F5E',apps:'#EC4899',loc:'#10B981',home:'#8B5CF6',def:'#FBBF24',bank:'#10B981',call:'#6366F1',alert:'#F97316',qm:'#EC4899',snd:'#A855F7',ver:'#64748B',pair:'#22D3EE'}[k]||'#8B5CF6';
   var t=RU_T[k]||['➕','เพิ่มเครื่องลูก'];
+  if(!can(RU_PERM[k])){ pill='<span class="rpl off">🔒 แอดมิน</span>'; if(k==='pair') fn='toast(\'🔒 เฉพาะแอดมิน\')'; }
   return '<button class="rit" data-snd onclick="'+(fn||'ruShow(\''+k+'\')')+'"><div class="ic" style="background:'+bg+'33">'+t[0]+'</div><div class="tx"><b>'+t[1]+'</b><small>'+sum+'</small></div>'+(pill||'')+'<span class="ch">›</span></button>';
 }
 function rpill(on,txt){ return '<span class="rpl'+(on===true?'':on==='w'?' w':' off')+'">'+txt+'</span>'; }
@@ -1751,7 +1802,9 @@ function ruMenusDraw(){
   // ตั้งค่าระบบ
   var H=homeCfg(), nh=Object.keys(H.hide).filter(function(k){return H.hide[k];}).length+Object.keys(H.fhide).filter(function(k){return H.fhide[k];}).length;
   var old=fdevs().filter(function(x){ return x.appVersion&&vnum(x.appVersion)<vnum(LATEST_APP); }).length;
-  $('ruMenuS').innerHTML='<div class="rgt">หน้าจอของฉัน</div><div class="rgrp">'+
+  $('ruMenuS').innerHTML=(ME.role==='admin'?'<div class="rgt">ผู้ดูแล</div><div class="rgrp">'+ruRow('auth','กำหนดว่าใครทำอะไรได้ · รหัสผู้ปกครอง · บัญชี LINE')+'</div>':
+    '<div class="rgt">ผู้ใช้</div><div class="rgrp"><div style="padding:12px 14px;font-size:14px;color:var(--mut)">👤 เข้าสู่ระบบเป็น <span style="color:#fff;font-weight:700">'+esc(ME.name||'ผู้ปกครอง')+'</span> · บางเมนูแก้ได้เฉพาะแอดมิน</div></div>')+
+    '<div class="rgt">หน้าจอของฉัน</div><div class="rgrp">'+
     ruRow('home', nh?'ซ่อนอยู่ '+nh+' ส่วน · เรียงลำดับเองได้':'แสดงครบทุกส่วน · ซ่อน/เรียงลำดับได้')+
     ruRow('def', tx('fsRDef'))+'</div>'+
     '<div class="rgt">ระบบของครอบครัว</div><div class="rgrp">'+
@@ -1767,26 +1820,46 @@ function ruMenusDraw(){
 // ----- 🏠 ปรับหน้าจอหลัก (เก็บในมือถือเครื่องนี้) -----
 var HOME_KEYS=[['qa','⚡','ปุ่มลัด · ส่งข้อความ · เรียกลูก'],['bank','🏦','ธนาคารเวลา'],['call','📞','โทรตอนกลางคืน'],['loc','📍','ตำแหน่งลูก'],['apps','📊','แอปที่ใช้วันนี้'],['hp','🛡️','สถานะการป้องกัน']];
 var HOME_FAM=[['all','⚡','สั่งพร้อมกันทีเดียว'],['bars','📊','วันนี้ใครเล่นเท่าไร'],['apps','🔥','แอปฮิตของบ้าน'],['map','📍','แผนที่ทุกคน'],['ev','🔔','เหตุการณ์ล่าสุด']];
+function homeMode(){ return lsGet('kgHomeMode')==='shared'?'shared':'local'; }
+function homeRaw(){ if(homeMode()==='shared'&&DATA&&DATA.homeShared) return JSON.parse(JSON.stringify(DATA.homeShared)); try{ return JSON.parse(localStorage.getItem('kgHome')||'{}')||{}; }catch(e){ return {}; } }
 function homeCfg(){
-  var h={}; try{ h=JSON.parse(localStorage.getItem('kgHome')||'{}')||{}; }catch(e){}
+  var h=homeRaw()||{};
   var keys=HOME_KEYS.map(function(x){return x[0];});
   h.order=(h.order||[]).filter(function(k){return keys.indexOf(k)>=0;}); keys.forEach(function(k){ if(h.order.indexOf(k)<0) h.order.push(k); });
   h.hide=h.hide||{}; h.fhide=h.fhide||{}; return h;
 }
-function homeSave(h){ try{ localStorage.setItem('kgHome',JSON.stringify(h)); }catch(e){} applyHome(); homeEdDraw(); ruMenusDraw(); }
+function homeSave(h){
+  if(homeMode()==='shared'){ DATA.homeShared=h; clearTimeout(homeSave._t); homeSave._t=setTimeout(function(){ call('saveHome',{home:h}).catch(function(e){ toast('บันทึกไม่ได้: '+(e.message||e)); }); },600); }
+  else try{ localStorage.setItem('kgHome',JSON.stringify(h)); }catch(e){}
+  applyHome(); homeEdDraw(); ruMenusDraw(); }
+/** เลือกว่าหน้าจอหลักใช้เฉพาะเครื่องนี้ หรือใช้ร่วมกันทุกเครื่อง */
+function homeScope(m){
+  if(m===homeMode()) return; setTimeout(function(){ try{ ruApply(); }catch(e){} },400);
+  var setMode=function(v){ try{ localStorage.setItem('kgHomeMode',v); }catch(e){} };
+  if(m==='local'){ var cur=homeCfg(); setMode('local'); try{ localStorage.setItem('kgHome',JSON.stringify(cur)); }catch(e){} sfx('pick'); toast('📱 ใช้หน้าจอเฉพาะเครื่องนี้แล้ว'); applyHome(); homeEdDraw(); ruMenusDraw(); return; }
+  var mine=homeCfg(), useMine=function(){ setMode('shared'); homeSave(mine); toast('👨‍👩‍👧 ส่งแบบของเครื่องนี้ไปให้ทุกเครื่องแล้ว'); },
+      useShared=function(){ setMode('shared'); sfx('ok'); toast('👨‍👩‍👧 ใช้แบบที่ตั้งร่วมกันแล้ว'); applyHome(); homeEdDraw(); ruMenusDraw(); };
+  if(!(DATA&&DATA.homeShared)) return useMine();
+  askChoice('👨‍👩‍👧','ใช้หน้าจอแบบเดียวกันทุกเครื่อง?','<div class="aline">เครื่องที่เลือก "ทุกเครื่อง" จะเห็นหน้าจอเหมือนกัน แก้ที่เครื่องไหนก็เปลี่ยนตามกัน</div>',[
+    {label:'ใช้แบบของเครื่องนี้',sub:'ส่งการตั้งค่าเครื่องนี้ไปให้ทุกเครื่อง',main:1,bg:G_ADD,fn:useMine},
+    {label:'ใช้แบบที่ตั้งร่วมกันไว้แล้ว',sub:'เครื่องนี้เปลี่ยนตามแบบรวม',fn:useShared}]);
+}
 function homeMove(k,dir){ var h=homeCfg(), i=h.order.indexOf(k), j=i+dir; if(j<0||j>=h.order.length) return; h.order.splice(i,1); h.order.splice(j,0,k); sfx('pick'); homeSave(h); }
 function homeTog(grp,k,on){ var h=homeCfg(); h[grp][k]=!on; sfx('pick'); homeSave(h); }
-function homeReset(){ try{ localStorage.removeItem('kgHome'); }catch(e){} sfx('ok'); toast('คืนค่าเริ่มต้นแล้ว'); applyHome(); homeEdDraw(); ruMenusDraw(); }
+function homeReset(){ if(homeMode()==='shared'){ sfx('ok'); toast('คืนค่าเริ่มต้นแล้ว (ทุกเครื่อง)'); return homeSave({}); } try{ localStorage.removeItem('kgHome'); }catch(e){} sfx('ok'); toast('คืนค่าเริ่มต้นแล้ว'); applyHome(); homeEdDraw(); ruMenusDraw(); }
 function homeEdDraw(){
   var h=homeCfg(), lab={}; HOME_KEYS.forEach(function(x){ lab[x[0]]=x; });
   var sw=function(grp,k,on){ return '<label class="sw"><input type="checkbox" '+(on?'checked':'')+' onchange="homeTog(\''+grp+'\',\''+k+'\',this.checked)"><span></span></label>'; };
-  $('homeEd').innerHTML='<div class="h4" style="margin-top:0">📱 หน้าเครื่องลูก <span class="mut" style="font-weight:400;font-size:12.5px">เรียงจากบนลงล่าง</span></div>'+
+  var sh=homeMode()==='shared', tile=function(v,ic,t,sub,on){ return '<button class="hsc'+(on?' on':'')+'" onclick="homeScope(\''+v+'\')"><div style="font-size:22px">'+ic+'</div><b>'+t+'</b><small>'+sub+'</small></button>'; };
+  $('homeEd').innerHTML='<div class="mut" style="font-size:13px;margin-bottom:8px">ใช้การตั้งค่านี้กับ</div><div class="hscw">'+
+    tile('local','📱','เฉพาะเครื่องนี้','เครื่องอื่นไม่เปลี่ยน',!sh)+tile('shared','👨‍👩‍👧','ทุกเครื่อง','พ่อแม่เห็นเหมือนกัน',sh)+'</div>'+
+    '<div class="h4">📱 หน้าเครื่องลูก <span class="mut" style="font-weight:400;font-size:12.5px">เรียงจากบนลงล่าง</span></div>'+
     '<div class="hrow"><div class="mv"><button disabled>▲</button><button disabled>▼</button></div><div class="ic">⏱️</div><div class="tx"><b>เวลาที่เหลือ · คำขอจากลูก</b><small>แสดงเสมอ</small></div></div>'+
     h.order.map(function(k,i){ var x=lab[k]; return '<div class="hrow"><div class="mv"><button '+(i?'':'disabled')+' onclick="homeMove(\''+k+'\',-1)">▲</button><button '+(i<h.order.length-1?'':'disabled')+' onclick="homeMove(\''+k+'\',1)">▼</button></div><div class="ic">'+x[1]+'</div><div class="tx"><b>'+x[2]+'</b>'+(k==='bank'?'<small>ซ่อนแค่บนจอนี้ ธนาคารที่เครื่องลูกยังทำงาน</small>':'')+'</div>'+sw('hide',k,!h.hide[k])+'</div>'; }).join('')+
     '<div class="h4">👨‍👩‍👧 หน้าทั้งบ้าน</div>'+
     HOME_FAM.map(function(x){ return '<div class="hrow"><div class="ic">'+x[1]+'</div><div class="tx"><b>'+x[2]+'</b></div>'+sw('fhide',x[0],!h.fhide[x[0]])+'</div>'; }).join('')+
     '<button class="ghost" style="width:100%;margin-top:12px" onclick="homeReset()">↺ คืนค่าเริ่มต้น</button>'+
-    '<div class="note" style="margin-top:8px">ตั้งในมือถือเครื่องนี้เท่านั้น · แม่ตั้งในมือถือแม่ได้อีกแบบ</div>';
+    '<div class="note" style="margin-top:8px">'+(sh?'👨‍👩‍👧 ใช้ร่วมกัน · มือถือที่เลือก "ทุกเครื่อง" จะเปลี่ยนตามเมื่อเปิดเว็บครั้งถัดไป':'📱 ตั้งในมือถือเครื่องนี้เท่านั้น · แม่ตั้งในมือถือแม่ได้อีกแบบ')+'</div>';
 }
 function applyHome(){
   var h=homeCfg(), box=$('pOv'), anchor=$('hEdit'); if(!box||!anchor) return;
@@ -2607,7 +2680,8 @@ function qmSave(btn){
 (function(){
   $('lgLogo').innerHTML = CHICK(156); $('sndBtn').textContent = SND_ON?'🔊':'🔇'; $('avatar').innerHTML = CHICK(60);
   var saved = null; try{ saved = localStorage.getItem('kgpw'); }catch(e){}
-  if(saved){ PW = saved; showApp(); load(); }
+  if(saved){ PW = saved; showApp(); load();
+    call('login').then(setMe).catch(function(e){ if(/รหัสผ่านไม่ถูกต้อง/.test(e.message||'')){ try{localStorage.removeItem('kgpw');}catch(x){} toast('รหัสผ่านถูกเปลี่ยน กรุณาเข้าสู่ระบบใหม่'); setTimeout(function(){ location.reload(); },1500); } }); }
   else $('login').classList.remove('hidden');
   setInterval(function(){ if(PW && !document.hidden && !$('app').classList.contains('hidden')) load(); }, 60000);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden && PW) load(); });
