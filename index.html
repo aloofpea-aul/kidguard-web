@@ -844,9 +844,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.29.2', WEB_DATE = '14 พ.ย. 2569', LATEST_APP = '1.19.1';
+var WEB_VER = '1.29.3', WEB_DATE = '14 พ.ย. 2569', LATEST_APP = '1.19.1';
 var CHANGES = [
-  ['1.29.2','14 พ.ย. 2569','⚠️ ธนาคารเวลา: กดหักซ้ำภายใน 1 นาที จะขึ้นเตือนยอดที่เพิ่งหักและยอดคงเหลือก่อน กันกดซ้ำโดยไม่ตั้งใจ'],
+  ['1.29.3','14 พ.ย. 2569','🏦 ธนาคารเวลา: กดหัก/เติมแล้วยอดเปลี่ยนให้เห็นทันที + มีปุ่ม "ยกเลิก" ถ้ากดพลาด · ⚠️ กดหักซ้ำภายใน 1 นาที จะขึ้นเตือนยอดที่เพิ่งหักและยอดคงเหลือก่อน'],
   ['1.29.1','14 พ.ย. 2569','📶 เน็ตสะดุดตอนสลับกลับมาเปิดแอป จะลองโหลดใหม่เองก่อน ไม่ขึ้น "Load failed" ทันที'],
   ['1.29','14 พ.ย. 2569','⚙️ หน้าตั้งกฎใหม่: แยก "กฎของลูก" กับ "ตั้งค่าระบบ" เป็นเมนู แตะเข้าไปแก้ทีละเรื่อง · 🏠 ปรับหน้าจอหลักเองได้ (ซ่อน/เรียงการ์ด เช่น ซ่อนธนาคาร) ตั้งแยกในมือถือพ่อ/แม่'],
   ['1.28.1','13 พ.ย. 2569','📞 สิทธิ์การโทรย้ายไปหน้าผู้ปกครองในแอปลูก (ไม่ขึ้นที่หน้าลูกแล้ว) · เว็บเตือนเมื่อยังไม่อนุญาต · แอปที่นับเป็นการโทรเพิ่ม Instagram/Facebook'],
@@ -887,7 +887,11 @@ var API = 'https://script.google.com/macros/s/AKfycbxh2xcNY_iRgaweNHMA1XERFsy5J_
 var CHICK = function(s){ return '<svg class="chick" viewBox="0 0 120 120" width="'+s+'" height="'+s+'" aria-hidden="true"><path d="M14 70 C14 40 36 20 60 20 C84 20 106 40 106 70 C96 58 80 52 60 52 C40 52 24 58 14 70 Z" fill="#7A4FD0"/><circle cx="60" cy="74" r="28" fill="#FFD25A"/><circle class="eye" cx="50" cy="70" r="4" fill="#2B2340"/><circle class="eye" cx="70" cy="70" r="4" fill="#2B2340"/><path d="M55 78 L65 78 L60 85 Z" fill="#FF8A4C"/><ellipse cx="45" cy="80" rx="4" ry="2.6" fill="#FFB4B4"/><ellipse cx="75" cy="80" rx="4" ry="2.6" fill="#FFB4B4"/><path d="M14 70 C22 92 40 104 60 104 C80 104 98 92 106 70 C98 86 82 96 60 96 C38 96 22 86 14 70 Z" fill="#B79BF0"/></svg>'; };
 
 function $(id){ return document.getElementById(id); }
-function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('show'); clearTimeout(e._t); e._t=setTimeout(function(){e.classList.remove('show');},2800); }
+function toast(t){ var e=$('toast'); e.textContent=t; e.style.pointerEvents=''; e.classList.add('show'); clearTimeout(e._t); e._t=setTimeout(function(){e.classList.remove('show');},2800); }
+/** toast ที่มีปุ่ม (เช่น "ยกเลิก") */
+function toastAct(t, label, fn, ms){ var e=$('toast'); e.innerHTML=esc(t)+' <a style="margin-left:12px;font-weight:700;text-decoration:underline;color:#FFD3DA">'+esc(label)+'</a>'; e.style.pointerEvents='auto';
+  e.querySelector('a').onclick=function(){ e.classList.remove('show'); e.style.pointerEvents=''; fn(); };
+  e.classList.add('show'); clearTimeout(e._t); e._t=setTimeout(function(){ e.classList.remove('show'); e.style.pointerEvents=''; }, ms||7000); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function dur(ms){ var m=Math.floor((ms||0)/60000), h=Math.floor(m/60); m=m%60; return h>0 ? (h+' ชม.'+(m? ' '+m+' น.':'')) : (m+' นาที'); }
 function clock(ms){ var m=Math.max(0,Math.floor((ms||0)/60000)); return Math.floor(m/60)+':'+('0'+(m%60)).slice(-2); }
@@ -1848,7 +1852,7 @@ function bankHome(d){
     return '<div class="'+(h.status==='rejected'?'x':'')+'"><span>'+new Date(h.at).toLocaleDateString('th-TH',{day:'numeric',month:'short'})+' '+tm(h.at)+' · '+lab+(h.status==='pending'?' (รออนุมัติ)':'')+'</span><span class="'+(h.min>0?'p':'m')+'">'+(h.min>0?'+':'')+bhm(h.min)+'</span></div>';
   }).join('');
   el.innerHTML='<div class="bkc rise"><div class="t">🏦 ธนาคารเวลาของ'+esc(d.name)+'</div>'+
-    '<div style="display:flex;justify-content:space-between;align-items:flex-end"><div class="num v">'+bhm(b.bal)+' <small style="font-size:15px">ชม.</small></div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:flex-end"><div class="num v">'+(BK_FLASH&&BK_FLASH.id===d.deviceId&&Date.now()-BK_FLASH.at<10000&&BK_FLASH.to===b.bal?'<span style="font-size:17px;opacity:.6;text-decoration:line-through">'+bhm(BK_FLASH.from)+'</span> <span style="font-size:17px;opacity:.7">→</span> <span style="color:'+(BK_FLASH.to<BK_FLASH.from?'#FFB3BF':'#A7FFD8')+'">'+bhm(b.bal)+'</span>':bhm(b.bal))+' <small style="font-size:15px">ชม.</small></div>'+
     '<div style="font-size:13px;color:#E8E1FF;text-align:right">วันนี้ถอนไป '+bhm(b.wToday)+'<br>เพดานวันนี้ '+bhm(b.cap)+' ชม.'+(b.off?' (วันหยุด)':'')+'</div></div>'+
     (b.tonight===undefined?'':'<div style="margin-top:8px;font-size:13.5px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.18)">'+(b.cutDone?'✓ ตัดรอบวันนี้แล้ว':b.wToday>0&&cf.cutW!==false?'🌙 วันนี้ถอนแล้ว · ตัดรอบ<b style="color:#FFB3BF">ไม่ฝาก</b> (เวลาที่เหลือตัดทิ้ง)':'⏰ ตัดรอบ '+bcut(b.cutAt)+' จะฝาก <b style="color:#7DFFC4">+'+bhm(b.tonight||0)+'</b> ชม.')+(b.dToday>0?' · 🐷 วันนี้ฝากเองแล้ว +'+bhm(b.dToday)+(b.streak>1?' 🔥'+b.streak+' วันติด':''):'')+'</div>')+
     '<div class="two"><button style="background:rgba(60,245,160,.18);color:#A7FFD8" onclick="bankAdj(1)">➕ เติมให้</button><button style="background:rgba(244,63,94,.18);color:#FFB3BF" onclick="bankAdj(-1)">➖ หักออก</button></div>'+
@@ -1876,8 +1880,7 @@ function bankAdjDraw(){
   askChoice(s>0?'🏦':'➖',(s>0?'เติมเวลาเข้าธนาคารของ':'หักเวลาจากธนาคารของ')+d.name,html,[
     {label:(s>0?'➕ เติม ':'➖ หัก ')+BADJ.m+' นาที',main:1,bg:s>0?G_OK:'linear-gradient(90deg,#F97316,#F43F5E)',fn:function(){
       var m=BADJ.m, note=BADJ.note;
-      var go=function(){ BADJ_LOG.push({id:d.deviceId,at:Date.now(),min:s*m});
-        call('bankAdjust',{deviceId:d.deviceId,min:s*m,note:note}).then(function(){ sfx('ok'); toast(s>0?'➕ เติมเวลาเข้าธนาคารแล้ว':'➖ หักเวลาแล้ว'); load(); }).catch(function(e){ BADJ_LOG.pop(); toast('ไม่สำเร็จ: '+(e.message||e)); }); };
+      var go=function(){ bankApply(d,s*m,note,true); };
       var r=bankRecent(d,s);
       if(s<0 && r.min) return setTimeout(function(){ bankRepeatAsk(d,m,r,go); },350);
       go(); }}]);
@@ -1886,11 +1889,28 @@ function bankAdjDraw(){
 var BADJ_LOG=[];
 function bankRecent(d,s){
   var now=Date.now(), off=(DATA&&DATA.now)?DATA.now-(DATA._got||now):0, lim=60000;
-  var loc=BADJ_LOG.filter(function(x){ return x.id===d.deviceId && now-x.at<lim && (x.min<0)===(s<0); });
-  var srv=((d.bank&&d.bank.hist)||[]).filter(function(h){ return h.kind==='adjust' && (h.min<0)===(s<0) && (now+off)-Number(h.at)<lim; });
-  var sum=function(a){ return a.reduce(function(t,x){ return t+Math.abs(Number(x.min)||0); },0); };
-  var ls=sum(loc), ss=sum(srv), unseen=Math.max(0,ls-ss);
-  return {min:Math.max(ls,ss), bal:(d.bank.bal||0)+(s<0?-unseen:unseen)};
+  var loc=BADJ_LOG.filter(function(x){ return x.id===d.deviceId && now-x.at<lim; });
+  var srv=((d.bank&&d.bank.hist)||[]).filter(function(h){ return h.kind==='adjust' && !/^tmp/.test(h.id) && (now+off)-Number(h.at)<lim; });
+  var sum=function(a){ var n=a.reduce(function(t,x){ return t+(Number(x.min)||0); },0); return Math.max(0,s<0?-n:n); };  // สุทธิ (หักแล้วกดยกเลิก = 0)
+  var ls=sum(loc), ss=sum(srv);
+  return {min:Math.max(ls,ss), bal:d.bank.bal||0};
+}
+/** หัก/เติมธนาคาร: ยอดบนจอเปลี่ยนทันที + มีปุ่มยกเลิก (ถ้ากดพลาด) */
+var BK_FLASH=null;
+function bankApply(d, min, note, undoable){
+  var b=d.bank, from=b.bal||0, now=Date.now(), tmp={id:'tmp'+now,kind:'adjust',min:min,note:note||(min>0?'พ่อแม่เติมให้':'พ่อแม่หักออก'),status:'ok',at:now};
+  b.bal=from+min; b.hist=[tmp].concat(b.hist||[]); BK_FLASH={id:d.deviceId,from:from,to:b.bal,at:now};
+  var log={id:d.deviceId,at:now,min:min}; if(undoable) BADJ_LOG.push(log);
+  render(); sfx('ok');
+  var p=call('bankAdjust',{deviceId:d.deviceId,min:min,note:tmp.note});
+  p.then(function(){ load(); }).catch(function(e){
+    b.bal-=min; b.hist=b.hist.filter(function(h){ return h!==tmp; }); BADJ_LOG=BADJ_LOG.filter(function(x){ return x!==log; }); BK_FLASH=null; render();
+    toast('ไม่สำเร็จ: '+(e.message||e)); });
+  var txt=(min>0?'✓ เติมเวลาแล้ว ':'✓ หักเวลาแล้ว ')+dur(Math.abs(min)*60000);
+  if(!undoable) return toast(txt);
+  toastAct(txt,'ยกเลิก',function(){
+    p.then(function(){ BADJ_LOG=BADJ_LOG.filter(function(x){ return x!==log; }); bankApply(fby(d.deviceId)||d,-min,'ยกเลิกรายการ (กดพลาด)',false); });
+  });
 }
 function bankRepeatAsk(d,m,r,go){
   askChoice('⚠️','เพิ่งหักไปแล้วเมื่อสักครู่',
