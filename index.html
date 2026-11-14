@@ -844,8 +844,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.29.1', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.19.1';
+var WEB_VER = '1.29.2', WEB_DATE = '14 พ.ย. 2569', LATEST_APP = '1.19.1';
 var CHANGES = [
+  ['1.29.2','14 พ.ย. 2569','⚠️ ธนาคารเวลา: กดหักซ้ำภายใน 1 นาที จะขึ้นเตือนยอดที่เพิ่งหักและยอดคงเหลือก่อน กันกดซ้ำโดยไม่ตั้งใจ'],
   ['1.29.1','14 พ.ย. 2569','📶 เน็ตสะดุดตอนสลับกลับมาเปิดแอป จะลองโหลดใหม่เองก่อน ไม่ขึ้น "Load failed" ทันที'],
   ['1.29','14 พ.ย. 2569','⚙️ หน้าตั้งกฎใหม่: แยก "กฎของลูก" กับ "ตั้งค่าระบบ" เป็นเมนู แตะเข้าไปแก้ทีละเรื่อง · 🏠 ปรับหน้าจอหลักเองได้ (ซ่อน/เรียงการ์ด เช่น ซ่อนธนาคาร) ตั้งแยกในมือถือพ่อ/แม่'],
   ['1.28.1','13 พ.ย. 2569','📞 สิทธิ์การโทรย้ายไปหน้าผู้ปกครองในแอปลูก (ไม่ขึ้นที่หน้าลูกแล้ว) · เว็บเตือนเมื่อยังไม่อนุญาต · แอปที่นับเป็นการโทรเพิ่ม Instagram/Facebook'],
@@ -940,7 +941,7 @@ function load(){
   LOADING=once().finally(function(){ LOADING=null; });
   return LOADING.then(function(d){
     LFAIL=0;
-    DATA = d;
+    DATA = d; DATA._got = Date.now();
     if(!d.devices.length){ $('empty').classList.remove('hidden'); ['pOv','pRp','pRu'].forEach(function(p){$(p).classList.add('hidden');}); $('updated').textContent='ยังไม่มีเครื่องลูก'; return; }
     $('empty').classList.add('hidden');
     if(!CUR || !dev()) CUR = startDev(d.devices);
@@ -1874,7 +1875,29 @@ function bankAdjDraw(){
     '<div class="aline">ธนาคาร <b>'+bhm(d.bank.bal)+'</b> → <b class="'+(s>0?'up':'dn')+'">'+bhm(d.bank.bal+s*BADJ.m)+'</b> ชม.</div>';
   askChoice(s>0?'🏦':'➖',(s>0?'เติมเวลาเข้าธนาคารของ':'หักเวลาจากธนาคารของ')+d.name,html,[
     {label:(s>0?'➕ เติม ':'➖ หัก ')+BADJ.m+' นาที',main:1,bg:s>0?G_OK:'linear-gradient(90deg,#F97316,#F43F5E)',fn:function(){
-      call('bankAdjust',{deviceId:d.deviceId,min:s*BADJ.m,note:BADJ.note}).then(function(){ sfx('ok'); toast(s>0?'➕ เติมเวลาเข้าธนาคารแล้ว':'➖ หักเวลาแล้ว'); load(); }).catch(function(e){ toast('ไม่สำเร็จ: '+(e.message||e)); }); }}]);
+      var m=BADJ.m, note=BADJ.note;
+      var go=function(){ BADJ_LOG.push({id:d.deviceId,at:Date.now(),min:s*m});
+        call('bankAdjust',{deviceId:d.deviceId,min:s*m,note:note}).then(function(){ sfx('ok'); toast(s>0?'➕ เติมเวลาเข้าธนาคารแล้ว':'➖ หักเวลาแล้ว'); load(); }).catch(function(e){ BADJ_LOG.pop(); toast('ไม่สำเร็จ: '+(e.message||e)); }); };
+      var r=bankRecent(d,s);
+      if(s<0 && r.min) return setTimeout(function(){ bankRepeatAsk(d,m,r,go); },350);
+      go(); }}]);
+}
+/** ⚠️ กันกดหักซ้ำ: ดูการหักของเครื่องนี้ใน 1 นาทีล่าสุด (จากเครื่องนี้ + จากเซิร์ฟเวอร์ เผื่ออีกคนกดจากมือถืออีกเครื่อง) */
+var BADJ_LOG=[];
+function bankRecent(d,s){
+  var now=Date.now(), off=(DATA&&DATA.now)?DATA.now-(DATA._got||now):0, lim=60000;
+  var loc=BADJ_LOG.filter(function(x){ return x.id===d.deviceId && now-x.at<lim && (x.min<0)===(s<0); });
+  var srv=((d.bank&&d.bank.hist)||[]).filter(function(h){ return h.kind==='adjust' && (h.min<0)===(s<0) && (now+off)-Number(h.at)<lim; });
+  var sum=function(a){ return a.reduce(function(t,x){ return t+Math.abs(Number(x.min)||0); },0); };
+  var ls=sum(loc), ss=sum(srv), unseen=Math.max(0,ls-ss);
+  return {min:Math.max(ls,ss), bal:(d.bank.bal||0)+(s<0?-unseen:unseen)};
+}
+function bankRepeatAsk(d,m,r,go){
+  askChoice('⚠️','เพิ่งหักไปแล้วเมื่อสักครู่',
+    '<div style="background:rgba(251,191,36,.16);color:#FDE68A;border-radius:12px;padding:10px 12px;line-height:1.7">1 นาทีที่ผ่านมา หักไปแล้ว <b>'+bhm(r.min)+' ชม.</b><br>ยอดตอนนี้เหลือ <b>'+bhm(r.bal)+' ชม.</b></div>'+
+    '<div class="aline">ถ้าหักอีก '+bhm(m)+' ชม. ยอดจะเหลือ <b class="dn">'+bhm(r.bal-m)+'</b> ชม.</div>',[
+    {label:'ไม่หักแล้ว',main:1,bg:G_OK,fn:function(){ toast('ไม่ได้หักเพิ่ม'); }},
+    {label:'➖ หักเพิ่มอีก '+m+' นาที',bg:'rgba(244,63,94,.25)',fn:go}]);
 }
 function bankSum(){
   var cf=DATA&&DATA.bankCfg; if(!cf) return;
