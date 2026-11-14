@@ -397,6 +397,33 @@ body.fmlock{overflow:hidden}
 .uprow{margin-top:10px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(251,191,36,.14);border:1px solid rgba(251,191,36,.35);font-size:13.5px;color:#FDE68A}
 .uprow button{margin-left:auto;height:36px;padding:0 12px;border:0;border-radius:11px;background:linear-gradient(90deg,#8B5CF6,#22D3EE);color:#fff;font-weight:700;font-size:13.5px;white-space:nowrap}
 .upst{margin-top:10px;font-size:13px;color:#C9C3F0;display:flex;flex-direction:column;gap:4px}.upst .d{color:#7DFFC4}.upst .w{color:#FDE68A}.upst .x{opacity:.45}.upst .e{color:#FFB3BF}
+/* ===== หน้าตั้งกฎแบบเมนู ===== */
+.ruseg{display:flex;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:16px;padding:4px}
+.ruseg button{flex:1;min-width:0;padding:10px 4px;border-radius:12px;border:0;background:none;font-size:14.5px;font-weight:700;color:#B9B3E6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ruseg button.on{background:var(--grad);color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.35)}
+.rumenu{display:flex;flex-direction:column;gap:4px}
+.rgt{font-size:12.5px;color:var(--mut2);margin:10px 6px 4px;font-weight:700;letter-spacing:.3px}
+.rgrp{border-radius:20px;background:rgba(255,255,255,.06);border:1px solid var(--line);overflow:hidden}
+.rit{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid rgba(255,255,255,.07);cursor:pointer;width:100%;background:none;border-left:0;border-right:0;border-bottom:0;color:#fff;text-align:left;font:inherit}
+.rit:first-child{border-top:0}
+.rit:active{background:rgba(255,255,255,.06)}
+.rit .ic{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 36px}
+.rit .tx{flex:1;min-width:0}.rit .tx b{display:block;font-size:15.5px}.rit .tx small{display:block;color:#B9B3E6;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rit .ch{color:var(--mut2);font-size:20px}
+.rpl{font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;background:rgba(60,245,160,.16);color:#7DFFC4;white-space:nowrap}
+.rpl.off{background:rgba(255,255,255,.1);color:#A9A3D6}.rpl.w{background:rgba(251,191,36,.2);color:#FDE68A}
+.rusubh{display:flex;align-items:center;gap:12px}
+.rusubh button{width:42px;height:42px;border-radius:13px;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:22px;flex:0 0 42px}
+.rusubh b{display:block;font-size:19px}.rusubh small{display:block;color:#B9B3E6;font-size:12.5px}
+#pRu [data-sub] .fold .fh,#pRu .fold[data-sub] .fh{display:none}
+#pRu [data-sub] .fold .fb,#pRu .fold[data-sub] .fb{grid-template-rows:1fr}
+.hhide{display:none!important}
+.hedit{display:block;width:100%;padding:12px;border-radius:16px;border:1px dashed rgba(255,255,255,.25);background:none;color:#C9C3F0;font-size:14.5px;font-weight:600}
+.hrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.07)}.hrow:first-of-type{border:0}
+.hrow .mv{display:flex;flex-direction:column;gap:2px}.hrow .mv button{width:30px;height:22px;border-radius:7px;border:0;background:rgba(255,255,255,.1);color:#C9C3F0;font-size:11px;line-height:1}
+.hrow .mv button:disabled{opacity:.25}
+.hrow .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 34px;background:rgba(255,255,255,.08)}
+.hrow .tx{flex:1;min-width:0}.hrow .tx b{display:block;font-size:15px}.hrow .tx small{color:#B9B3E6;font-size:12px}
 </style>
 <style>
 /* ===== กลุ่มพับได้ ===== */
@@ -584,12 +611,12 @@ body.fmlock{overflow:hidden}
     <div id="famReq" style="display:flex;flex-direction:column;gap:10px"></div>
     <div class="fsec">📱 ทุกเครื่อง <span>แตะ "เปิดดู" เพื่อดูละเอียด</span></div>
     <div id="famDevs"></div>
-    <div class="fsec" style="margin-top:-6px">⚡ สั่งพร้อมกันทีเดียว <span>เลือกเครื่องก่อน</span></div>
-    <div class="fall" id="famAll"></div>
-    <div class="fsec">📊 วันนี้ใครเล่นเท่าไร <span>เส้นขาว = โควตา</span></div>
-    <div class="fcard" id="famBars"></div>
-    <div class="fsec">🔥 แอปฮิตของบ้านวันนี้</div>
-    <div class="fcard" id="famApps"></div>
+    <div id="hfAll" style="display:flex;flex-direction:column;gap:14px"><div class="fsec" style="margin-top:-6px">⚡ สั่งพร้อมกันทีเดียว <span>เลือกเครื่องก่อน</span></div>
+    <div class="fall" id="famAll"></div></div>
+    <div id="hfBars" style="display:flex;flex-direction:column;gap:14px"><div class="fsec">📊 วันนี้ใครเล่นเท่าไร <span>เส้นขาว = โควตา</span></div>
+    <div class="fcard" id="famBars"></div></div>
+    <div id="hfApps" style="display:flex;flex-direction:column;gap:14px"><div class="fsec">🔥 แอปฮิตของบ้านวันนี้</div>
+    <div class="fcard" id="famApps"></div></div>
     <div id="famLocW"><div class="fsec" style="margin-bottom:10px">📍 ทุกคนอยู่ไหน <span id="famLocS"></span></div>
       <div class="fmw" id="fmWrap"><div id="famMapBox"></div>
         <div class="fmcover" onclick="fmFull(true)"></div><button class="fmexp" data-snd onclick="fmFull(true)">⛶ ขยายเต็มจอ</button>
@@ -603,8 +630,9 @@ body.fmlock{overflow:hidden}
         </div>
         <div class="fmbot" id="fmList"></div>
       </div></div>
-    <div class="fsec">🔔 เหตุการณ์ล่าสุดทั้งบ้าน</div>
-    <div class="fcard" id="famEv"></div>
+    <div id="hfEv" style="display:flex;flex-direction:column;gap:14px"><div class="fsec">🔔 เหตุการณ์ล่าสุดทั้งบ้าน</div>
+    <div class="fcard" id="famEv"></div></div>
+    <button class="hedit" onclick="tab('ru');ruTab('sys');ruShow('home')">✏️ ปรับหน้าจอหลัก</button>
   </div>
   <div id="pFamRp" class="hidden" style="display:flex;flex-direction:column;gap:14px">
     <div class="fsec">📊 7 วันล่าสุด ทั้งบ้าน</div>
@@ -631,12 +659,12 @@ body.fmlock{overflow:hidden}
     <div id="hBan"></div>
     <div id="reqList" style="display:flex;flex-direction:column;gap:10px"></div>
     <div class="qa rise" style="animation-delay:.14s" id="qa"></div>
-    <div style="display:flex;gap:10px"><button class="msgbtn rise" style="animation-delay:.18s;flex:1.3" id="msgBtn" onclick="openMsg()">💬 ส่งข้อความถึงลูก</button>
+    <div style="display:flex;gap:10px" id="qaMsg"><button class="msgbtn rise" style="animation-delay:.18s;flex:1.3" id="msgBtn" onclick="openMsg()">💬 ส่งข้อความถึงลูก</button>
     <button class="msgbtn rise ringbtn" style="animation-delay:.2s;flex:1" id="ringBtn" onclick="openRing()">📢 เรียกลูก</button></div>
     <div class="note" id="note">คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
     <div id="bankHome"></div>
     <div id="callHome"></div>
-    <div class="foldgrp rise" style="animation-delay:.26s">
+    <div class="foldgrp rise" style="animation-delay:.26s" id="hLoc">
     <div class="fold" id="fLoc" data-k="loc">
       <div class="fh" onclick="fold('loc')"><div class="ft" style="background:linear-gradient(135deg,#22D3EE,#3B82F6)">📍</div>
         <div class="fx"><div class="fn">ตำแหน่งลูก</div><div class="fs" id="fsLoc">-</div></div><div class="fr" id="frLoc"></div><div class="fc">⌄</div></div>
@@ -647,7 +675,8 @@ body.fmlock{overflow:hidden}
         <div class="lrow"><div class="e" id="locE">📍</div><div style="flex:1;min-width:0"><div class="lplace" id="locPlace">-</div><div class="mut" id="locSub"></div></div></div>
         <div class="lbtn"><button class="p shine" id="locNow" data-snd onclick="locateNow(this)">🎯 หาตอนนี้</button><button class="s" data-snd onclick="openMap()">🗺️ ดูเส้นทาง</button></div>
       </div></div></div></div>
-    </div>
+    </div></div>
+    <div class="foldgrp rise" style="animation-delay:.28s" id="hApps">
     <div class="fold" id="fApps" data-k="apps">
       <div class="fh" onclick="fold('apps')"><div class="ft" style="background:linear-gradient(135deg,#A78BFA,#EC4899)">📊</div>
         <div class="fx"><div class="fn">แอปที่ใช้วันนี้</div><div class="fs" id="fsApps">-</div></div><div class="fr" id="frApps"></div><div class="fc">⌄</div></div>
@@ -655,13 +684,15 @@ body.fmlock{overflow:hidden}
         <div id="topApps" style="display:flex;flex-direction:column;gap:12px"></div>
         <a class="fmore" onclick="tab('rp')">ดูทั้งหมดในรายงาน ›</a>
       </div></div></div>
-    </div>
+    </div></div>
+    <div class="foldgrp rise" style="animation-delay:.3s" id="hHp">
     <div class="fold" id="fHp" data-k="hp">
       <div class="fh" onclick="fold('hp')"><div class="ft" id="ftHp" style="background:linear-gradient(135deg,#3CF5A0,#10B981)">🛡️</div>
         <div class="fx"><div class="fn">สถานะการป้องกัน</div><div class="fs" id="fsHp">-</div></div><div class="fr" id="frHp"></div><div class="fc">⌄</div></div>
       <div class="fb"><div><div class="fin" id="hCard"></div></div></div>
     </div>
     </div>
+    <button class="hedit" id="hEdit" onclick="tab('ru');ruTab('sys');ruShow('home')">✏️ ปรับหน้าจอหลัก</button>
     <div class="vfoot" id="vFoot" onclick="tab('ru');setTimeout(function(){$('verCard').scrollIntoView({behavior:'smooth'});},300)"></div>
   </div>
 
@@ -683,24 +714,32 @@ body.fmlock{overflow:hidden}
 
   <!-- ตั้งกฎ -->
   <div id="pRu" class="hidden" style="display:flex;flex-direction:column;gap:14px">
+    <div class="ruseg" id="ruSeg"><button id="ruSegD" onclick="ruTab('dev')">📱 กฎของ<span id="ruDevName"></span></button><button id="ruSegS" onclick="ruTab('sys')">⚙️ ตั้งค่าระบบ</button></div>
+    <div id="ruMenuD" class="rumenu"></div>
+    <div id="ruMenuS" class="rumenu"></div>
+    <div id="ruSubH" class="rusubh hidden"><button onclick="ruBack()" aria-label="กลับ">‹</button><div style="min-width:0"><b id="ruSubT"></b><small id="ruSubS"></small></div></div>
+    <div class="glass sec" data-sub="home" id="homeEd"></div>
     <div id="ruEmpty" class="glass sec mut hidden">ยังไม่มีข้อมูลกฎจากเครื่องนี้ รอเครื่องลูกซิงค์ครั้งแรก</div>
     <div id="ruForm" style="display:flex;flex-direction:column;gap:14px">
-      <div class="glass sec rise">
+      <div class="glass sec rise" data-sub="lim">
         <div class="lbl">เวลาเล่นต่อวัน (เลื่อนไปซ้ายสุด = ไม่จำกัด)</div>
         <div class="lims">
           <div class="limbox"><div class="lbl">วันเรียน จ.–ศ.</div><div class="num" id="vWd">-</div><input type="range" id="rWd" min="0" max="480" step="15" oninput="showLim()"></div>
           <div class="limbox"><div class="lbl">วันหยุด ส.–อา.</div><div class="num" id="vWe">-</div><input type="range" id="rWe" min="0" max="480" step="15" oninput="showLim()"></div>
         </div>
       </div>
-      <div class="glass rise" style="padding:4px 16px;animation-delay:.08s">
-        <div class="trow"><div class="e">🌙</div><div class="t"><b>เวลานอน</b><span class="mut">ทุกวัน</span></div><label class="sw"><input type="checkbox" id="rBedOn"><span></span></label></div>
+      <div class="glass rise" style="padding:4px 16px" data-sub="bed">
+        <div class="trow"><div class="e">🌙</div><div class="t"><b>เวลานอน</b><span class="mut">ทุกวัน · ล็อกเครื่อง ยกเว้นโทรศัพท์และแอป "ใช้ได้เสมอ"</span></div><label class="sw"><input type="checkbox" id="rBedOn"><span></span></label></div>
         <div class="times"><label>เริ่ม<input type="time" id="rBedS"></label><label>ถึง<input type="time" id="rBedE"></label></div>
-        <div class="trow"><div class="e">🏫</div><div class="t"><b>เวลาเรียน</b><span class="mut">จ.–ศ.</span></div><label class="sw"><input type="checkbox" id="rSchOn"><span></span></label></div>
-        <div class="times"><label>เริ่ม<input type="time" id="rSchS"></label><label>ถึง<input type="time" id="rSchE"></label></div>
-        <div class="trow"><div class="e">🛡️</div><div class="t"><b>กันเข้าการตั้งค่าเครื่อง</b><span class="mut">ต้องใช้ PIN พ่อแม่</span></div><label class="sw"><input type="checkbox" id="rProt"><span></span></label></div>
       </div>
-      <div class="glabel rise" style="animation-delay:.1s">กฎเพิ่มเติม <span>บันทึกพร้อมปุ่มด้านล่าง</span></div>
-      <div class="foldgrp rise" style="animation-delay:.12s">
+      <div class="glass rise" style="padding:4px 16px" data-sub="sch">
+        <div class="trow"><div class="e">🏫</div><div class="t"><b>เวลาเรียน</b><span class="mut">จ.–ศ. · ไม่ใช้กับวันหยุดนักขัตฤกษ์ที่ตั้งในธนาคาร</span></div><label class="sw"><input type="checkbox" id="rSchOn"><span></span></label></div>
+        <div class="times"><label>เริ่ม<input type="time" id="rSchS"></label><label>ถึง<input type="time" id="rSchE"></label></div>
+      </div>
+      <div class="glass rise" style="padding:4px 16px" data-sub="prot">
+        <div class="trow"><div class="e">🛡️</div><div class="t"><b>กันเข้าการตั้งค่าเครื่อง</b><span class="mut">ลูกเปิดหน้าตั้งค่าของเครื่องไม่ได้ ต้องใช้ PIN พ่อแม่</span></div><label class="sw"><input type="checkbox" id="rProt"><span></span></label></div>
+      </div>
+      <div class="foldgrp rise" data-sub="apps">
     <div class="fold" data-k="rapps">
       <div class="fh" onclick="fold('rapps')"><div class="ft" style="background:linear-gradient(135deg,#A78BFA,#EC4899)">📱</div>
         <div class="fx"><div class="fn">กฎรายแอป</div><div class="fs" id="fsRApps">-</div></div><div class="fr" id="fsRAppsR"></div><div class="fc">⌄</div></div>
@@ -708,7 +747,8 @@ body.fmlock{overflow:hidden}
         <input type="search" id="appSearch" placeholder="🔍 ค้นหาแอป…" oninput="renderApps()">
         <div id="appsRules"></div>
       </div></div></div>
-    </div>
+    </div></div>
+      <div class="foldgrp rise" data-sub="loc">
     <div class="fold locf" data-k="rlocf">
       <div class="fh" onclick="fold('rlocf')"><div class="ft" style="background:linear-gradient(135deg,#22D3EE,#3B82F6)">📍</div>
         <div class="fx"><div class="fn">บังคับเปิดตำแหน่ง</div><div class="fs" id="fsRLoc">-</div></div><div class="fr" id="fsRLocR"></div><div class="fc">⌄</div></div>
@@ -718,12 +758,11 @@ body.fmlock{overflow:hidden}
       </div></div></div>
     </div>
       </div>
-      <button class="big shine rise" style="animation-delay:.16s" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
-      <div class="note">กฎใหม่ถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
+      <button class="big shine rise" data-sub="lim bed sch prot apps loc" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
+      <div class="note" data-sub="lim bed sch prot apps loc">กฎใหม่ถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
     </div>
-    <div class="glabel rise" style="animation-delay:.2s">ตั้งค่าอื่นๆ <span>เปลี่ยนแล้วบันทึกทันที</span></div>
-    <div class="foldgrp rise" style="animation-delay:.22s">
-    <div class="fold" data-k="rdef">
+    <div class="foldgrp rise" id="ruSysGrp">
+    <div class="fold" data-k="rdef" data-sub="def">
       <div class="fh" onclick="fold('rdef')"><div class="ft" style="background:linear-gradient(135deg,#FDE047,#F59E0B)">⭐</div>
         <div class="fx"><div class="fn">เปิดเว็บมาเจอเครื่องไหน</div><div class="fs" id="fsRDef">-</div></div><div class="fr"></div><div class="fc">⌄</div></div>
       <div class="fb"><div><div class="fin">
@@ -731,17 +770,17 @@ body.fmlock{overflow:hidden}
         <div id="defDevOpts" class="dopts"></div>
       </div></div></div>
     </div>
-    <div class="fold" data-k="rbank">
+    <div class="fold" data-k="rbank" data-sub="bank">
       <div class="fh" onclick="fold('rbank')"><div class="ft" style="background:linear-gradient(135deg,#FFD66B,#FF9F43)">🏦</div>
         <div class="fx"><div class="fn">ธนาคารเวลา</div><div class="fs" id="fsRBank">-</div></div><div class="fr" id="fsRBankR"></div><div class="fc">⌄</div></div>
       <div class="fb"><div><div class="fin" id="bankEd"></div></div></div>
     </div>
-    <div class="fold" data-k="rcall">
+    <div class="fold" data-k="rcall" data-sub="call">
       <div class="fh" onclick="fold('rcall')"><div class="ft" style="background:linear-gradient(135deg,#A5B4FC,#6366F1)">📞</div>
         <div class="fx"><div class="fn">คุมการโทรตอนกลางคืน</div><div class="fs" id="fsRCall">-</div></div><div class="fr" id="fsRCallR"></div><div class="fc">⌄</div></div>
       <div class="fb"><div><div class="fin" id="callEd"></div></div></div>
     </div>
-    <div class="fold" data-k="rsnd">
+    <div class="fold" data-k="rsnd" data-sub="snd">
       <div class="fh" onclick="fold('rsnd')"><div class="ft" style="background:linear-gradient(135deg,#F472B6,#8B5CF6)">🎙️</div>
         <div class="fx"><div class="fn">เสียงเรียกลูก</div><div class="fs" id="fsRSnd">-</div></div><div class="fr" id="fsRSndR"></div><div class="fc">⌄</div></div>
       <div class="fb"><div><div class="fin">
@@ -749,7 +788,7 @@ body.fmlock{overflow:hidden}
         <button class="big shine" style="width:100%" data-snd onclick="openSounds()">🎙️ จัดการเสียง <span id="sndCount"></span></button>
       </div></div></div>
     </div>
-    <div class="fold alc" data-k="ralert">
+    <div class="fold alc" data-k="ralert" data-sub="alert">
       <div class="fh" onclick="fold('ralert')"><div class="ft" style="background:linear-gradient(135deg,#F43F5E,#F97316)">🚨</div>
         <div class="fx"><div class="fn">แจ้งเตือนทาง LINE</div><div class="fs" id="fsRAlert">-</div></div><div class="fr" id="fsRAlertR"></div><div class="fc">⌄</div></div>
       <div class="fb"><div><div class="fin">
@@ -763,7 +802,7 @@ body.fmlock{overflow:hidden}
         <div class="note" style="margin-top:6px">ตอนจอดับ เครื่องลูกส่งข้อมูลทุก ~15 นาที จึงเริ่มที่ 20 นาที เพื่อไม่ให้เตือนผิด</div>
       </div></div></div>
     </div>
-    <div class="fold" data-k="rqm" id="qmCard">
+    <div class="fold" data-k="rqm" data-sub="qm" id="qmCard">
       <div class="fh" onclick="fold('rqm')"><div class="ft" style="background:linear-gradient(135deg,#FBBF24,#F59E0B)">💬</div>
         <div class="fx"><div class="fn">ข้อความด่วน</div><div class="fs" id="fsRQm">-</div></div><div class="fr" id="fsRQmR"></div><div class="fc">⌄</div></div>
       <div class="fb"><div><div class="fin">
@@ -772,7 +811,7 @@ body.fmlock{overflow:hidden}
       <div class="two" style="margin-top:10px"><button class="bno" onclick="qmAdd()">+ เพิ่มข้อความ</button><button class="bok" onclick="qmSave(this)">บันทึกข้อความด่วน</button></div>
       </div></div></div>
     </div>
-    <div class="fold" data-k="rver">
+    <div class="fold" data-k="rver" data-sub="ver">
       <div class="fh" onclick="fold('rver')"><div class="ft" style="background:linear-gradient(135deg,#64748B,#475569)">ℹ️</div>
         <div class="fx"><div class="fn">เวอร์ชันและสิ่งที่อัปเดต</div><div class="fs" id="fsRVer">-</div></div><div class="fr" id="fsRVerR"></div><div class="fc">⌄</div></div>
       <div class="fb"><div><div class="fin"><div class="ver" id="verCard"></div></div></div></div>
@@ -805,8 +844,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.28.1', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.19.1';
+var WEB_VER = '1.29', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.19.1';
 var CHANGES = [
+  ['1.29','14 พ.ย. 2569','⚙️ หน้าตั้งกฎใหม่: แยก "กฎของลูก" กับ "ตั้งค่าระบบ" เป็นเมนู แตะเข้าไปแก้ทีละเรื่อง · 🏠 ปรับหน้าจอหลักเองได้ (ซ่อน/เรียงการ์ด เช่น ซ่อนธนาคาร) ตั้งแยกในมือถือพ่อ/แม่'],
   ['1.28.1','13 พ.ย. 2569','📞 สิทธิ์การโทรย้ายไปหน้าผู้ปกครองในแอปลูก (ไม่ขึ้นที่หน้าลูกแล้ว) · เว็บเตือนเมื่อยังไม่อนุญาต · แอปที่นับเป็นการโทรเพิ่ม Instagram/Facebook'],
   ['1.28','13 พ.ย. 2569','⬆️ ส่งอัปเดตแอปไปที่เครื่องลูกจากเว็บได้ + ดูสถานะทีละขั้น (เครื่องลูกต้องเป็นแอป v1.19 ขึ้นไป)'],
   ['1.27','13 พ.ย. 2569','🏦 เปิด/ปิดธนาคารเวลาแยกรายเครื่องได้ (สวิตช์หลักยังปิดทั้งบ้าน) · ยอดเดิมเก็บไว้เมื่อปิด'],
@@ -1143,7 +1183,7 @@ function render(){
   $('devChips').innerHTML = (DATA.devices.length>1 ? '<button class="dchip fam'+(CUR==='ALL'?' on':'')+'" onclick="pick(\'ALL\')">'+(dstar==='ALL'?'<span class="dstar">⭐</span>':'')+'👨‍👩‍👧 ทั้งบ้าน</button>'+DATA.devices.map(function(x){
     return '<button class="dchip'+(x.deviceId===CUR?' on':'')+'" onclick="pick(\''+x.deviceId+'\')">'+(lsGet('kgDefDev')===x.deviceId?'<span class="dstar">⭐</span>':'')+esc(x.name)+'</button>'; }).join('') : '')+
     '<button class="dchip add" data-snd onclick="openPair()">➕ เพิ่มเครื่องลูก</button>';
-  if(CUR==='ALL'){ try{ renderFam(); renderFamRp(); defDevUI(); }catch(e){ console.error(e); } if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); } return; }
+  if(CUR==='ALL'){ try{ renderFam(); renderFamRp(); defDevUI(); applyHome(); if(TAB==='ru') ruApply(); }catch(e){ console.error(e); } if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); } return; }
 
   // วงแหวนเวลา
   var T = dl(d), used = T.used, unlimited = T.un;
@@ -1236,6 +1276,7 @@ function render(){
 
   if(!DRAFT || DRAFT._id!==d.deviceId) fillRules();
   try{ ruleSums(); defDevUI(); bankSum(); bankHome(dev()); callSum(); callHome(dev()); }catch(e){ console.error(e); }
+  try{ applyHome(); if(TAB==='ru') ruApply(); }catch(e){ console.error(e); }
   applyFold();
   if(FIRST){ FIRST=false; setTimeout(function(){ document.body.classList.add('calm'); }, 3000); }
 }
@@ -1634,6 +1675,108 @@ function famBulkGo(){
     call('command',jobs[i++]).then(next).catch(function(){ fail++; next(); });
   })();
 }
+// ===== ⚙️ หน้าตั้งกฎแบบเมนู + 🏠 ปรับหน้าจอหลัก =====
+var RU={tab:'dev', sub:null};
+var RU_DEV=['lim','bed','sch','prot','apps','loc'];
+var RU_T={lim:['⏰','เวลาเล่นต่อวัน'],bed:['🌙','เวลานอน'],sch:['🏫','เวลาเรียน'],prot:['🛡️','กันเข้าการตั้งค่าเครื่อง'],apps:['📱','กฎรายแอป'],loc:['📍','บังคับเปิดตำแหน่ง'],
+  home:['🏠','ปรับหน้าจอหลัก'],def:['⭐','เปิดเว็บมาเจอ'],bank:['🏦','ธนาคารเวลา'],call:['📞','คุมการโทรกลางคืน'],alert:['🔔','แจ้งเตือน LINE'],qm:['💬','ข้อความด่วน'],snd:['🎙️','เสียงเรียกลูก'],ver:['ℹ️','เวอร์ชันและอัปเดต']};
+function ruTab(t){ RU.tab=t; RU.sub=null; if(t==='dev'&&CUR==='ALL'){} sfx('pick'); ruApply(); }
+function ruShow(k){
+  RU.sub=k; RU.tab=RU_DEV.indexOf(k)>=0?'dev':'sys';
+  try{ if(k==='home') homeEdDraw(); if(k==='alert') fillAlerts(); if(k==='bank') bankSum(); if(k==='call') callSum(); if(k==='def') defDevUI();
+    if(k==='ver'){ var d=dev(), av=d&&d.appVersion?String(d.appVersion):''; renderVer(d, av, av&&vnum(av)<vnum(LATEST_APP)); } }catch(e){ console.error(e); }
+  ruApply(); window.scrollTo(0,0); sfx('pick');
+}
+function ruBack(){ RU.sub=null; ruApply(); window.scrollTo(0,0); sfx('pick'); }
+function ruApply(){
+  var sub=RU.sub, isDev=sub&&RU_DEV.indexOf(sub)>=0, fam=CUR==='ALL', d=dev();
+  $('ruSegD').classList.toggle('on',RU.tab==='dev'); $('ruSegS').classList.toggle('on',RU.tab==='sys');
+  $('ruDevName').textContent = fam ? 'รายเครื่อง' : (d?d.name:'');
+  $('ruSeg').style.display = sub?'none':'';
+  $('ruMenuD').style.display = (!sub&&RU.tab==='dev')?'':'none';
+  $('ruMenuS').style.display = (!sub&&RU.tab==='sys')?'':'none';
+  $('ruSubH').classList.toggle('hidden',!sub);
+  if(sub){ $('ruSubT').textContent=RU_T[sub][0]+' '+RU_T[sub][1]; $('ruSubS').textContent = isDev ? 'ของ'+(d?d.name:'')+' · แก้แล้วกดบันทึกด้านล่าง' : sub==='home'||sub==='def' ? 'ตั้งเฉพาะมือถือเครื่องนี้' : 'ใช้กับทุกเครื่องในบ้าน'; }
+  document.querySelectorAll('#pRu [data-sub]').forEach(function(el){ el.style.display = sub && el.getAttribute('data-sub').split(' ').indexOf(sub)>=0 ? '' : 'none'; });
+  $('ruForm').style.display = isDev?'':'none'; $('ruEmpty').style.display = isDev?'':'none';
+  $('ruSysGrp').style.display = sub&&!isDev&&sub!=='home'?'':'none';
+  ruMenusDraw();
+}
+function ruRow(k,sum,pill,fn){
+  var bg={lim:'#2563EB',bed:'#6366F1',sch:'#F59E0B',prot:'#F43F5E',apps:'#EC4899',loc:'#10B981',home:'#8B5CF6',def:'#FBBF24',bank:'#10B981',call:'#6366F1',alert:'#F97316',qm:'#EC4899',snd:'#A855F7',ver:'#64748B',pair:'#22D3EE'}[k]||'#8B5CF6';
+  var t=RU_T[k]||['➕','เพิ่มเครื่องลูก'];
+  return '<button class="rit" data-snd onclick="'+(fn||'ruShow(\''+k+'\')')+'"><div class="ic" style="background:'+bg+'33">'+t[0]+'</div><div class="tx"><b>'+t[1]+'</b><small>'+sum+'</small></div>'+(pill||'')+'<span class="ch">›</span></button>';
+}
+function rpill(on,txt){ return '<span class="rpl'+(on===true?'':on==='w'?' w':' off')+'">'+txt+'</span>'; }
+function ruMenusDraw(){
+  var d=dev(), fam=CUR==='ALL';
+  try{ ruleSums(); }catch(e){} try{ bankSum(); callSum(); defDevUI(); }catch(e){}
+  var tx=function(id){ var e=$(id); return e?esc(e.textContent):''; };
+  // กฎรายเครื่อง
+  var hD='';
+  if(fam){
+    hD='<div class="rgt">เลือกเครื่องที่จะตั้งกฎ</div><div class="rgrp">'+fdevs().map(function(x){ var c=x.cfg||{};
+      return '<button class="rit" data-snd onclick="pick(\''+x.deviceId+'\');RU.tab=\'dev\';RU.sub=null;tab(\'ru\')"><div class="ic" style="background:'+fcol(x.deviceId)+'33"><span style="width:12px;height:12px;border-radius:50%;background:'+fcol(x.deviceId)+'"></span></div><div class="tx"><b>'+esc(x.name)+'</b><small>วันเรียน '+limTxt(c.weekdayLimit||0)+' · วันหยุด '+limTxt(c.weekendLimit||0)+(c.bedOn?' · นอน '+hm(c.bedStart):'')+'</small></div><span class="ch">›</span></button>'; }).join('')+'</div>';
+  } else if(d && d.cfg){
+    var c=d.cfg, wd=+$('rWd').value, we=+$('rWe').value, bo=$('rBedOn').checked, so=$('rSchOn').checked, pr=$('rProt').checked, lf=$('rLocF').checked;
+    var dirty=function(a,b){ return a!==b ? ' <span style="color:#FDE68A">• ยังไม่บันทึก</span>' : ''; };
+    hD='<div class="rgrp">'+
+      ruRow('lim','วันเรียน '+limTxt(wd)+' · วันหยุด '+limTxt(we)+dirty(wd+'/'+we, c.weekdayLimit+'/'+c.weekendLimit))+
+      ruRow('bed','ทุกวัน '+$('rBedS').value+' – '+$('rBedE').value+dirty(bo+$('rBedS').value+$('rBedE').value, !!c.bedOn+hm(c.bedStart)+hm(c.bedEnd)), rpill(bo,bo?'เปิด':'ปิด'))+
+      ruRow('sch','จ.–ศ. '+$('rSchS').value+' – '+$('rSchE').value+dirty(so+$('rSchS').value+$('rSchE').value, !!c.schoolOn+hm(c.schoolStart)+hm(c.schoolEnd)), rpill(so,so?'เปิด':'ปิด'))+
+      ruRow('apps',tx('fsRApps'))+
+      ruRow('loc',tx('fsRLoc')+dirty(lf,!!c.forceLoc), rpill(lf,lf?'เปิด':'ปิด'))+
+      ruRow('prot','ลูกเปิดหน้าตั้งค่าเครื่องไม่ได้ ต้องใช้ PIN'+dirty(pr,!!c.protectSettings), rpill(pr,pr?'เปิด':'ปิด'))+'</div>'+
+      '<div class="note">💡 แตะหัวข้อเพื่อแก้ · บันทึกแล้วถึงเครื่องลูกภายใน ~30 วินาที</div>';
+  } else hD='<div class="glass sec mut">ยังไม่มีข้อมูลกฎจากเครื่องนี้ รอเครื่องลูกซิงค์ครั้งแรก</div>';
+  $('ruMenuD').innerHTML=hD;
+  // ตั้งค่าระบบ
+  var H=homeCfg(), nh=Object.keys(H.hide).filter(function(k){return H.hide[k];}).length+Object.keys(H.fhide).filter(function(k){return H.fhide[k];}).length;
+  var old=fdevs().filter(function(x){ return x.appVersion&&vnum(x.appVersion)<vnum(LATEST_APP); }).length;
+  $('ruMenuS').innerHTML='<div class="rgt">หน้าจอของฉัน</div><div class="rgrp">'+
+    ruRow('home', nh?'ซ่อนอยู่ '+nh+' ส่วน · เรียงลำดับเองได้':'แสดงครบทุกส่วน · ซ่อน/เรียงลำดับได้')+
+    ruRow('def', tx('fsRDef'))+'</div>'+
+    '<div class="rgt">ระบบของครอบครัว</div><div class="rgrp">'+
+    ruRow('bank', tx('fsRBank'), $('fsRBankR')?$('fsRBankR').innerHTML.replace(/fpill/g,'rpl'):'')+
+    ruRow('call', tx('fsRCall'), $('fsRCallR')?$('fsRCallR').innerHTML.replace(/fpill/g,'rpl'):'')+
+    ruRow('alert', tx('fsRAlert'))+
+    ruRow('qm', tx('fsRQm'))+
+    ruRow('snd', tx('fsRSnd'))+'</div>'+
+    '<div class="rgt">เครื่องลูก</div><div class="rgrp">'+
+    ruRow('pair','มี '+fdevs().length+' เครื่อง','', 'openPair()')+
+    ruRow('ver','เว็บ v'+WEB_VER+' · แอปล่าสุด v'+LATEST_APP, old?rpill('w',old+' เครื่องเก่า'):'')+'</div>';
+}
+// ----- 🏠 ปรับหน้าจอหลัก (เก็บในมือถือเครื่องนี้) -----
+var HOME_KEYS=[['qa','⚡','ปุ่มลัด · ส่งข้อความ · เรียกลูก'],['bank','🏦','ธนาคารเวลา'],['call','📞','โทรตอนกลางคืน'],['loc','📍','ตำแหน่งลูก'],['apps','📊','แอปที่ใช้วันนี้'],['hp','🛡️','สถานะการป้องกัน']];
+var HOME_FAM=[['all','⚡','สั่งพร้อมกันทีเดียว'],['bars','📊','วันนี้ใครเล่นเท่าไร'],['apps','🔥','แอปฮิตของบ้าน'],['map','📍','แผนที่ทุกคน'],['ev','🔔','เหตุการณ์ล่าสุด']];
+function homeCfg(){
+  var h={}; try{ h=JSON.parse(localStorage.getItem('kgHome')||'{}')||{}; }catch(e){}
+  var keys=HOME_KEYS.map(function(x){return x[0];});
+  h.order=(h.order||[]).filter(function(k){return keys.indexOf(k)>=0;}); keys.forEach(function(k){ if(h.order.indexOf(k)<0) h.order.push(k); });
+  h.hide=h.hide||{}; h.fhide=h.fhide||{}; return h;
+}
+function homeSave(h){ try{ localStorage.setItem('kgHome',JSON.stringify(h)); }catch(e){} applyHome(); homeEdDraw(); ruMenusDraw(); }
+function homeMove(k,dir){ var h=homeCfg(), i=h.order.indexOf(k), j=i+dir; if(j<0||j>=h.order.length) return; h.order.splice(i,1); h.order.splice(j,0,k); sfx('pick'); homeSave(h); }
+function homeTog(grp,k,on){ var h=homeCfg(); h[grp][k]=!on; sfx('pick'); homeSave(h); }
+function homeReset(){ try{ localStorage.removeItem('kgHome'); }catch(e){} sfx('ok'); toast('คืนค่าเริ่มต้นแล้ว'); applyHome(); homeEdDraw(); ruMenusDraw(); }
+function homeEdDraw(){
+  var h=homeCfg(), lab={}; HOME_KEYS.forEach(function(x){ lab[x[0]]=x; });
+  var sw=function(grp,k,on){ return '<label class="sw"><input type="checkbox" '+(on?'checked':'')+' onchange="homeTog(\''+grp+'\',\''+k+'\',this.checked)"><span></span></label>'; };
+  $('homeEd').innerHTML='<div class="h4" style="margin-top:0">📱 หน้าเครื่องลูก <span class="mut" style="font-weight:400;font-size:12.5px">เรียงจากบนลงล่าง</span></div>'+
+    '<div class="hrow"><div class="mv"><button disabled>▲</button><button disabled>▼</button></div><div class="ic">⏱️</div><div class="tx"><b>เวลาที่เหลือ · คำขอจากลูก</b><small>แสดงเสมอ</small></div></div>'+
+    h.order.map(function(k,i){ var x=lab[k]; return '<div class="hrow"><div class="mv"><button '+(i?'':'disabled')+' onclick="homeMove(\''+k+'\',-1)">▲</button><button '+(i<h.order.length-1?'':'disabled')+' onclick="homeMove(\''+k+'\',1)">▼</button></div><div class="ic">'+x[1]+'</div><div class="tx"><b>'+x[2]+'</b>'+(k==='bank'?'<small>ซ่อนแค่บนจอนี้ ธนาคารที่เครื่องลูกยังทำงาน</small>':'')+'</div>'+sw('hide',k,!h.hide[k])+'</div>'; }).join('')+
+    '<div class="h4">👨‍👩‍👧 หน้าทั้งบ้าน</div>'+
+    HOME_FAM.map(function(x){ return '<div class="hrow"><div class="ic">'+x[1]+'</div><div class="tx"><b>'+x[2]+'</b></div>'+sw('fhide',x[0],!h.fhide[x[0]])+'</div>'; }).join('')+
+    '<button class="ghost" style="width:100%;margin-top:12px" onclick="homeReset()">↺ คืนค่าเริ่มต้น</button>'+
+    '<div class="note" style="margin-top:8px">ตั้งในมือถือเครื่องนี้เท่านั้น · แม่ตั้งในมือถือแม่ได้อีกแบบ</div>';
+}
+function applyHome(){
+  var h=homeCfg(), box=$('pOv'), anchor=$('hEdit'); if(!box||!anchor) return;
+  var M={qa:['qa','qaMsg','note'],bank:['bankHome'],call:['callHome'],loc:['hLoc'],apps:['hApps'],hp:['hHp']};
+  h.order.forEach(function(k){ (M[k]||[]).forEach(function(id){ var el=$(id); if(!el) return; box.insertBefore(el,anchor); el.classList.toggle('hhide',!!h.hide[k]); }); });
+  var F={all:'hfAll',bars:'hfBars',apps:'hfApps',map:'famLocW',ev:'hfEv'};
+  Object.keys(F).forEach(function(k){ var el=$(F[k]); if(el) el.classList.toggle('hhide',!!h.fhide[k]); });
+}
 // ===== เครื่องที่เปิดเว็บมาเจอ (จำแยกในมือถือแต่ละเครื่อง พ่อกับแม่ตั้งไม่เหมือนกันได้) =====
 function lsGet(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
 function startDev(ds){
@@ -1657,8 +1800,9 @@ function tab(t){ TAB=t; showTab(); window.scrollTo({top:0,behavior:'smooth'}); }
 function showTab(){
   var has = DATA && DATA.devices && DATA.devices.length;
   var fam=CUR==='ALL';
-  $('pOv').classList.toggle('hidden', !has || fam || TAB!=='ov'); $('pRp').classList.toggle('hidden', !has || fam || TAB!=='rp'); $('pRu').classList.toggle('hidden', !has || fam || TAB!=='ru');
-  $('pFam').classList.toggle('hidden', !has || !fam || TAB!=='ov'); $('pFamRp').classList.toggle('hidden', !has || !fam || TAB!=='rp'); $('pFamRu').classList.toggle('hidden', !has || !fam || TAB!=='ru');
+  $('pOv').classList.toggle('hidden', !has || fam || TAB!=='ov'); $('pRp').classList.toggle('hidden', !has || fam || TAB!=='rp'); $('pRu').classList.toggle('hidden', !has || TAB!=='ru');
+  $('pFam').classList.toggle('hidden', !has || !fam || TAB!=='ov'); $('pFamRp').classList.toggle('hidden', !has || !fam || TAB!=='rp'); $('pFamRu').classList.add('hidden');
+  if(has && TAB==='ru'){ if(fam && RU.sub && RU_DEV.indexOf(RU.sub)>=0) RU.sub=null; try{ ruApply(); }catch(e){ console.error(e); } }
   if(fam && TAB==='ov' && FM.map) setTimeout(fmResize,60);
   $('tOv').classList.toggle('on', TAB==='ov'); $('tRp').classList.toggle('on', TAB==='rp'); $('tRu').classList.toggle('on', TAB==='ru');
 }
