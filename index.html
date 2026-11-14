@@ -844,8 +844,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.29', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.19.1';
+var WEB_VER = '1.29.1', WEB_DATE = '12 พ.ย. 2569', LATEST_APP = '1.19.1';
 var CHANGES = [
+  ['1.29.1','14 พ.ย. 2569','📶 เน็ตสะดุดตอนสลับกลับมาเปิดแอป จะลองโหลดใหม่เองก่อน ไม่ขึ้น "Load failed" ทันที'],
   ['1.29','14 พ.ย. 2569','⚙️ หน้าตั้งกฎใหม่: แยก "กฎของลูก" กับ "ตั้งค่าระบบ" เป็นเมนู แตะเข้าไปแก้ทีละเรื่อง · 🏠 ปรับหน้าจอหลักเองได้ (ซ่อน/เรียงการ์ด เช่น ซ่อนธนาคาร) ตั้งแยกในมือถือพ่อ/แม่'],
   ['1.28.1','13 พ.ย. 2569','📞 สิทธิ์การโทรย้ายไปหน้าผู้ปกครองในแอปลูก (ไม่ขึ้นที่หน้าลูกแล้ว) · เว็บเตือนเมื่อยังไม่อนุญาต · แอปที่นับเป็นการโทรเพิ่ม Instagram/Facebook'],
   ['1.28','13 พ.ย. 2569','⬆️ ส่งอัปเดตแอปไปที่เครื่องลูกจากเว็บได้ + ดูสถานะทีละขั้น (เครื่องลูกต้องเป็นแอป v1.19 ขึ้นไป)'],
@@ -927,8 +928,18 @@ function showApp(){ $('login').classList.add('hidden'); $('app').classList.remov
 function logout(){ askConfirm('👋','ออกจากระบบ?','ต้องใส่รหัสผ่านใหม่ครั้งหน้า','ออกจากระบบ',function(){ try{localStorage.removeItem('kgpw');}catch(e){} location.reload(); }); }
 
 function refresh(){ $('sync').classList.add('spin'); load().then(function(){ $('sync').classList.remove('spin'); }); }
+var LOADING=null, LFAIL=0;
+/** โหลดข้อมูล · เน็ตสะดุด (มักเกิดตอนเพิ่งสลับกลับมาเปิดแอป) จะลองใหม่เองเงียบๆ ก่อน */
 function load(){
-  return call('overview').then(function(d){
+  if(LOADING) return LOADING;
+  var tries=0;
+  var once=function(){ return call('overview').catch(function(e){
+    var m=String(e&&e.message||e), net=/load failed|failed to fetch|network|timed out|NetworkError/i.test(m);
+    if(net && tries<2){ tries++; return new Promise(function(r){ setTimeout(r, tries===1?1500:4000); }).then(once); }
+    throw e; }); };
+  LOADING=once().finally(function(){ LOADING=null; });
+  return LOADING.then(function(d){
+    LFAIL=0;
     DATA = d;
     if(!d.devices.length){ $('empty').classList.remove('hidden'); ['pOv','pRp','pRu'].forEach(function(p){$(p).classList.add('hidden');}); $('updated').textContent='ยังไม่มีเครื่องลูก'; return; }
     $('empty').classList.add('hidden');
@@ -941,7 +952,9 @@ function load(){
     if(MAPOPEN && MDAY===todayKey()) loadDay(MDAY, true);
   }).catch(function(e){
     if(String(e.message||'').indexOf('รหัสผ่าน')>=0){ try{localStorage.removeItem('kgpw');}catch(x){} location.reload(); }
-    toast('โหลดข้อมูลไม่ได้: '+(e.message||e));
+    LFAIL++;
+    var m=String(e&&e.message||e);
+    toast(/load failed|failed to fetch|network/i.test(m) ? '📶 ต่อเซิร์ฟเวอร์ไม่ได้ชั่วคราว · ข้อมูลที่เห็นอาจไม่ล่าสุด จะลองใหม่เอง' : 'โหลดข้อมูลไม่ได้: '+m);
   });
 }
 // ===== ตำแหน่งลูก =====
