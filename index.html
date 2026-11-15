@@ -691,6 +691,16 @@ body.fmlock{overflow:hidden}
         <a class="fmore" onclick="tab('rp')">ดูทั้งหมดในรายงาน ›</a>
       </div></div></div>
     </div></div>
+    <div class="foldgrp rise" style="animation-delay:.3s" id="hWeb">
+    <div class="fold" id="fWeb" data-k="web">
+      <div class="fh" onclick="fold('web')"><div class="ft" style="background:linear-gradient(135deg,#38BDF8,#6366F1)">🌐</div>
+        <div class="fx"><div class="fn">เว็บที่เข้าวันนี้</div><div class="fs" id="fsWeb">-</div></div><div class="fr" id="frWeb"></div><div class="fc">⌄</div></div>
+      <div class="fb"><div><div class="fin">
+        <div id="webSites" style="display:flex;flex-direction:column;gap:12px"></div>
+        <div class="h4" style="margin-top:16px">🔍 ค้นหาใน Google</div>
+        <div id="webQ"></div>
+      </div></div></div>
+    </div></div>
     <div class="foldgrp rise" style="animation-delay:.3s" id="hHp">
     <div class="fold" id="fHp" data-k="hp">
       <div class="fh" onclick="fold('hp')"><div class="ft" id="ftHp" style="background:linear-gradient(135deg,#3CF5A0,#10B981)">🛡️</div>
@@ -852,8 +862,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.30', WEB_DATE = '14 พ.ย. 2569', LATEST_APP = '1.19.1';
+var WEB_VER = '1.31', WEB_DATE = '15 พ.ย. 2569', LATEST_APP = '1.20';
 var CHANGES = [
+  ['1.31','15 พ.ย. 2569','🌐 เว็บที่ลูกเข้า: ดูชื่อเว็บ เวลาที่ใช้ และคำค้นหา Google ย้อนหลัง 7 วัน · 🚫 บล็อกเว็บ + แจ้ง LINE เมื่อลูกพยายามเข้า (ต้องใช้แอปลูก v1.20)'],
   ['1.30','14 พ.ย. 2569','👑 สิทธิ์ผู้ใช้: แอดมินคนเดียวตั้งได้ว่าผู้ปกครองอีกคนทำอะไรได้บ้าง (รหัสแยก) · ผูกบัญชี LINE เป็นแอดมิน/ผู้ปกครอง · 🏠 ปรับหน้าจอหลักเลือกได้ว่าใช้เฉพาะมือถือนี้ หรือมือถือพ่อแม่ทุกเครื่อง'],
   ['1.29.3','14 พ.ย. 2569','🏦 ธนาคารเวลา: กดหัก/เติมแล้วยอดเปลี่ยนให้เห็นทันที + มีปุ่ม "ยกเลิก" ถ้ากดพลาด · ⚠️ กดหักซ้ำภายใน 1 นาที จะขึ้นเตือนยอดที่เพิ่งหักและยอดคงเหลือก่อน'],
   ['1.29.1','14 พ.ย. 2569','📶 เน็ตสะดุดตอนสลับกลับมาเปิดแอป จะลองโหลดใหม่เองก่อน ไม่ขึ้น "Load failed" ทันที'],
@@ -1324,6 +1335,7 @@ function render(){
   $('fsApps').textContent = list.length ? list.slice(0,2).map(function(u){return u.label+' '+clock(u.ms);}).join(' · ')+(list.length>2?' · อีก '+(list.length-2)+' แอป':'') : 'ยังไม่ได้ใช้แอปไหนวันนี้';
   $('frApps').innerHTML = '<div class="fic">'+list.slice(0,3).map(function(u){return aIcon(u.label,u.pkg);}).join('')+'</div>';
   $('allApps').innerHTML = appRows(list.slice(0,5));
+  try{ renderWeb(d); }catch(e){ console.error(e); }
   var rest=list.slice(5,40); $('moreApps').innerHTML = rest.length ? appRows(rest) : '';
   $('allCnt').textContent = list.length ? list.length+' แอป' : '';
   var mb=$('moreBtn'); mb.setAttribute('data-t', rest.length ? 'ดูอีก '+rest.length+' แอป ⌄' : ''); mb.textContent = rest.length ? mb.getAttribute('data-t') : '';
@@ -1818,14 +1830,14 @@ function ruMenusDraw(){
     ruRow('ver','เว็บ v'+WEB_VER+' · แอปล่าสุด v'+LATEST_APP, old?rpill('w',old+' เครื่องเก่า'):'')+'</div>';
 }
 // ----- 🏠 ปรับหน้าจอหลัก (เก็บในมือถือเครื่องนี้) -----
-var HOME_KEYS=[['qa','⚡','ปุ่มลัด · ส่งข้อความ · เรียกลูก'],['bank','🏦','ธนาคารเวลา'],['call','📞','โทรตอนกลางคืน'],['loc','📍','ตำแหน่งลูก'],['apps','📊','แอปที่ใช้วันนี้'],['hp','🛡️','สถานะการป้องกัน']];
+var HOME_KEYS=[['qa','⚡','ปุ่มลัด · ส่งข้อความ · เรียกลูก'],['bank','🏦','ธนาคารเวลา'],['call','📞','โทรตอนกลางคืน'],['loc','📍','ตำแหน่งลูก'],['apps','📊','แอปที่ใช้วันนี้'],['web','🌐','เว็บที่เข้าวันนี้'],['hp','🛡️','สถานะการป้องกัน']];
 var HOME_FAM=[['all','⚡','สั่งพร้อมกันทีเดียว'],['bars','📊','วันนี้ใครเล่นเท่าไร'],['apps','🔥','แอปฮิตของบ้าน'],['map','📍','แผนที่ทุกคน'],['ev','🔔','เหตุการณ์ล่าสุด']];
 function homeMode(){ return lsGet('kgHomeMode')==='shared'?'shared':'local'; }
 function homeRaw(){ if(homeMode()==='shared'&&DATA&&DATA.homeShared) return JSON.parse(JSON.stringify(DATA.homeShared)); try{ return JSON.parse(localStorage.getItem('kgHome')||'{}')||{}; }catch(e){ return {}; } }
 function homeCfg(){
   var h=homeRaw()||{};
   var keys=HOME_KEYS.map(function(x){return x[0];});
-  h.order=(h.order||[]).filter(function(k){return keys.indexOf(k)>=0;}); keys.forEach(function(k){ if(h.order.indexOf(k)<0) h.order.push(k); });
+  h.order=(h.order||[]).filter(function(k){return keys.indexOf(k)>=0;}); keys.forEach(function(k){ if(h.order.indexOf(k)<0){ var ai=h.order.indexOf('apps'); if(k==='web'&&ai>=0) h.order.splice(ai+1,0,k); else h.order.push(k); } });
   h.hide=h.hide||{}; h.fhide=h.fhide||{}; return h;
 }
 function homeSave(h){
@@ -1863,7 +1875,7 @@ function homeEdDraw(){
 }
 function applyHome(){
   var h=homeCfg(), box=$('pOv'), anchor=$('hEdit'); if(!box||!anchor) return;
-  var M={qa:['qa','qaMsg','note'],bank:['bankHome'],call:['callHome'],loc:['hLoc'],apps:['hApps'],hp:['hHp']};
+  var M={qa:['qa','qaMsg','note'],bank:['bankHome'],call:['callHome'],loc:['hLoc'],apps:['hApps'],web:['hWeb'],hp:['hHp']};
   h.order.forEach(function(k){ (M[k]||[]).forEach(function(id){ var el=$(id); if(!el) return; box.insertBefore(el,anchor); el.classList.toggle('hhide',!!h.hide[k]); }); });
   var F={all:'hfAll',bars:'hfBars',apps:'hfApps',map:'famLocW',ev:'hfEv'};
   Object.keys(F).forEach(function(k){ var el=$(F[k]); if(el) el.classList.toggle('hhide',!!h.fhide[k]); });
@@ -2250,6 +2262,64 @@ function fillRules(){
   fillAlerts();
   if(SOUNDS===null) loadSounds().catch(function(){});
   renderApps(); try{ ruleSums(); }catch(e){}
+}
+// ===== 🌐 เว็บที่ลูกเข้า =====
+var WCOL=['#F43F5E','#3B82F6','#10B981','#F59E0B','#8B5CF6','#EC4899','#14B8A6','#F97316'];
+function wIcon(h,blk){ var c=blk?'#F43F5E':WCOL[[].reduce.call(h,function(a,ch){return (a*31+ch.charCodeAt(0))>>>0;},0)%WCOL.length];
+  return '<div class="ai" style="background:'+c+'">'+(blk?'!':esc(h.charAt(0).toUpperCase()))+'</div>'; }
+function renderWeb(d){
+  var w=(d.isToday&&d.web)||{sites:[],q:[]}, S=(w.sites||[]).slice().sort(function(a,b){ return (b.blk?1:0)-(a.blk?1:0) || b.ms-a.ms; }), mx=Math.max.apply(null,[1].concat(S.map(function(x){return x.ms||0;})));
+  var tot=S.reduce(function(a,x){ return a+(x.ms||0); },0);
+  $('webSites').innerHTML = S.length ? S.slice(0,6).map(function(x,i){
+    return '<div class="app tap" onclick="openSite('+i+')">'+wIcon(x.h,x.blk)+'<div class="ab"><div class="at"><span>'+esc(x.h)+'</span>'+(x.blk?'<span style="color:#FDA4AF">🚫 ถูกบล็อก</span>':'<span class="mut">'+dur(x.ms)+'</span>')+'</div>'+
+      (x.blk?'<div class="mut" style="font-size:12.5px">พยายามเข้า '+x.n+' ครั้ง · ล่าสุด '+hhmmT(x.last)+'</div>':'<div class="bar"><i style="width:'+Math.max(4,Math.round(x.ms/mx*100))+'%"></i></div>')+'</div><span class="chev">›</span></div>'; }).join('')+
+    '' : '<div class="mut">วันนี้ยังไม่ได้เข้าเว็บไหน</div>';
+  $('webQ').innerHTML = (w.q||[]).length ? w.q.slice(0,5).map(function(q){ return '<div class="aline" style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.07)"><span>'+esc(q.t)+'</span><span class="mut">'+hhmmT(q.at)+'</span></div>'; }).join('') : '<div class="mut">ยังไม่มีการค้นหา</div>';
+  var oldApp=vnum(d.appVersion||'0')<vnum('1.20'), off=!oldApp && d.web && d.web.on===false;
+  $('fsWeb').textContent = oldApp ? '⚠️ ต้องอัปเดตแอปเครื่องลูกเป็น v1.20' : off ? '⚠️ เครื่องลูกยังไม่เปิด "การช่วยเหลือพิเศษ"' :
+    S.length ? S.filter(function(x){return !x.blk;}).length+' เว็บ · '+clock(tot)+((w.q||[]).length?' · ค้นหา '+w.q.length+' ครั้ง':'') : 'ยังไม่ได้เข้าเว็บไหน';
+  if(oldApp||off) $('webSites').innerHTML='<div class="note" style="color:#FDE68A;line-height:1.7">'+(oldApp?'⚠️ เครื่องนี้เป็นแอป v'+esc(d.appVersion||'?')+' · อัปเดตเป็น v1.20 ก่อน แล้วเปิด "การช่วยเหลือพิเศษ" ของ KidGuard':
+    '⚠️ ที่เครื่องลูก เปิด KidGuard → หน้าผู้ปกครอง → แตะ "🌐 ดูเว็บที่เข้า + บล็อกเว็บ" แล้วเปิดสวิตช์ KidGuard ในหน้าการช่วยเหลือพิเศษ')+'</div>'+$('webSites').innerHTML;
+  $('webSites').innerHTML+='<a class="fmore" onclick="openSites()">'+(S.length>6?'ดูทั้งหมด '+S.length+' เว็บ · ':'')+'ย้อนดู 7 วัน · จัดการเว็บที่บล็อก ›</a>';
+  $('frWeb').innerHTML = '<div class="fic">'+S.slice(0,3).map(function(x){ return wIcon(x.h,x.blk); }).join('')+'</div>';
+  WEB_CUR=S;
+}
+var WEB_CUR=[];
+function hhmmT(t){ var x=new Date(Number(t)); return ('0'+x.getHours()).slice(-2)+':'+('0'+x.getMinutes()).slice(-2); }
+function openSite(i){
+  var x=WEB_CUR[i]; if(!x) return;
+  var ses=(x.ses||[]).map(function(s){ return hhmmT(s[0])+' – '+hhmmT(s[1]); }).join(' · ');
+  askChoice('🌐',x.h,'<div class="aline">'+(x.blk?'🚫 เว็บนี้ถูกบล็อก · ลูกพยายามเข้า '+x.n+' ครั้ง':'วันนี้เข้า '+x.n+' ครั้ง รวม '+dur(x.ms))+'</div>'+(ses?'<div class="mut" style="line-height:1.8;margin-top:6px">'+ses+'</div>':''),
+    (x.blk||isBlk(x.h))?[{label:'✅ เลิกบล็อก',bg:G_OK,fn:function(){ webBlockSet(x.h,false); }},{label:'ปิด',main:1,fn:function(){}}]
+         :[{label:'ปิด',main:1,fn:function(){}},{label:'🚫 บล็อกเว็บนี้',bg:'rgba(244,63,94,.25)',fn:function(){ webBlockSet(x.h,true); }}]);
+}
+function isBlk(h){ var d=dev(); return ((d&&d.webBlock)||[]).some(function(b){ return h===b||h.slice(-b.length-1)==='.'+b; }); }
+function webBlockSet(h,on){
+  var d=dev(); if(!d) return;
+  if(!can('rules')) return toast('🔒 เฉพาะแอดมิน (บล็อกเว็บ)');
+  call('webBlock',{deviceId:d.deviceId,host:h,on:on}).then(function(r){ d.webBlock=r.webBlock; sfx('ok'); toast(on?'🚫 บล็อก '+h+' แล้ว · มีผลที่เครื่องลูกภายใน ~30 วินาที':'✅ เลิกบล็อก '+h+' แล้ว'); try{ renderWeb(d); if(WS.open) drawSites(); }catch(e){} load(); })
+    .catch(function(e){ toast('ไม่สำเร็จ: '+(e.message||e)); });
+}
+var WS={day:'',open:false};
+function openSites(){ WS.day=''; WS.open=true; SH=null; drawSites(); $('sbg').classList.remove('hidden');
+  requestAnimationFrame(function(){ $('sbg').classList.add('show'); $('sheet').classList.add('show'); }); document.body.style.overflow='hidden'; sfx('open'); }
+function drawSites(){
+  var d=dev(); if(!d) return;
+  var days=(d.webDays||[]).slice().reverse(), w = WS.day ? (days.filter(function(x){return x.key===WS.day;})[0]||{sites:[],q:[]}) : ((d.isToday&&d.web)||{sites:[],q:[]});
+  var S=(w.sites||[]).slice().sort(function(a,b){ return (b.blk?1:0)-(a.blk?1:0) || b.ms-a.ms; }), mx=Math.max.apply(null,[1].concat(S.map(function(x){return x.ms||0;})));
+  if(!WS.day) WEB_CUR=S;
+  var chip=function(k,t){ return '<button class="rchip'+(WS.day===k?' on':'')+'" onclick="WS.day=\''+k+'\';sfx(\'pick\');drawSites()">'+t+'</button>'; };
+  var bl=d.webBlock||[];
+  $('sheet').innerHTML='<div class="grab"></div><div class="sh-top"><div style="font-size:38px">🌐</div><div><div class="sh-name">เว็บที่'+esc(d.name)+'เข้า</div><div class="mut">เก็บเฉพาะชื่อเว็บ และคำค้นหาใน Google</div></div></div>'+
+    '<div class="rchips">'+chip('','วันนี้')+days.map(function(x){ return chip(x.key, x.label+' '+x.key.slice(6)); }).join('')+'</div>'+
+    '<div class="sec-t">'+(S.length?S.length+' เว็บ':'ไม่มีข้อมูล')+'</div>'+
+    S.map(function(x,i){ return '<div class="app'+(WS.day?'':' tap')+'"'+(WS.day?'':' onclick="openSite('+i+')"')+'>'+wIcon(x.h,x.blk)+'<div class="ab"><div class="at"><span>'+esc(x.h)+'</span>'+(x.blk?'<span style="color:#FDA4AF">🚫 พยายาม '+x.n+' ครั้ง</span>':'<span class="mut">'+dur(x.ms)+'</span>')+'</div>'+(x.blk?'':'<div class="bar"><i style="width:'+Math.max(4,Math.round(x.ms/mx*100))+'%"></i></div>')+'</div></div>'; }).join('')+
+    ((w.q||[]).length?'<div class="sec-t">🔍 ค้นหาใน Google</div>'+w.q.map(function(q){ return '<div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.07)"><span>'+esc(q.t)+'</span><span class="mut">'+hhmmT(q.at)+'</span></div>'; }).join(''):'')+
+    '<div class="sec-t">🚫 เว็บที่บล็อกไว้ ('+bl.length+')</div>'+
+    (bl.length?bl.map(function(h){ return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.07)"><span style="flex:1">'+esc(h)+'</span><button class="ghost" style="height:34px;padding:0 12px" onclick="webBlockSet(\''+h+'\',false)">เลิกบล็อก</button></div>'; }).join(''):'<div class="mut">ยังไม่ได้บล็อกเว็บไหน</div>')+
+    '<div style="display:flex;gap:8px;margin-top:10px"><input class="pinp" id="wbAdd" placeholder="พิมพ์ชื่อเว็บ เช่น example.com" style="flex:1;margin:0"><button class="ghost" style="flex:0 0 auto;padding:0 14px" onclick="var v=$(\'wbAdd\').value.trim(); if(v) webBlockSet(v,true)">🚫 บล็อก</button></div>'+
+    '<div class="note">บล็อกเว็บหลักแล้ว เว็บย่อยถูกบล็อกด้วย เช่น บล็อก example.com จะบล็อก m.example.com ด้วย</div>'+
+    '<div class="sh-act"><button class="ghost" onclick="WS.open=false;closeSheet()">ปิด</button></div>';
 }
 function renderApps(){
   var d = dev(); if(!DRAFT) return;
