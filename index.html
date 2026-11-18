@@ -862,8 +862,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.31.1', WEB_DATE = '17 พ.ย. 2569', LATEST_APP = '1.21';
+var WEB_VER = '1.32', WEB_DATE = '18 พ.ย. 2569', LATEST_APP = '1.22';
 var CHANGES = [
+  ['1.32','18 พ.ย. 2569','🟢 เห็นว่าลูกกำลังใช้แอปอะไรอยู่ตอนนี้ (หรือจอดับ/ถูกล็อก) · 🪟 แอปลูก v1.22: นับเวลาและล็อกหน้าต่างลอย/แบ่งจอด้วย (ต้องเปิดการช่วยเหลือพิเศษ)'],
   ['1.31.1','17 พ.ย. 2569','✂️ แอปลูก v1.21: หมดโควตาโทรกลางคืน ระบบกดวางสายแอปโทร (LINE, IG, Whee ฯลฯ) ให้อัตโนมัติ (ต้องเปิดการช่วยเหลือพิเศษ)'],
   ['1.31','15 พ.ย. 2569','🌐 เว็บที่ลูกเข้า: ดูชื่อเว็บ เวลาที่ใช้ และคำค้นหา Google ย้อนหลัง 7 วัน · 🚫 บล็อกเว็บ + แจ้ง LINE เมื่อลูกพยายามเข้า (ต้องใช้แอปลูก v1.20)'],
   ['1.30','14 พ.ย. 2569','👑 สิทธิ์ผู้ใช้: แอดมินคนเดียวตั้งได้ว่าผู้ปกครองอีกคนทำอะไรได้บ้าง (รหัสแยก) · ผูกบัญชี LINE เป็นแอดมิน/ผู้ปกครอง · 🏠 ปรับหน้าจอหลักเลือกได้ว่าใช้เฉพาะมือถือนี้ หรือมือถือพ่อแม่ทุกเครื่อง'],
@@ -1281,7 +1282,8 @@ function render(){
   var bat = (d.battery!=='' && Number(d.battery)>=0) ? '<span class="chip">'+(Number(d.battery)<20?'🪫':'🔋')+' '+d.battery+'%</span>' : '';
   var av = d.appVersion ? String(d.appVersion) : '';
   var needUp = av && vnum(av) < vnum(LATEST_APP);
-  $('kChips').innerHTML = '<span class="chip"><span class="dot'+(d.online?'':' off')+'"></span>'+(d.online?'ออนไลน์':'ออฟไลน์')+'</span>'+bat+
+  var nw=nowTxt(d);
+  $('kChips').innerHTML = (nw?'<div style="flex-basis:100%;font-size:13.5px;line-height:1.45;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,.14)">'+nw+'</div>':'')+'<span class="chip"><span class="dot'+(d.online?'':' off')+'"></span>'+(d.online?'ออนไลน์':'ออฟไลน์')+'</span>'+bat+
     (av ? '<span class="chip" style="'+(needUp?'background:rgba(255,210,90,.18);color:#FFE7A1':'')+'">'+(needUp?'⬆️ ':'📱 ')+'v'+esc(av)+'</span>' : '');
   renderVer(d, av, needUp);
   $('msgBtn').textContent='💬 ส่งข้อความ';
@@ -1447,7 +1449,8 @@ function renderFam(){
   var cc=DATA.callCfg||{};
   $('famDevs').innerHTML = ds.map(function(d,i){
     var s=st[i], top=(d.isToday?d.usage||[]:[]).slice().sort(function(a,b){return b.ms-a.ms;})[0];
-    var line = !d.online ? 'เงียบไป '+lago(d.lastSeen)+' (เห็นล่าสุด '+tm(d.lastSeen)+')' : s.k==='lock'&&d.lockUntil>now ? '🔒 ล็อกถึง '+tm(d.lockUntil) : s.k==='pause' ? 'เล่นได้ไม่จำกัดถึง '+tm(d.pauseUntil) : top&&top.ms>=60000 ? 'เล่นมากสุด <b>'+esc(top.label)+'</b> '+clock(top.ms) : 'ยังไม่ได้เล่นแอปไหนวันนี้';
+    var nwl = nowTxt(d);
+    var line = nwl && d.online ? nwl : !d.online ? 'เงียบไป '+lago(d.lastSeen)+' (เห็นล่าสุด '+tm(d.lastSeen)+')' : s.k==='lock'&&d.lockUntil>now ? '🔒 ล็อกถึง '+tm(d.lockUntil) : s.k==='pause' ? 'เล่นได้ไม่จำกัดถึง '+tm(d.pauseUntil) : top&&top.ms>=60000 ? 'เล่นมากสุด <b>'+esc(top.label)+'</b> '+clock(top.ms) : 'ยังไม่ได้เล่นแอปไหนวันนี้';
     var bat=(d.battery!==''&&Number(d.battery)>=0)?(Number(d.battery)<20?'🪫 ':'🔋 ')+d.battery+'%':'';
     var tags=[];
     if(d.bank&&d.bank.on!==false&&DATA.bankCfg&&DATA.bankCfg.on) tags.push('🏦 '+bhm(d.bank.bal));
@@ -2286,6 +2289,13 @@ function renderWeb(d){
   WEB_CUR=S;
 }
 var WEB_CUR=[];
+/** ลูกกำลังทำอะไรอยู่ตอนนี้ (แอปลูก v1.22+) */
+function nowTxt(d){
+  var n=d&&d.health&&d.health.now; if(!n||!d.online) return '';
+  if(n.kind!=='off' && Date.now()-(Number(n.at)||0)>180000) return '';
+  var L=esc(n.label||n.pkg||'');
+  return n.kind==='app'?'🟢 กำลังใช้ <b>'+L+'</b>':n.kind==='float'?'🪟 เปิดหน้าต่างลอย <b>'+L+'</b>':n.kind==='locked'?'🔒 พยายามเปิด <b>'+L+'</b> · ถูกล็อก':n.kind==='home'?'🏠 อยู่หน้าโฮม':n.kind==='off'?'🌙 จอดับอยู่':'';
+}
 function hhmmT(t){ var x=new Date(Number(t)); return ('0'+x.getHours()).slice(-2)+':'+('0'+x.getMinutes()).slice(-2); }
 function openSite(i){
   var x=WEB_CUR[i]; if(!x) return;
