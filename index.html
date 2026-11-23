@@ -668,6 +668,7 @@ body.fmlock{overflow:hidden}
     <div style="display:flex;gap:10px" id="qaMsg"><button class="msgbtn rise" style="animation-delay:.18s;flex:1.3" id="msgBtn" onclick="openMsg()">💬 ส่งข้อความถึงลูก</button>
     <button class="msgbtn rise ringbtn" style="animation-delay:.2s;flex:1" id="ringBtn" onclick="openRing()">📢 เรียกลูก</button></div>
     <div class="note" id="note">คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
+    <div id="accRow"></div>
     <div id="bankHome"></div>
     <div id="callHome"></div>
     <div class="foldgrp rise" style="animation-delay:.26s" id="hLoc">
@@ -862,8 +863,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.32.2', WEB_DATE = '23 พ.ย. 2569', LATEST_APP = '1.24';
+var WEB_VER = '1.33', WEB_DATE = '23 พ.ย. 2569', LATEST_APP = '1.25';
 var CHANGES = [
+  ['1.33','23 พ.ย. 2569','🏦 ให้ลูกใช้แอปธนาคารจากระยะไกล: ลูกกดขอ → พ่อแม่อนุญาตใน LINE/เว็บ → ปิดการช่วยเหลือพิเศษชั่วคราว ครบเวลาลูกต้องเปิดกลับเอง (แอปลูก v1.25)'],
   ['1.32.2','23 พ.ย. 2569','🏦 แอปลูก v1.24: ปุ่มปิดการช่วยเหลือพิเศษชั่วคราวเพื่อใช้แอปธนาคาร · แจ้ง LINE ถ้าลืมเปิดกลับเกิน 30 นาที'],
   ['1.32.1','20 พ.ย. 2569','📞 แอปลูก v1.23: แก้โทรเกินเวลา (ตัดสายไม่ได้ตอนแนบหูจนจอดับ) · เห็นเบอร์ที่ลูกโทรออก'],
   ['1.32','18 พ.ย. 2569','🟢 เห็นว่าลูกกำลังใช้แอปอะไรอยู่ตอนนี้ (หรือจอดับ/ถูกล็อก) · 🪟 แอปลูก v1.22: นับเวลาและล็อกหน้าต่างลอย/แบ่งจอด้วย (ต้องเปิดการช่วยเหลือพิเศษ)'],
@@ -1323,6 +1325,7 @@ function render(){
     qb('adjTime(1)','➕','plus','เพิ่มเวลา',addB)+
     qb('adjTime(-1)','➖','minus','ลดเวลา',subB)+
     (paused ? qb("cmd('resume')",'▶️','cool','คุมต่อ','') : qb("cmd('pause',60)",'⏸️','','พัก 1 ชม.',''));
+  try{ accRowDraw(d); }catch(e){}
   $('note').textContent = d.pending.length ? 'มีคำสั่งรอส่ง '+d.pending.length+' รายการ · ถึงเครื่องลูกภายใน ~30 วินาที' : 'คำสั่งถึงเครื่องลูกภายในประมาณ 30 วินาที';
 
   // แอป
@@ -2297,6 +2300,20 @@ function nowTxt(d){
   if(n.kind!=='off' && Date.now()-(Number(n.at)||0)>180000) return '';
   var L=esc(n.label||n.pkg||'');
   return n.kind==='app'?'🟢 กำลังใช้ <b>'+L+'</b>':n.kind==='float'?'🪟 เปิดหน้าต่างลอย <b>'+L+'</b>':n.kind==='locked'?'🔒 พยายามเปิด <b>'+L+'</b> · ถูกล็อก':n.kind==='home'?'🏠 อยู่หน้าโฮม':n.kind==='off'?'🌙 จอดับอยู่':'';
+}
+/** 🏦 ให้ลูกใช้แอปธนาคาร: ปิดการช่วยเหลือพิเศษชั่วคราว (แอปลูก v1.25+) */
+function accRowDraw(d){
+  var g=d.health&&d.health.dbg||{}, ok=vnum(d.appVersion||'0')>=vnum('1.25');
+  if(!ok||!g.accEver){ $('accRow').innerHTML=''; return; }
+  $('accRow').innerHTML = g.acc
+    ? '<button class="ghost" style="width:100%;margin-top:10px" onclick="accGrant()">🏦 ให้ใช้แอปธนาคาร (ปิดการช่วยเหลือพิเศษชั่วคราว)</button>'
+    : '<div class="note" style="margin-top:8px;color:#FDE68A">🏦 การช่วยเหลือพิเศษปิดอยู่ (ลูกใช้แอปธนาคารได้) · ครบเวลาเครื่องจะให้ลูกเปิดกลับเอง</div>';
+}
+function accGrant(){
+  var d=dev(); if(!d) return;
+  askChoice('🏦','ให้'+esc(d.name)+'ใช้แอปธนาคาร','<div class="aline">ระบบจะปิด "การช่วยเหลือพิเศษ" ชั่วคราว · ครบเวลาลูกต้องเปิดกลับเองก่อนใช้มือถือต่อ</div>',
+    [15,30].map(function(m,i){ return {label:m+' นาที',main:i===0,bg:i===0?G_ADD:null,fn:function(){
+      call('command',{deviceId:d.deviceId,cmd:'accPause',arg:m}).then(function(){ sfx('ok'); toast('🏦 อนุญาตแล้ว '+m+' นาที · ถึงเครื่องลูกภายใน ~30 วินาที'); load(); }).catch(function(e){ toast('ไม่สำเร็จ: '+(e.message||e)); }); }}; }));
 }
 function hhmmT(t){ var x=new Date(Number(t)); return ('0'+x.getHours()).slice(-2)+':'+('0'+x.getMinutes()).slice(-2); }
 function openSite(i){
