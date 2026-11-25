@@ -863,8 +863,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.34', WEB_DATE = '23 พ.ย. 2569', LATEST_APP = '1.26';
+var WEB_VER = '1.35', WEB_DATE = '25 พ.ย. 2569', LATEST_APP = '1.26';
 var CHANGES = [
+  ['1.35','25 พ.ย. 2569','🏦 อนุญาตแอปธนาคาร: เพิ่มตัวเลือก 1 ชม. และ ⏱️ กำหนดเวลาเอง (ใช้ได้ถึงกี่โมง) ทั้งในเว็บและ LINE'],
   ['1.34','23 พ.ย. 2569','📚 โหมดแอป "ใช้ทำงาน": ไม่นับเวลาเล่น ล็อกตอนนอน · จำกัดเวลาของแอปแยกได้ · แอปรูปภาพเลือก "รูปภาพอย่างเดียว" (กันเปิดวิดีโอ) · แอปลูก v1.26'],
   ['1.33','23 พ.ย. 2569','🏦 ให้ลูกใช้แอปธนาคารจากระยะไกล: ลูกกดขอ → พ่อแม่อนุญาตใน LINE/เว็บ → ปิดการช่วยเหลือพิเศษชั่วคราว ครบเวลาลูกต้องเปิดกลับเอง (แอปลูก v1.25)'],
   ['1.32.2','23 พ.ย. 2569','🏦 แอปลูก v1.24: ปุ่มปิดการช่วยเหลือพิเศษชั่วคราวเพื่อใช้แอปธนาคาร · แจ้ง LINE ถ้าลืมเปิดกลับเกิน 30 นาที'],
@@ -2314,8 +2315,19 @@ function accRowDraw(d){
 function accGrant(){
   var d=dev(); if(!d) return;
   askChoice('🏦','ให้'+esc(d.name)+'ใช้แอปธนาคาร','<div class="aline">ระบบจะปิด "การช่วยเหลือพิเศษ" ชั่วคราว · ครบเวลาลูกต้องเปิดกลับเองก่อนใช้มือถือต่อ</div>',
-    [15,30].map(function(m,i){ return {label:m+' นาที',main:i===0,bg:i===0?G_ADD:null,fn:function(){
-      call('command',{deviceId:d.deviceId,cmd:'accPause',arg:m}).then(function(){ sfx('ok'); toast('🏦 อนุญาตแล้ว '+m+' นาที · ถึงเครื่องลูกภายใน ~30 วินาที'); load(); }).catch(function(e){ toast('ไม่สำเร็จ: '+(e.message||e)); }); }}; }));
+    [15,30,60].map(function(m,i){ return {label:accLbl(m),main:i===0,bg:i===0?G_ADD:null,fn:function(){ accSend(d,m); }}; })
+    .concat([{label:'⏱️ กำหนดเวลาเอง',sub:'เลือกว่าใช้ได้ถึงกี่โมง',fn:function(){ accCustom(d); }}]));
+}
+function accLbl(m){ return m>=60?(m%60?Math.floor(m/60)+' ชม. '+(m%60)+' นาที':(m/60)+' ชม.'):m+' นาที'; }
+function accSend(d,m){
+  call('command',{deviceId:d.deviceId,cmd:'accPause',arg:m}).then(function(){ sfx('ok'); toast('🏦 อนุญาตแล้ว '+accLbl(m)+' · ถึงเครื่องลูกภายใน ~30 วินาที'); load(); }).catch(function(e){ toast('ไม่สำเร็จ: '+(e.message||e)); });
+}
+function accMinTo(v){ var p=String(v||'').split(':'); if(p.length<2) return 0; var n=new Date(), t=new Date(n); t.setHours(+p[0],+p[1],0,0); if(t<=n) t.setDate(t.getDate()+1); return Math.round((t-n)/60000); }
+function accCustom(d){
+  setTimeout(function(){
+    askChoice('⏱️','ใช้แอปธนาคารได้ถึงกี่โมง','<div class="aline">เลือกเวลาสิ้นสุด (สูงสุด 12 ชม.)</div><input id="accTo" type="time" value="'+hhmmT(Date.now()+90*60000)+'" style="width:100%;font-size:22px;padding:10px;margin-top:8px;border-radius:12px">',
+      [{label:'✅ อนุญาต',main:true,bg:G_ADD,fn:function(){ var m=accMinTo(($('accTo')||{}).value); if(m<1||m>720){ toast('เลือกเวลาไม่เกิน 12 ชม. จากตอนนี้'); return; } accSend(d,m); }}]);
+  },250);
 }
 function hhmmT(t){ var x=new Date(Number(t)); return ('0'+x.getHours()).slice(-2)+':'+('0'+x.getMinutes()).slice(-2); }
 function openSite(i){
