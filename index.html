@@ -759,6 +759,13 @@ body.fmlock{overflow:hidden}
         <div class="trow"><div class="e">🏫</div><div class="t"><b>เวลาเรียน</b><span class="mut">จ.–ศ. · ไม่ใช้กับวันหยุดนักขัตฤกษ์ที่ตั้งในธนาคาร</span></div><label class="sw"><input type="checkbox" id="rSchOn"><span></span></label></div>
         <div class="times"><label>เริ่ม<input type="time" id="rSchS"></label><label>ถึง<input type="time" id="rSchE"></label></div>
       </div>
+      <div class="glass rise" style="padding:4px 16px" data-sub="fweb">
+        <div class="trow"><div class="e">🌐</div><div class="t"><b>เว็บไม่นับเวลา</b><span class="mut">เปิดในเบราว์เซอร์ได้แม้เวลาเล่นหมด · ไม่หักเวลา · เวลานอน/เวลาเรียนยังล็อก</span></div></div>
+        <div id="rFwList" style="display:flex;flex-direction:column;gap:8px;padding:0 0 10px"></div>
+        <div style="display:flex;gap:8px;padding:0 0 10px"><input id="rFwIn" placeholder="เช่น aloofpea-aul.github.io/english-step" style="flex:1;min-width:0;height:48px;padding:0 14px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:inherit;font:inherit"><button class="ghost" style="flex:0 0 auto;padding:0 16px" onclick="fwAdd($('rFwIn').value)">เพิ่ม</button></div>
+        <div id="rFwQuick" style="padding:0 0 10px"></div>
+        <div class="note" id="rFwNote" style="margin:0 0 12px"></div>
+      </div>
       <div class="glass rise" style="padding:4px 16px" data-sub="prot">
         <div class="trow"><div class="e">🛡️</div><div class="t"><b>กันเข้าการตั้งค่าเครื่อง</b><span class="mut">ลูกเปิดหน้าตั้งค่าของเครื่องไม่ได้ ต้องใช้ PIN พ่อแม่</span></div><label class="sw"><input type="checkbox" id="rProt"><span></span></label></div>
       </div>
@@ -781,8 +788,8 @@ body.fmlock{overflow:hidden}
       </div></div></div>
     </div>
       </div>
-      <button class="big shine rise" data-sub="lim bed sch prot apps loc" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
-      <div class="note" data-sub="lim bed sch prot apps loc">กฎใหม่ถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
+      <button class="big shine rise" data-sub="lim bed sch fweb prot apps loc" onclick="saveRules()">บันทึกและส่งไปเครื่องลูก</button>
+      <div class="note" data-sub="lim bed sch fweb prot apps loc">กฎใหม่ถึงเครื่องลูกภายในประมาณ 30 วินาที</div>
     </div>
     <div class="glass sec rise" data-sub="auth" id="authEd"><div class="mut">กำลังโหลด…</div></div>
     <div class="foldgrp rise" id="ruSysGrp">
@@ -868,8 +875,9 @@ body.fmlock{overflow:hidden}
 <div class="dlg" id="dlg" role="alertdialog"><div class="e" id="dE">🔒</div><h3 id="dT"></h3><p id="dP" style="white-space:pre-line"></p><div class="dch hidden" id="dCh"></div><div class="two" id="dTwo"><button class="bno" onclick="dlgAns(false)">ยกเลิก</button><button class="bok" id="dOk" onclick="dlgAns(true)">ตกลง</button></div></div>
 
 <script>
-var WEB_VER = '1.37', WEB_DATE = '27 พ.ย. 2569', LATEST_APP = '1.28';
+var WEB_VER = '1.38', WEB_DATE = '28 พ.ย. 2569', LATEST_APP = '1.29';
 var CHANGES = [
+  ['1.38','28 พ.ย. 2569','🌐 เว็บไม่นับเวลา: ตั้งเว็บ เช่น English Step ให้เปิดได้แม้เวลาเล่นหมดและไม่หักเวลา (เวลานอน/เรียนยังล็อก) · แอปลูก v1.29'],
   ['1.37','27 พ.ย. 2569','⏰ แอปลูก v1.28: แก้เวลาเล่นถูกนับตอนนอน (แอปค้างบนจอตอนจอดับ/ปิดฝาพับ/เครื่องดับแล้วเปิดใหม่)'],
   ['1.36','25 พ.ย. 2569','📚 คืนทำการบ้าน: เลือกวันที่เลื่อนเวลานอน (เช่น พ/พฤ ถึง 22:30) · ใช้ได้เฉพาะแอปใช้ทำงาน หรือทุกแอป · ลูกกด "ขอทำการบ้านต่อคืนนี้" แล้วพ่อแม่อนุญาตใน LINE (แอปลูก v1.27)'],
   ['1.35','25 พ.ย. 2569','🏦 อนุญาตแอปธนาคาร: เพิ่มตัวเลือก 1 ชม. และ ⏱️ กำหนดเวลาเอง (ใช้ได้ถึงกี่โมง) ทั้งในเว็บและ LINE'],
@@ -967,7 +975,7 @@ function doLogin(){
 var ME={role:'admin',perms:null,name:''};
 function setMe(r){ if(!r||!r.role) return; ME={role:r.role,perms:r.perms||{},name:r.name||''}; try{ ruMenusDraw(); if(TAB==='ru') ruApply(); }catch(e){} }
 function can(p){ return !p || ME.role==='admin' || !ME.perms || !!ME.perms[p]; }
-var RU_PERM={lim:'rules',bed:'rules',sch:'rules',prot:'rules',apps:'rules',loc:'rules',bank:'sys',call:'sys',alert:'sys',qm:'msg',snd:'msg',pair:'devs',auth:'admin'};
+var RU_PERM={lim:'rules',bed:'rules',sch:'rules',fweb:'rules',prot:'rules',apps:'rules',loc:'rules',bank:'sys',call:'sys',alert:'sys',qm:'msg',snd:'msg',pair:'devs',auth:'admin'};
 var PERM_T=[['cmd','🔒','ล็อก · เพิ่ม/ลดเวลา · พัก'],['msg','💬','ส่งข้อความ · เรียกลูก · ดูตำแหน่ง'],['req','✅','อนุมัติคำขอของลูก'],['bank','🏦','เติม/หักธนาคารเวลา'],
   ['rules','📋','แก้กฎของลูก (เวลาเล่น เวลานอน แอป)'],['sys','⚙️','ตั้งค่าระบบ (ธนาคาร การโทร แจ้งเตือน LINE)'],['devs','📱','เพิ่มเครื่องลูก · ส่งอัปเดตแอป']];
 var AU=null;
@@ -1775,8 +1783,8 @@ function famBulkGo(){
 }
 // ===== ⚙️ หน้าตั้งกฎแบบเมนู + 🏠 ปรับหน้าจอหลัก =====
 var RU={tab:'dev', sub:null};
-var RU_DEV=['lim','bed','sch','prot','apps','loc'];
-var RU_T={auth:['👑','สิทธิ์ผู้ใช้'],lim:['⏰','เวลาเล่นต่อวัน'],bed:['🌙','เวลานอน'],sch:['🏫','เวลาเรียน'],prot:['🛡️','กันเข้าการตั้งค่าเครื่อง'],apps:['📱','กฎรายแอป'],loc:['📍','บังคับเปิดตำแหน่ง'],
+var RU_DEV=['lim','bed','sch','fweb','prot','apps','loc'];
+var RU_T={auth:['👑','สิทธิ์ผู้ใช้'],lim:['⏰','เวลาเล่นต่อวัน'],bed:['🌙','เวลานอน'],sch:['🏫','เวลาเรียน'],fweb:['🌐','เว็บไม่นับเวลา'],prot:['🛡️','กันเข้าการตั้งค่าเครื่อง'],apps:['📱','กฎรายแอป'],loc:['📍','บังคับเปิดตำแหน่ง'],
   home:['🏠','ปรับหน้าจอหลัก'],def:['⭐','เปิดเว็บมาเจอ'],bank:['🏦','ธนาคารเวลา'],call:['📞','คุมการโทรกลางคืน'],alert:['🔔','แจ้งเตือน LINE'],qm:['💬','ข้อความด่วน'],snd:['🎙️','เสียงเรียกลูก'],ver:['ℹ️','เวอร์ชันและอัปเดต']};
 function ruTab(t){ RU.tab=t; RU.sub=null; if(t==='dev'&&CUR==='ALL'){} sfx('pick'); ruApply(); }
 function ruShow(k){
@@ -1802,7 +1810,7 @@ function ruApply(){
   ruMenusDraw();
 }
 function ruRow(k,sum,pill,fn){
-  var bg={lim:'#2563EB',bed:'#6366F1',sch:'#F59E0B',prot:'#F43F5E',apps:'#EC4899',loc:'#10B981',home:'#8B5CF6',def:'#FBBF24',bank:'#10B981',call:'#6366F1',alert:'#F97316',qm:'#EC4899',snd:'#A855F7',ver:'#64748B',pair:'#22D3EE'}[k]||'#8B5CF6';
+  var bg={lim:'#2563EB',bed:'#6366F1',sch:'#F59E0B',fweb:'#0EA5E9',prot:'#F43F5E',apps:'#EC4899',loc:'#10B981',home:'#8B5CF6',def:'#FBBF24',bank:'#10B981',call:'#6366F1',alert:'#F97316',qm:'#EC4899',snd:'#A855F7',ver:'#64748B',pair:'#22D3EE'}[k]||'#8B5CF6';
   var t=RU_T[k]||['➕','เพิ่มเครื่องลูก'];
   if(!can(RU_PERM[k])){ pill='<span class="rpl off">🔒 แอดมิน</span>'; if(k==='pair') fn='toast(\'🔒 เฉพาะแอดมิน\')'; }
   return '<button class="rit" data-snd onclick="'+(fn||'ruShow(\''+k+'\')')+'"><div class="ic" style="background:'+bg+'33">'+t[0]+'</div><div class="tx"><b>'+t[1]+'</b><small>'+sum+'</small></div>'+(pill||'')+'<span class="ch">›</span></button>';
@@ -1824,6 +1832,7 @@ function ruMenusDraw(){
       ruRow('lim','วันเรียน '+limTxt(wd)+' · วันหยุด '+limTxt(we)+dirty(wd+'/'+we, c.weekdayLimit+'/'+c.weekendLimit))+
       ruRow('bed','ทุกวัน '+$('rBedS').value+' – '+$('rBedE').value+hwSum()+dirty(bo+$('rBedS').value+$('rBedE').value+HW.days+HW.all+$('rHwEnd').value, !!c.bedOn+hm(c.bedStart)+hm(c.bedEnd)+(+c.hwDays||0)+(!!c.hwAll)+hm(c.hwEnd!=null?c.hwEnd:1350)), rpill(bo,bo?'เปิด':'ปิด'))+
       ruRow('sch','จ.–ศ. '+$('rSchS').value+' – '+$('rSchE').value+dirty(so+$('rSchS').value+$('rSchE').value, !!c.schoolOn+hm(c.schoolStart)+hm(c.schoolEnd)), rpill(so,so?'เปิด':'ปิด'))+
+      ruRow('fweb',FW.length?FW.map(fwName).join(' · ')+dirty(FW.join(','),(c.freeWeb||[]).join(',')):'ยังไม่มี · เช่น English Step'+dirty(FW.join(','),(c.freeWeb||[]).join(',')))+
       ruRow('apps',tx('fsRApps'))+
       ruRow('loc',tx('fsRLoc')+dirty(lf,!!c.forceLoc), rpill(lf,lf?'เปิด':'ปิด'))+
       ruRow('prot','ลูกเปิดหน้าตั้งค่าเครื่องไม่ได้ ต้องใช้ PIN'+dirty(pr,!!c.protectSettings), rpill(pr,pr?'เปิด':'ปิด'))+'</div>'+
@@ -2275,6 +2284,7 @@ function fillRules(){
   DRAFT = c; DRAFT._id = d.deviceId;
   $('rWd').value = c.weekdayLimit; $('rWe').value = c.weekendLimit; showLim();
   $('rBedOn').checked = !!c.bedOn; $('rBedS').value = hm(c.bedStart); $('rBedE').value = hm(c.bedEnd);
+  FW = (c.freeWeb||[]).slice(); fwDraw();
   HW.days = +c.hwDays||0; HW.all = !!c.hwAll; $('rHwEnd').value = hm(c.hwEnd!=null?c.hwEnd:1350); hwDraw();
   $('rSchOn').checked = !!c.schoolOn; $('rSchS').value = hm(c.schoolStart); $('rSchE').value = hm(c.schoolEnd);
   $('rProt').checked = !!c.protectSettings;
@@ -2404,6 +2414,17 @@ function locfWarn(el){
   else if(d.locState==='noperm') toast('⚠️ เครื่องลูกยังไม่ได้อนุญาตตำแหน่ง บันทึกแล้วจะล็อกจนกว่าลูกกดอนุญาต');
   else if(d.locState==='off') toast('⚠️ ตอนนี้เครื่องลูกปิดตำแหน่งอยู่ บันทึกแล้วจะล็อกทันที');
 }
+var FW=[], FW_ES='aloofpea-aul.github.io/english-step';
+function fwName(u){ return /english-step/.test(u)?'English Step':u.replace(/^https?:\/\//,'').split('/')[0]; }
+function fwNorm(u){ return String(u||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/\/+$/,''); }
+function fwAdd(u){ u=fwNorm(u); if(!u||!/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/.*)?$/.test(u)){ toast('ใส่ที่อยู่เว็บ เช่น aloofpea-aul.github.io/english-step'); return; } if(FW.indexOf(u)<0) FW.push(u); $('rFwIn').value=''; fwDraw(); ruMenusDraw(); }
+function fwDel(i){ FW.splice(i,1); fwDraw(); ruMenusDraw(); }
+function fwDraw(){
+  $('rFwList').innerHTML=FW.length?FW.map(function(u,i){ return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(14,165,233,.12)"><div style="flex:1;min-width:0"><b>'+esc(fwName(u))+'</b><div class="mut" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(u)+'</div></div><button class="ghost" style="height:36px;padding:0 12px" onclick="fwDel('+i+')">ลบ</button></div>'; }).join(''):'<div class="mut" style="font-size:13px">ยังไม่มีเว็บในรายการ</div>';
+  $('rFwQuick').innerHTML=FW.indexOf(FW_ES)<0?'<button class="ghost" style="width:100%;height:auto;padding:10px" onclick="fwAdd(FW_ES)">＋ เพิ่ม English Step (แอปสอนภาษา)</button>':'';
+  var d=dev(), old=d&&vnum(d.appVersion||'0')<vnum('1.29');
+  $('rFwNote').innerHTML=(old?'⚠️ ต้องอัปเดตแอปลูกเป็น v1.29 ก่อน<br>':'')+'ต้องเปิด "การช่วยเหลือพิเศษ" ของ KidGuard ไว้ (ใช้อ่านที่อยู่เว็บ) · ตอนเวลาหมด หน้าล็อกมีปุ่มลัดเปิดเว็บนี้';
+}
 var HW={days:0,all:false}, HW_D=['อา','จ','อ','พ','พฤ','ศ','ส'];
 function hwDraw(){
   $('rHwDays').innerHTML=HW_D.map(function(n,i){ var on=(HW.days>>i)&1; return '<button class="dchip'+(on?' on':'')+'" style="height:38px;padding:0 14px" onclick="HW.days^='+(1<<i)+';hwDraw();ruMenusDraw()">'+n+'</button>'; }).join('');
@@ -2419,6 +2440,7 @@ function saveRules(){
   c.weekdayLimit = Math.max(0, parseInt($('rWd').value,10)||0);
   c.weekendLimit = Math.max(0, parseInt($('rWe').value,10)||0);
   c.bedOn = $('rBedOn').checked; c.bedStart = toMin($('rBedS').value); c.bedEnd = toMin($('rBedE').value);
+  c.freeWeb = FW.slice();
   c.hwDays = HW.days; c.hwAll = HW.all; c.hwEnd = toMin($('rHwEnd').value);
   if(c.hwDays && !(c.hwEnd>c.bedStart && c.hwEnd<1440)){ toast('เวลาทำการบ้านต้องหลังเวลานอน '+$('rBedS').value+' และก่อนเที่ยงคืน'); return; }
   if(c.hwEnd==null) c.hwEnd=1350;
